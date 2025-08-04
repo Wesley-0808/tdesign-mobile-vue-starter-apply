@@ -13,10 +13,12 @@ import { getActive } from '@/router';
 const route = useRoute();
 const { locale } = useLocale();
 
+type RouteTitleMeta = RouteMeta & { title: { [key: string]: string } };
+
 // 获取当前标题
 const currentTitle = computed(() => {
   const currentRoute = route.matched[route.matched.length - 1];
-  const meta = currentRoute?.meta as RouteMeta;
+  const meta = currentRoute?.meta as RouteTitleMeta;
   if (meta?.title) {
     if (typeof meta.title === 'string') {
       return meta.title;

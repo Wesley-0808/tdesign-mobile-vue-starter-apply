@@ -34,7 +34,7 @@ watch(
 
 const tabbarValue = ref(activeRoutes.value[0]);
 
-const gotoPage = (path: string) => {
-  router.push(path);
+const gotoPage = (path: string | number) => {
+  router.push(path as string);
 };
 </script>

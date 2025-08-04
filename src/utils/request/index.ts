@@ -4,7 +4,6 @@ import isString from 'lodash/isString';
 import merge from 'lodash/merge';
 
 import { ContentTypeEnum } from '@/constants';
-import { useUserStore } from '@/store';
 
 import { VAxios } from './Axios';
 import type { AxiosTransform, CreateAxiosOptions } from './AxiosTransform';
@@ -111,19 +110,19 @@ const transform: AxiosTransform = {
   },
 
   // 请求拦截器处理
-  requestInterceptors: (config, options) => {
-    // 请求之前处理config
-    const userStore = useUserStore();
-    const { token } = userStore;
+  // requestInterceptors: (config, options) => {
+  //   // 请求之前处理config
+  //   const userStore = useUserStore();
+  //   const { token } = userStore;
 
-    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
-      // jwt token
-      (config as Recordable).headers.Authorization = options.authenticationScheme
-        ? `${options.authenticationScheme} ${token}`
-        : token;
-    }
-    return config;
-  },
+  //   if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
+  //     // jwt token
+  //     (config as Recordable).headers.Authorization = options.authenticationScheme
+  //       ? `${options.authenticationScheme} ${token}`
+  //       : token;
+  //   }
+  //   return config;
+  // },
 
   // 响应拦截器处理
   responseInterceptors: (res) => {
