@@ -1,5 +1,5 @@
 <template>
-  <t-navbar :title="currentTitle" :fixed="false" :left-arrow="showLeftArrow" />
+  <t-navbar v-if="!isInTabbar" :title="currentTitle" :fixed="false" :left-arrow="showLeftArrow" />
 </template>
 <script setup lang="ts">
 import { computed } from 'vue';
@@ -14,6 +14,11 @@ const route = useRoute();
 const { locale } = useLocale();
 
 type RouteTitleMeta = RouteMeta & { title: { [key: string]: string } };
+
+const activeRoutes = computed(() => getActive().split('/').filter(Boolean));
+
+// 判断当前路由是否在tabbar中
+const isInTabbar = computed(() => tabbarList.some((item) => item.value === activeRoutes.value[0] || ''));
 
 // 获取当前标题
 const currentTitle = computed(() => {
@@ -32,14 +37,9 @@ const currentTitle = computed(() => {
 // 判断是否显示返回箭头
 const showLeftArrow = computed(() => {
   // 获取当前路由层级
-  const activeRoutes = getActive().split('/').filter(Boolean);
-  const routeLevel = activeRoutes.length;
-
-  // 判断当前路由是否在tabbar中
-  const currentPath = activeRoutes[0] || '';
-  const isInTabbar = tabbarList.some((item) => item.value === currentPath);
+  const routeLevel = activeRoutes.value.length;
 
   // 如果路由层级<=1且在tabbar中，则不显示返回箭头
-  return !(routeLevel <= 1 && isInTabbar);
+  return !(routeLevel <= 1 && isInTabbar.value);
 });
 </script>
