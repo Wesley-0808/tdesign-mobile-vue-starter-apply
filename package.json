@@ -1,6 +1,6 @@
 {
-  "name": "@tencent/tdesign-mobile-vue-starter",
-  "version": "0.13.1",
+  "name": "@tencent/tdesign-mobile-vue-starter-apply",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev:mock": "vite --open --mode mock",
