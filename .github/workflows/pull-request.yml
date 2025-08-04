@@ -67,21 +67,16 @@ jobs:
         with:
           submodules: recursive
 
-      # 设置 pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       # 设置 Node.js 环境，版本为 20
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
       # 安装依赖
-      - run: pnpm install
+      - run: npm install
 
       # 运行代码 lint 检查
-      - run: pnpm run lint
+      - run: npm run lint
 
   test:
     # 如果需要依赖 check 任务，可以取消注释
@@ -94,24 +89,18 @@ jobs:
         with:
           submodules: recursive
 
-      # 设置 pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       # 设置 Node.js 环境，版本为 20
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-
 
       # 安装依赖
-      - run: pnpm install
+      - run: npm install
 
       # 运行测试
-      - run: pnpm run test
+      - run: npm run test
 
-  build_vue-next:
+  build:
     # 在最新版本的 Ubuntu 环境中运行
     runs-on: ubuntu-latest
     # 如果需要依赖自身任务，可以取消注释（通常不需要）
@@ -122,20 +111,14 @@ jobs:
         with:
           submodules: recursive
 
-      # 设置 pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       # 设置 Node.js 环境，版本为 20
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-
 
       # 安装依赖
-      - run: pnpm install
+      - run: npm install
 
       # 运行构建任务
       - name: Build 
-        run: pnpm run build
+        run: npm run build
