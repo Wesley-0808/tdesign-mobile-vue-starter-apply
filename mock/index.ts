@@ -3,366 +3,125 @@ import type { MockMethod } from 'vite-plugin-mock';
 
 export default [
   {
-    url: '/api/get-purchase-list',
+    url: '/api/get-recommend-list',
     method: 'get',
     response: () => ({
-      code: 0,
-      data: {
-        ...Mock.mock({
-          'list|1-100': [
-            {
-              index: /S20201228115950\d\d\d/,
-              pdName: 'Macbook',
-              pdNum: 'p_tmp_60a637cd0d',
-              'purchaseNum|1-100': 100,
-              adminName: '财务部111',
-              updateTime: '2020-05-20@date("HH:mm:ss")',
-              pdType: '电子产品',
-            },
-            {
-              index: /S20201228115950\d\d\d/,
-              pdName: 'Macbook',
-              pdNum: 'p_tmp_60a637cd0d',
-              'purchaseNum|1-100': 100,
-              adminName: '财务部',
-              updateTime: '2020-05-20@date("HH:mm:ss")',
-            },
-          ],
-        }),
-      },
-    }),
-  },
-  {
-    url: '/api/get-list',
-    method: 'get',
-    response: () => ({
-      code: 0,
-      data: {
-        ...Mock.mock({
-          'list|1-100': [
-            {
-              'index|+1': 1,
-              'status|1': '@natural(0, 4)',
-              no: 'BH00@natural(01, 100)',
-              name: '@city()办公用品采购项目',
-              'paymentType|1': '@natural(0, 1)',
-              'contractType|1': '@natural(0, 2)',
-              updateTime: '2020-05-30 @date("HH:mm:ss")',
-              amount: '@natural(10, 500),000,000',
-              adminName: '@cname()',
-            },
-          ],
-        }),
-      },
-    }),
-  },
-  {
-    url: '/api/detail-basic',
-    method: 'get',
-    response: () => ({
-      code: 0,
-      data: {
-        ...Mock.mock({
-          name: 'td_20023747',
-          loginType: 'Web',
-          currentRole: 'Admin',
-          rightsList: '通用权限',
-          userStatus: '启用',
-          language: '简体中文',
-          timeZone: '(GMT+08:00)中国时区—北京（Asia/Beijing）',
-        }),
-      },
-    }),
-  },
-  {
-    url: '/api/get-card-list',
-    method: 'get',
-    response: () => ({
-      code: 0,
-      data: {
-        ...Mock.mock({
-          'list|48-50': [
-            {
-              'index|+1': 1,
-              isSetup: '@boolean',
-              'type|1': '@natural(1, 5)',
-              'banner|1': [
-                'https://tdesign.gtimg.com/starter/cloud-db.jpg',
-                'https://tdesign.gtimg.com/starter/cloud-server.jpg',
-                'https://tdesign.gtimg.com/starter/ssl.jpg',
-                'https://tdesign.gtimg.com/starter/t-sec.jpg',
-                'https://tdesign.gtimg.com/starter/face-recognition.jpg',
-              ],
-              'name|1': ['人脸识别', 'SSL证书', 'CVM', '云数据库', 'T-Sec 云防火墙'],
-              'description|1': [
-                '基于腾讯优图强大的面部分析技术，提供包括人脸检测与分析、五官定位、人脸搜索、人脸比对、人脸',
-                '云硬盘为您提供用于CVM的持久性数据块级存储服务。云硬盘中的数据自动地可用区内以多副本冗',
-                'SSL证书又叫服务器证书，腾讯云为您提供证书的一站式服务，包括免费、付费证书的申请、管理及部',
-                '腾讯安全云防火墙产品，是腾讯云安全团队结合云原生的优势，自主研发的SaaS化防火墙产品，无需客无需客无需客无需客无需客无需客无需客',
-                '云数据库MySQL为用户提供安全可靠，性能卓越、易于维护的企业级云数据库服务。',
-              ],
-            },
-          ],
-        }),
-      },
-    }),
-  },
-  {
-    url: '/api/get-project-list',
-    method: 'get',
-    response: () => ({
-      code: 0,
-      data: {
-        ...Mock.mock({
-          'list|1-50': [
-            {
-              'index|+1': 1,
-              adminPhone: '+86 13587609955',
-              updateTime: '2020-05-30 @date("HH:mm:ss")',
-              'adminName|1': ['顾娟	', '常刚', '郑洋'],
-              'name|1': [
-                '沧州市办公用品采购项目',
-                '红河哈尼族彝族自治州办公用品采购项目	',
-                '铜川市办公用品采购项目',
-                '陇南市办公用品采购项目	',
-                '六安市办公用品采购项目	 ',
-              ],
-            },
-          ],
-        }),
-      },
-    }),
-  },
-  {
-    url: '/api/post',
-    method: 'post',
-    timeout: 2000,
-    response: {
-      code: 0,
-      data: {
-        name: 'vben',
-      },
-    },
-  },
-  {
-    url: '/api/get-menu-list-i18n',
-    method: 'get',
-    timeout: 2000,
-    response: {
       code: 0,
       data: {
         ...Mock.mock({
           list: [
             {
-              path: '/list',
-              name: 'list',
-              component: 'LAYOUT',
-              redirect: '/list/base',
-              meta: {
-                title: {
-                  zh_CN: '列表页',
-                  en_US: 'List',
-                },
-                icon: 'view-list',
-              },
-              children: [
-                {
-                  path: 'base',
-                  name: 'ListBase',
-                  component: '/list/base/index',
-                  meta: {
-                    title: {
-                      zh_CN: '基础列表页',
-                      en_US: 'Base List',
-                    },
-                  },
-                },
-                {
-                  path: 'card',
-                  name: 'ListCard',
-                  component: '/list/card/index',
-                  meta: {
-                    title: {
-                      zh_CN: '卡片列表页',
-                      en_US: 'Card List',
-                    },
-                  },
-                },
-                {
-                  path: 'filter',
-                  name: 'ListFilter',
-                  component: '/list/filter/index',
-                  meta: {
-                    title: {
-                      zh_CN: '筛选列表页',
-                      en_US: 'Filter List',
-                    },
-                  },
-                },
-                {
-                  path: 'tree',
-                  name: 'ListTree',
-                  component: '/list/tree/index',
-                  meta: {
-                    title: {
-                      zh_CN: '树状筛选列表页',
-                      en_US: 'Tree List',
-                    },
-                  },
-                },
-              ],
+              id: 1,
+              img: '/assets/image/activity/sicc-2019.png',
             },
             {
-              path: '/form',
-              name: 'form',
-              component: 'LAYOUT',
-              redirect: '/form/base',
-              meta: {
-                title: {
-                  zh_CN: '表单页',
-                  en_US: 'Form',
-                },
-                icon: 'edit-1',
-              },
-              children: [
-                {
-                  path: 'base',
-                  name: 'FormBase',
-                  component: '/form/base/index',
-                  meta: {
-                    title: {
-                      zh_CN: '基础表单页',
-                      en_US: 'Base Form',
-                    },
-                  },
-                },
-                {
-                  path: 'step',
-                  name: 'FormStep',
-                  component: '/form/step/index',
-                  meta: {
-                    title: {
-                      zh_CN: '分步表单页',
-                      en_US: 'Step Form',
-                    },
-                  },
-                },
-              ],
+              id: 2,
+              img: '/assets/image/activity/sicc-2021.png',
             },
             {
-              path: '/detail',
-              name: 'detail',
-              component: 'LAYOUT',
-              redirect: '/detail/base',
-              meta: {
-                title: {
-                  zh_CN: '详情页',
-                  en_US: 'Detail',
-                },
-                icon: 'layers',
-              },
-              children: [
-                {
-                  path: 'base',
-                  name: 'DetailBase',
-                  component: '/detail/base/index',
-                  meta: {
-                    title: {
-                      zh_CN: '基础详情页',
-                      en_US: 'Base Detail',
-                    },
-                  },
-                },
-                {
-                  path: 'advanced',
-                  name: 'DetailAdvanced',
-                  component: '/detail/advanced/index',
-                  meta: {
-                    title: {
-                      zh_CN: '多卡片详情页',
-                      en_US: 'Card Detail',
-                    },
-                  },
-                },
-                {
-                  path: 'deploy',
-                  name: 'DetailDeploy',
-                  component: '/detail/deploy/index',
-                  meta: {
-                    title: {
-                      zh_CN: '数据详情页',
-                      en_US: 'Data Detail',
-                    },
-                  },
-                },
-                {
-                  path: 'secondary',
-                  name: 'DetailSecondary',
-                  component: '/detail/secondary/index',
-                  meta: {
-                    title: {
-                      zh_CN: '二级详情页',
-                      en_US: 'Secondary Detail',
-                    },
-                  },
-                },
-              ],
+              id: 3,
+              img: '/assets/image/activity/sicc-2019.png',
             },
             {
-              path: '/frame',
-              name: 'Frame',
-              component: 'Layout',
-              redirect: '/frame/doc',
-              meta: {
-                icon: 'internet',
-                title: {
-                  zh_CN: '外部页面',
-                  en_US: 'External',
-                },
-              },
-              children: [
-                {
-                  path: 'doc',
-                  name: 'Doc',
-                  component: 'IFrame',
-                  meta: {
-                    frameSrc: 'https://tdesign.tencent.com/starter/docs/vue-next/get-started',
-                    title: {
-                      zh_CN: '使用文档（内嵌）',
-                      en_US: 'Documentation(IFrame)',
-                    },
-                  },
-                },
-                {
-                  path: 'TDesign',
-                  name: 'TDesign',
-                  component: 'IFrame',
-                  meta: {
-                    frameSrc: 'https://tdesign.tencent.com/vue-next/getting-started',
-                    title: {
-                      zh_CN: 'TDesign 文档（内嵌）',
-                      en_US: 'TDesign (IFrame)',
-                    },
-                  },
-                },
-                {
-                  path: 'TDesign2',
-                  name: 'TDesign2',
-                  component: 'IFrame',
-                  meta: {
-                    frameSrc: 'https://tdesign.tencent.com/vue-next/getting-started',
-                    frameBlank: true,
-                    title: {
-                      zh_CN: 'TDesign 文档（外链',
-                      en_US: 'TDesign Doc(Link)',
-                    },
-                  },
-                },
-              ],
+              id: 4,
+              img: '/assets/image/activity/sicc-2021.png',
+            },
+            {
+              id: 5,
+              img: '/assets/image/activity/sicc-2019.png',
+            },
+            {
+              id: 6,
+              img: '/assets/image/activity/sicc-2021.png',
             },
           ],
         }),
       },
-    },
+    }),
+  },
+  {
+    url: '/api/get-all-activity',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          list: [
+            {
+              id: 1,
+              img: '/assets/image/activity/cover-1.png',
+              name: '2019 SICC服务设计创新大会',
+              price: [],
+              evaluate: 5,
+            },
+            {
+              id: 2,
+              img: '/assets/image/activity/cover-2.png',
+              name: '2021 SICC服务设计创新大会',
+              price: ['88.00', '228.00'],
+              evaluate: 4.5,
+              interested: 236,
+              date: ['2021-3-16'],
+              place: '深圳市腾讯滨海大厦',
+              introduce:
+                '在数字化时代背景下，如何抓住机遇，构建“数字”+“文化”更高效、宽领域、深覆盖的新时代文化创新之路，让优秀传统文化得以延续和新生，被更多人认可和接受，也是我们服务设计探索的方向。2021年5月16日，由腾讯用户研究与体验设计部（简称CDC）主办的第三届服务创新大会，将在深圳腾讯滨海大厦召开。近年来数字化正在赋能传统文化的传承和传播，而传统文化也同样在启发新的服务设计理念和思路，两者之间的界限越来越模糊，相互融合。本次大会将围绕文化保育和文化创新，邀请7位传统文物、建筑、服饰、工艺等不同艺术领域的行业专家，为我们分享最新发展趋势和实践经验，开拓来宾在传统文化与数字科技间的碰撞思路，探索新的服务设计课题，让我们先睹为快，了解这些专家们将会分享哪些主题。 ',
+              guest: [
+                {
+                  name: '1',
+                  img: '/assets/image/activity/guest-1.png',
+                },
+                {
+                  name: '2',
+                  img: '/assets/image/activity/guest-2.png',
+                },
+              ],
+              venue: [
+                {
+                  name: '1',
+                  img: '/assets/image/activity/venue-1.png',
+                },
+                {
+                  name: '2',
+                  img: '/assets/image/activity/venue-2.png',
+                },
+              ],
+            },
+            {
+              id: 3,
+              img: '/assets/image/activity/cover-3.png',
+              name: '少年与星空 插画巡展',
+              price: ['98.00', '118.00'],
+              evaluate: 4.5,
+            },
+            {
+              id: 4,
+              img: '/assets/image/activity/cover-4.png',
+              name: 'Unverse AI艺术展',
+              price: ['66.00', '988.00'],
+              evaluate: 3,
+            },
+          ],
+        }),
+      },
+    }),
+  },
+  {
+    url: '/api/get-activity-evaluate',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          'list|1-3': [
+            {
+              'id|+1': 1,
+              'user|1': ['小小轩', '中中轩', '大大轩'],
+              content: '我已经是第三次参加SICC大会了，作为一名服务体验设计行业的从业者，每次参与都受益匪浅...',
+              avatar: '/assets/image/avatar.png',
+            },
+          ],
+        }),
+      },
+    }),
   },
 ] as MockMethod[];

@@ -1,5 +1,5 @@
 <template>
-  <t-navbar v-if="!isInTabbar" :title="currentTitle" :fixed="false" :left-arrow="showLeftArrow" />
+  <t-navbar v-if="showLeftArrow" :title="currentTitle" :fixed="false" :left-arrow="showLeftArrow" />
 </template>
 <script setup lang="ts">
 import { computed } from 'vue';
@@ -19,6 +19,7 @@ const activeRoutes = computed(() => getActive().split('/').filter(Boolean));
 
 // 判断当前路由是否在tabbar中
 const isInTabbar = computed(() => tabbarList.some((item) => item.value === activeRoutes.value[0] || ''));
+console.log(isInTabbar.value, activeRoutes.value[0]);
 
 // 获取当前标题
 const currentTitle = computed(() => {

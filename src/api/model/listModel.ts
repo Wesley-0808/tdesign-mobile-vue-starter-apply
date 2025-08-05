@@ -1,26 +1,45 @@
-export interface ListResult {
-  list: Array<ListModel>;
+export interface RecommendListResult {
+  list: RecommendListModel[];
 }
-export interface ListModel {
-  adminName: string;
-  amount: string;
-  contractType: number;
-  index: number;
-  name: string;
-  no: string;
-  paymentType: number;
-  status: number;
-  updateTime: Date;
+export interface RecommendListModel {
+  id: number;
+  img: string;
 }
 
-export interface CardListResult {
-  list: Array<CardList>;
+export interface ActivityResult {
+  list: ActivityModel[];
 }
-export interface CardList {
-  banner: string;
-  description: string;
-  index: number;
-  isSetup: boolean;
+
+export interface ActivityModel {
+  id: number;
+  img: string;
   name: string;
-  type: number;
+  price: string[];
+  evaluate: number;
+  interested: number;
+  date: string[];
+  place: string;
+  introduce: string;
+  guest: ActivityGuest[];
+  venue: ActivityVenue[];
+}
+
+interface ActivityVenue {
+  name: string;
+  img: string;
+}
+
+interface ActivityGuest {
+  name: string;
+  img: string;
+}
+
+export interface ActivityEvaluateResult {
+  list: ActivityEvaluate[];
+}
+export interface ActivityEvaluate {
+  id: number;
+  user: string;
+  content: string;
+  avatar: string;
 }

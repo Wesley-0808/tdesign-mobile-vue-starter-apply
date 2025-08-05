@@ -1,19 +1,26 @@
-import type { CardListResult, ListResult } from '@/api/model/listModel';
+import type { ActivityEvaluateResult, ActivityResult, RecommendListResult } from '@/api/model/listModel';
 import { request } from '@/utils/request';
 
 const Api = {
-  BaseList: '/get-list',
-  CardList: '/get-card-list',
+  RecommendActivity: '/get-recommend-list',
+  AllActivity: '/get-all-activity',
+  ActivityEvaluate: '/get-activity-evaluate',
 };
 
-export function getList() {
-  return request.get<ListResult>({
-    url: Api.BaseList,
+export function getRecommendList() {
+  return request.get<RecommendListResult>({
+    url: Api.RecommendActivity,
   });
 }
 
-export function getCardList() {
-  return request.get<CardListResult>({
-    url: Api.CardList,
+export function getAllActivityList() {
+  return request.get<ActivityResult>({
+    url: Api.AllActivity,
+  });
+}
+
+export function getActivityEvaluate() {
+  return request.get<ActivityEvaluateResult>({
+    url: Api.ActivityEvaluate,
   });
 }
