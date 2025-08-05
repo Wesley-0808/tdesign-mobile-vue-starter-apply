@@ -10,6 +10,11 @@ export default [
         path: ':id',
         name: 'activity-detail',
         component: () => import('@/pages/activity/index.vue'),
+        meta: {
+          navBgColor: '#000000',
+          navFgColor: '#ffffff',
+          title: { zh_CN: '详情', en_US: 'ActivityDetail' },
+        },
       },
     ],
   },
