@@ -11,7 +11,12 @@ export default [
         path: '',
         name: 'MineIndex',
         component: () => import('@/pages/mine/index/index.vue'),
-        meta: { title: { zh_CN: '我的', en_US: 'Mine' } },
+        meta: {
+          title: { zh_CN: '我的', en_US: 'Mine' },
+          showNav: true,
+          navBgColor: 'transparent',
+          navFgColor: '#000000e6',
+        },
       },
       {
         path: 'info',

@@ -11,7 +11,11 @@ export default [
         path: '',
         name: 'HomeIndex',
         component: () => import('@/pages/home/index/index.vue'),
-        meta: { title: { zh_CN: '首页', en_US: 'Index' } },
+        meta: {
+          title: { zh_CN: '', en_US: '' },
+          navBgColor: 'transparent',
+          navFgColor: 'transparent',
+        },
       },
       {
         path: 'region',
