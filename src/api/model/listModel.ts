@@ -14,7 +14,7 @@ export interface ActivityModel {
   id: number;
   img: string;
   name: string;
-  price: string[];
+  price: ActivityPrice[];
   evaluate: number;
   interested: number;
   date: string[];
@@ -32,6 +32,12 @@ interface ActivityVenue {
 interface ActivityGuest {
   name: string;
   img: string;
+}
+
+interface ActivityPrice {
+  name: string;
+  price: number;
+  discount: number | null;
 }
 
 export interface ActivityEvaluateResult {

@@ -58,7 +58,28 @@ export default [
               id: 2,
               img: '/assets/image/activity/cover-2.png',
               name: '2021 SICC服务设计创新大会',
-              price: ['88.00', '228.00'],
+              price: [
+                {
+                  name: '早鸟价-单人票',
+                  price: 128,
+                  discount: 88,
+                },
+                {
+                  name: '早鸟价-双人票',
+                  price: 228,
+                  discount: 168,
+                },
+                {
+                  name: '正价-单人票',
+                  price: 128,
+                  discount: null,
+                },
+                {
+                  name: '正价-双人票',
+                  price: 228,
+                  discount: null,
+                },
+              ],
               evaluate: 4.5,
               interested: 236,
               date: ['2021-3-16'],
