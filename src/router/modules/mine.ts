@@ -1,4 +1,5 @@
 import Layout from '@/layouts/index.vue';
+import { t } from '@/locales';
 
 export default [
   {
@@ -16,6 +17,12 @@ export default [
           showNav: true,
           navBgColor: 'transparent',
           navFgColor: '#000000e6',
+          tabbar: {
+            value: 'mine',
+            label: t('layout.tabbar.mine'),
+            icon: 'user',
+            index: 1,
+          },
         },
       },
       {
