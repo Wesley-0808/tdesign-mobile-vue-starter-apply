@@ -1,0 +1,10 @@
+.pxtovw(@value){
+  @vw: (@value/375) *100;
+  @result: unit((@vw), vw);
+}
+
+.flex-center(@justify: center, @align: center) {
+  display: flex;
+  justify-content: @justify;
+  align-items: @align;
+}

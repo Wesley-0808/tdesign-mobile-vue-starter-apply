@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{ backgroundColor: bgc }" class="main">
     <navbar />
     <router-view v-slot="{ Component }">
       <component :is="Component" />
@@ -10,7 +10,21 @@
 <script setup lang="ts">
 import '@/style/layout.less';
 
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
 // import { prefix } from '@/config/global';
 import Navbar from './components/Navbar.vue';
 import Tabbar from './components/Tabbar.vue';
+
+const route = useRoute();
+
+const bgc = computed(() => (route.path.includes('mine') ? '#f5f6f7' : '#fff'));
+console.log(bgc.value);
 </script>
+<style lang="less" scoped>
+.main {
+  width: 100vw;
+  height: 812px;
+}
+</style>
