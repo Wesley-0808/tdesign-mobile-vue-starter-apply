@@ -25,7 +25,8 @@ console.log(bgc.value);
 <style lang="less" scoped>
 .main {
   width: 100vw;
-  height: 686px;
+  height: 100vh;
   overflow: hidden;
+  scrollbar-width: none;
 }
 </style>

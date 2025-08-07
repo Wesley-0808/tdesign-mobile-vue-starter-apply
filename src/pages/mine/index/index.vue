@@ -1,14 +1,12 @@
 <template>
-  <div class="aaaaa">
-    <div class="mine-card">
-      <t-avatar class="mine-card--avatar" size="large" alt=""></t-avatar>
-      <div class="mine-card--content">
-        <div class="mine-card--content--info">
-          <div class="mine-card--content--info--name">陈梓博</div>
-          <div class="mine-card--content--info--age_reputation"></div>
-        </div>
-        <div class="mine-card--content--edit"><t-icon name="edit" size="20px" /></div>
+  <div class="mine-card">
+    <t-avatar class="mine-card--avatar" size="large" alt=""></t-avatar>
+    <div class="mine-card--content">
+      <div class="mine-card--content--info">
+        <div class="mine-card--content--info--name">陈梓博</div>
+        <div class="mine-card--content--info--age_reputation"></div>
       </div>
+      <div class="mine-card--content--edit"><t-icon name="edit" size="20px" /></div>
     </div>
   </div>
   <t-tabs :value="currentValue" :list="tabList" @change="onChange">
@@ -100,20 +98,14 @@ const onChange = (value: TabValue) => {
 };
 </script>
 <style scoped lang="less">
-.aaaaa {
-  width: 100vw;
-  .flex-center();
-}
-
 .mine-card {
   position: relative;
-  width: 343px;
   height: 96px;
   border-radius: 12px;
   background: #fff;
   margin: 0 16px;
   margin-bottom: 16px;
-  .flex-center();
+  .flex-center(space-evenly);
 
   &--avatar {
     margin-left: 16px;
@@ -122,32 +114,27 @@ const onChange = (value: TabValue) => {
   &--content {
     flex-grow: 1;
     height: 64px;
-    .flex-center(start);
+    .flex-center(space-between);
 
     &--info {
       margin-left: 16px;
-      width: 195px;
       height: 54px;
       .flex-center(flex-end,flex-start);
 
       flex-direction: column;
 
       &--name {
-        width: auto;
-        width: 48px;
         height: 24px;
         font-size: 16px;
         font-weight: 600;
         white-space: nowrap;
         text-align: center;
         line-height: 24px;
-        border: 1px solid #000;
       }
 
       &--age_reputation {
         height: 24px;
-        width: auto;
-        width: 157px;
+        min-width: 157px;
         border: 1px solid #000;
       }
     }
@@ -163,25 +150,32 @@ const onChange = (value: TabValue) => {
 
 .t-tabs {
   position: relative;
-  width: 343px;
-  height: 404px;
+  height: 110vw;
   border-radius: 12px;
   background: #fff;
-  margin: 0 auto;
+  margin: 0 16px;
   overflow: hidden;
 
   :deep(&__nav) {
     z-index: 2;
     position: absolute;
-    width: 343px;
     border-radius: 12px;
   }
 }
 
 .t-list {
   padding-top: 48px;
-  height: 404px;
+  height: 110vw;
   overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
   border-radius: 12px;
+
+  &::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+  }
 }
 </style>
