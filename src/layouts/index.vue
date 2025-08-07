@@ -1,6 +1,6 @@
 <template>
   <div :style="{ backgroundColor: bgc }" class="main">
-    <navbar />
+    <navbar style="position: fixed; z-index: 30" />
     <router-view v-slot="{ Component }">
       <component :is="Component" />
     </router-view>
@@ -25,6 +25,7 @@ console.log(bgc.value);
 <style lang="less" scoped>
 .main {
   width: 100vw;
-  height: 812px;
+  height: 686px;
+  overflow: hidden;
 }
 </style>
