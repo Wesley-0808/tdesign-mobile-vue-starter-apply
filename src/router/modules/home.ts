@@ -17,7 +17,6 @@ export default [
           navBgColor: 'transparent',
           navFgColor: 'transparent',
           tabbar: {
-            value: 'home',
             label: t('layout.tabbar.index'),
             icon: 'home',
             index: 0,

@@ -18,7 +18,6 @@ export default [
           navBgColor: 'transparent',
           navFgColor: '#000000e6',
           tabbar: {
-            value: 'mine',
             label: t('layout.tabbar.mine'),
             icon: 'user',
             index: 1,
@@ -29,7 +28,9 @@ export default [
         path: 'info',
         name: 'MineInfo',
         component: () => import('@/pages/mine/info/index.vue'),
-        meta: { title: { zh_CN: '个人信息', en_US: 'MineInfo' } },
+        meta: {
+          title: { zh_CN: '个人信息', en_US: 'MineInfo' },
+        },
       },
     ],
   },

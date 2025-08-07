@@ -16,7 +16,7 @@ export interface RouterItem extends RouteRecordRaw {
 export interface TabbarItem {
   path: string;
   label: string;
-  icon: 'home';
+  icon: string;
   index: number;
 }
 
