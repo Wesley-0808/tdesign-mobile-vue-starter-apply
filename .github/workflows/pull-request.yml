@@ -122,3 +122,17 @@ jobs:
       # 运行构建任务
       - name: Build 
         run: npm run build
+
+      - run: |
+          zip -r preview.zip dist
+
+      # 上传构建产物
+      - name: upload preview site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # 产物名称
+          name: preview
+          # 产物路径
+          path: preview.zip
+          # 产物保留天数
+          retention-days: 5
