@@ -2,7 +2,7 @@ import './index.less';
 
 import dayjs from 'dayjs';
 import { omit } from 'lodash';
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, onMounted, reactive, ref } from 'vue';
 
 import { Occupation } from '@/config/consts';
 import { prefix } from '@/config/global';
@@ -11,7 +11,9 @@ import { formConfig, formOptions } from '@/config/userinfo';
 import { t } from '@/locales';
 
 export default defineComponent({
+  // 表单通用组件
   name: 'FormRender',
+  // 表单提交校验完毕后出触发
   emits: ['confirm'],
   setup(props, { emit }) {
     const prefixClass = `${prefix}-form`;
@@ -20,21 +22,24 @@ export default defineComponent({
 
     const rules: Record<string, any> = {};
 
-    formOptions.forEach((option) => {
-      if (option.type === 'picker') {
-        initialFormData[option.id] = [];
-      } else if (option.type === 'date-picker') {
-        initialFormData[option.id] = dayjs().format('YYYY-MM-DD');
-      } else if (option.type === 'switch') {
-        initialFormData[option.id] = false;
-      } else {
-        initialFormData[option.id] = '';
-      }
+    // 初始化表单数据
+    onMounted(() => {
+      formOptions.forEach((option) => {
+        if (option.type === 'picker') {
+          initialFormData[option.id] = [];
+        } else if (option.type === 'date-picker') {
+          initialFormData[option.id] = dayjs().format('YYYY-MM-DD');
+        } else if (option.type === 'switch') {
+          initialFormData[option.id] = false;
+        } else {
+          initialFormData[option.id] = '';
+        }
 
-      // 规则
-      if (option.rules) {
-        rules[option.id] = option.rules;
-      }
+        // 规则
+        if (option.rules) {
+          rules[option.id] = option.rules;
+        }
+      });
     });
 
     const formData = reactive(initialFormData);
@@ -76,6 +81,7 @@ export default defineComponent({
       pickerVisible.value[id] = false;
     };
 
+    // 渲染表单内容
     const renderItem = (option: FormItems) => {
       switch (option.type) {
         case 'input':

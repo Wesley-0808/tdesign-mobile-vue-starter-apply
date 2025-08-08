@@ -65,7 +65,7 @@ interface FormPickerOption extends FormOptionCommon {
 
 export type FormItems = FormSwitchOption | FormInputOption | FormDatePickerOption | FormPickerOption;
 
-// 表单内配置
+// 表单内容配置
 export const formOptions: FormItems[] = [
   {
     id: 'setDefault',
