@@ -1,3 +1,4 @@
+import { isFinite } from 'lodash';
 import { defineStore } from 'pinia';
 
 import { store } from '@/store';
@@ -12,19 +13,26 @@ export const useUsersStore = defineStore('users', {
   state: () => ({
     userInfo: {
       list: [],
-      default: 0,
+      default: null,
     } as UsersInfo,
   }),
   getters: {
-    defaultUser: (state) => state.userInfo.list.filter((item) => item.id === state.userInfo.default),
-    getCurrentMaxUserId: (state) => Math.max(...state.userInfo.list.map((item) => item.id)),
+    defaultUser: (state) =>
+      state.userInfo.default && state.userInfo.list.find((item) => item.id === state.userInfo.default)?.id,
   },
   actions: {
     addUser(info: UserInfo, setToDefault = false) {
-      this.userInfo.list.push(info);
+      const id = this.getCurrentMaxUserId() + 1;
+      this.userInfo.list.push({ ...info, id });
       if (setToDefault) {
-        this.userInfo.default = info.id;
+        this.userInfo.default = id;
       }
+    },
+
+    getCurrentMaxUserId() {
+      const ids = this.userInfo.list.map((item) => item.id);
+      const maxId = Math.max(...ids);
+      return isFinite(maxId) ? maxId : 0;
     },
   },
 });
