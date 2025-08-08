@@ -49,3 +49,16 @@ export interface ActivityEvaluate {
   content: string;
   avatar: string;
 }
+
+export interface MyActivityListResult {
+  list: MyActivityList[];
+  is_end: boolean;
+}
+
+export interface MyActivityList {
+  id: number;
+  img: string;
+  name: string;
+  date: string;
+  status: 0 | 1;
+}
