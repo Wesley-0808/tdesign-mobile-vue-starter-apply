@@ -1,6 +1,6 @@
 <template>
   <t-tab-bar v-if="tabbarVisible" v-model="tabbarValue" theme="tag" :split="false" :on-change="gotoPage">
-    <t-tab-bar-item v-for="item in tabbarList" :key="item.value" :value="item.value">
+    <t-tab-bar-item v-for="item in tabbarConfig.tabbarList.value" :key="item.path" :value="item.path">
       {{ item.label }}
       <template #icon>
         <t-icon :name="item.icon" />
@@ -11,28 +11,30 @@
 <script setup lang="ts">
 import '@/style/layout.less';
 
+import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
-import tabbarList from '@/config/tabbar';
 import { getActive } from '@/router';
+import { useRouterStore } from '@/store';
 
 const router = useRouter();
+const routerStore = useRouterStore();
+const tabbarConfig = storeToRefs(routerStore);
 
 const tabbarVisible = ref(false);
-const activeRoutes = computed(() => getActive().split('/').filter(Boolean));
+const activeRoutes = computed(() => getActive());
 
 watch(
   activeRoutes,
   (newRoutes) => {
-    const routeLength = newRoutes.length;
-    // 二级页面不显示tabs
-    tabbarVisible.value = routeLength < 2;
+    // 如果当前页面是tabbar的页面
+    tabbarVisible.value = tabbarConfig.tabbarPath.value.includes(newRoutes);
   },
   { immediate: true },
 );
 
-const tabbarValue = ref(activeRoutes.value[0]);
+const tabbarValue = ref(activeRoutes.value);
 
 const gotoPage = (path: string | number) => {
   router.push(path as string);
