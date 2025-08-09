@@ -2,7 +2,7 @@ import 'nprogress/nprogress.css'; // progress bar style
 
 import NProgress from 'nprogress'; // progress bar
 import type { RouteRecordRaw } from 'vue-router';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 // 导入index相关固定路由
 const indexModules = import.meta.glob('./modules/**/home.ts', { eager: true });
@@ -58,7 +58,7 @@ export const getActive = (maxLevel = 3): string => {
 NProgress.configure({ showSpinner: false });
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_URL),
+  history: createWebHashHistory(import.meta.env.VITE_BASE_URL),
   routes: allRoutes,
   scrollBehavior() {
     return {
