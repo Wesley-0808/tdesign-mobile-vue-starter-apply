@@ -187,7 +187,7 @@ const selectCity = (city: { name: string; pinyin: string }) => {
 };
 
 // 索引变化事件
-const onIndexChange = (index: string) => {
+const onIndexChange = (index: string | number) => {
   console.log('当前索引:', index);
 };
 
