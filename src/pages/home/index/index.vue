@@ -181,7 +181,7 @@ const handleTouchEnd = (e: TouchEvent) => {
 
 const value = ref('');
 </script>
-<style scoped lang="scss">
+<style scoped lang="less">
 .home-container {
   background: #fff !important;
   min-height: 100vh;

@@ -305,7 +305,7 @@ watch(
   { deep: true },
 );
 </script>
-<style scoped lang="scss">
+<style scoped lang="less">
 .t-button--outline {
   border-radius: 100px !important;
   background: #e7e7e7;
