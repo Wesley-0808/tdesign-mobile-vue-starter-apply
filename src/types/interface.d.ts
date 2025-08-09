@@ -31,6 +31,6 @@ export interface UserInfo {
 }
 
 export interface NormalOption {
-  value: string | number;
+  value: any;
   label: string;
 }
