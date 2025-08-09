@@ -1,28 +1,27 @@
 <template>
   <div class="home-container">
-    <!-- 位置头部 -->
-    <div class="location-header">
-      <div class="location-info" @click="goToRegion">
-        <img src="../../../assets/location.svg" alt="位置" class="location-icon" />
-        <span class="city-name">深圳市</span>
-      </div>
-      <div class="menu-container">
-        <div class="menu-button">
-          <img src="../../../assets/menu-right.svg" alt="菜单" class="menu-icon" />
+    <t-sticky :offset-top="0" :z-index="100">
+      <div class="top-container">
+        <!-- 位置头部 -->
+        <div class="location-header">
+          <div class="location-info" @click="goToRegion">
+            <location-icon size="18px" />
+            <span class="city-name">深圳市</span>
+          </div>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="example-search">
+          <t-search
+            v-model="value"
+            :clearable="true"
+            shape="round"
+            placeholder="搜索活动"
+            @change="() => onChange('')"
+          ></t-search>
         </div>
       </div>
-    </div>
-
-    <!-- 搜索框 -->
-    <div class="example-search">
-      <t-search
-        v-model="value"
-        :clearable="true"
-        shape="round"
-        placeholder="搜索活动"
-        @change="() => onChange('')"
-      ></t-search>
-    </div>
+    </t-sticky>
 
     <!-- 热门推荐部分 -->
     <div class="hot-recommendations">
@@ -48,17 +47,26 @@
     </div>
 
     <!-- 吸顶部分 -->
-    <t-sticky :offset-top="0" :z-index="100">
+    <t-sticky :offset-top="104" :z-index="100">
       <div class="sticky-header">
         <div class="title-container">
           <div class="title-text">全部活动</div>
         </div>
-        <div class="filter-tabs">
-          <div class="filter-tab active">最新活动</div>
-          <div class="filter-tab">高分活动</div>
-          <div class="filter-tab">
-            <t-icon name="filter" size="16" />
-            筛选
+        <div class="activity-nav">
+          <t-tabs
+            v-model="allActivityTabsActive"
+            :list="activityTabs"
+            :split="false"
+            class="hidden-track"
+            style="width: 100%"
+          >
+          </t-tabs>
+
+          <div class="filter-btn">
+            <div>
+              <filter-icon size="18px" />
+              <span>筛选</span>
+            </div>
           </div>
         </div>
       </div>
@@ -83,9 +91,21 @@
   </div>
 </template>
 <script setup lang="ts">
+import { FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+const allActivityTabsActive = ref(0);
+const activityTabs = [
+  {
+    value: 0,
+    label: '最新活动',
+  },
+  {
+    value: 1,
+    label: '高分活动',
+  },
+];
 const imageCdn = 'https://tdesign.gtimg.com/mobile/demos';
 const swiperList = [
   `${imageCdn}/swiper1.png`,
@@ -182,22 +202,24 @@ const handleTouchEnd = (e: TouchEvent) => {
 const value = ref('');
 </script>
 <style scoped lang="less">
-.home-container {
-  background: #fff !important;
-  min-height: 100vh;
-  background-image: url('/assets/image/bg-head.png') !important;
-  background-size: 100% auto !important;
-  background-repeat: no-repeat !important;
-  background-position: top center !important;
+.hidden-track {
+  :deep(.t-tabs__track) {
+    display: none;
+  }
+}
+
+.top-container {
+  background: var(--td-bg-color-container);
+  background-image: url('/assets/image/bg-head.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .location-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  backdrop-filter: blur(10px);
-  padding: 8px 12px;
-  // background: #fff;
+  padding: 14px 16px;
 }
 
 .location-info {
@@ -206,43 +228,11 @@ const value = ref('');
   gap: 8px;
 }
 
-.location-icon {
-  width: 20px;
-  height: 20px;
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 10%));
-}
-
 .city-name {
   font-size: 14px;
   font-weight: 400;
-  color: #000;
-  letter-spacing: 0.5px;
-}
-
-.menu-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.menu-button {
-  width: 87px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgb(255 255 255 / 95%);
-    transform: translateY(-1px);
-  }
-}
-
-.menu-icon {
-  width: 87px;
-  height: 32px;
+  text-align: center;
+  line-height: 22px;
 }
 
 .example-search {
@@ -254,13 +244,13 @@ const value = ref('');
 }
 
 .title-container {
-  padding: 16px 16px 8px;
-}
+  padding: 16px 16px 0;
 
-.title-text {
-  font-size: 20px;
-  font-weight: 600;
-  color: #000;
+  .title-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+  }
 }
 
 // 轮播图容器样式
@@ -287,32 +277,28 @@ const value = ref('');
 .sticky-header {
   background: #fff;
   border-bottom: 1px solid #f0f0f0;
-  padding: 16px 16px 12px;
 }
 
-.filter-tabs {
+.activity-nav {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-top: 12px;
-}
+  flex-direction: row;
 
-.filter-tab {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: #999;
-  cursor: pointer;
-  transition: color 0.2s ease;
+  .filter-btn {
+    height: 48px;
+    display: flex;
+    align-items: center;
 
-  &.active {
-    color: #0052d9;
-    font-weight: 500;
-  }
-
-  &:hover {
-    color: #0052d9;
+    > div {
+      width: 125px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      line-height: 22px;
+      font-size: 14px;
+      font-weight: 400;
+      justify-content: center;
+      border-left: 1px solid #e7e7e7;
+    }
   }
 }
 
