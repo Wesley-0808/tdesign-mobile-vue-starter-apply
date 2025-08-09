@@ -1,5 +1,5 @@
 <template>
-  <div class="home-container">
+  <div class="home-container container-view">
     <t-sticky :offset-top="0" :z-index="100">
       <div class="top-container">
         <!-- 位置头部 -->
@@ -74,17 +74,17 @@
 
     <!-- 活动列表内容 -->
     <div class="activity-list">
-      <div v-for="(activity, index) in activityList" :key="index" class="activity-item">
-        <div class="activity-image">
+      <div v-for="(activity, index) in activityList" :key="index" class="activity-list-item">
+        <div class="activity-list-item__image">
           <img :src="activity.image" :alt="activity.title" />
         </div>
-        <div class="activity-content">
-          <div class="activity-title">{{ activity.title }}</div>
-          <div class="activity-rating">
-            <t-rate :value="activity.rating" :max="5" size="12" />
-            <span class="rating-text">{{ activity.rating }}分</span>
+        <div class="activity-list-item__content">
+          <div class="activity-list-item__content-title">{{ activity.title }}</div>
+          <div class="activity-list-item__content-evaluate">
+            <t-rate :value="activity.rating" :max="5" size="16" placement="" allow-half />
+            <span class="evaluate-text">{{ activity.rating }}分</span>
           </div>
-          <div class="activity-price">{{ activity.price }}</div>
+          <div class="activity-list-item__content-price">{{ activity.price }}</div>
         </div>
       </div>
     </div>
@@ -202,168 +202,5 @@ const handleTouchEnd = (e: TouchEvent) => {
 const value = ref('');
 </script>
 <style scoped lang="less">
-.hidden-track {
-  :deep(.t-tabs__track) {
-    display: none;
-  }
-}
-
-.top-container {
-  background: var(--td-bg-color-container);
-  background-image: url('/assets/image/bg-head.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.location-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
-}
-
-.location-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.city-name {
-  font-size: 14px;
-  font-weight: 400;
-  text-align: center;
-  line-height: 22px;
-}
-
-.example-search {
-  padding: 8px 16px;
-}
-
-.hot-recommendations {
-  margin-bottom: 8px;
-}
-
-.title-container {
-  padding: 16px 16px 0;
-
-  .title-text {
-    font-size: 20px;
-    font-weight: 600;
-    color: #000;
-  }
-}
-
-// 轮播图容器样式
-.swiper-wrapper {
-  padding: 0 16px 16px;
-  overflow: hidden;
-  position: relative;
-}
-
-// 轮播图样式
-:deep(.t-swiper-outside) {
-  touch-action: pan-y pinch-zoom;
-
-  .t-swiper__container {
-    overflow: hidden;
-  }
-
-  .t-swiper__item {
-    touch-action: pan-y pinch-zoom;
-  }
-}
-
-// 吸顶头部样式
-.sticky-header {
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.activity-nav {
-  display: flex;
-  flex-direction: row;
-
-  .filter-btn {
-    height: 48px;
-    display: flex;
-    align-items: center;
-
-    > div {
-      width: 125px;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      line-height: 22px;
-      font-size: 14px;
-      font-weight: 400;
-      justify-content: center;
-      border-left: 1px solid #e7e7e7;
-    }
-  }
-}
-
-// 活动列表样式
-.activity-list {
-  background: #fff;
-  padding: 0 16px;
-  padding-bottom: 60px;
-}
-
-.activity-item {
-  display: flex;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.activity-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-right: 12px;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.activity-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.activity-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  line-height: 1.4;
-  margin-bottom: 8px;
-}
-
-.activity-rating {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.rating-text {
-  font-size: 12px;
-  color: #999;
-}
-
-.activity-price {
-  font-size: 14px;
-  color: #ff6b35;
-  font-weight: 500;
-}
+@import './index.less';
 </style>
