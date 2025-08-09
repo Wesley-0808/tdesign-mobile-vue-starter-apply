@@ -29,3 +29,8 @@ export interface UserInfo {
   email: string;
   occupation: string;
 }
+
+export interface NormalOption {
+  value: string | number;
+  label: string;
+}
