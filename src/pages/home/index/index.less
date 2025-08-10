@@ -54,6 +54,9 @@
   padding: 0 16px 16px;
   overflow: hidden;
   position: relative;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 16px;
 }
 
 // 轮播图样式
@@ -67,6 +70,48 @@
   .t-swiper__item {
     touch-action: pan-y pinch-zoom;
   }
+}
+
+
+
+
+// 轮播图容器样式，实现露出前后图片的效果
+.swiper-container {
+  padding: 0 26px;
+  overflow: visible;
+}
+
+// 轮播图样式调整
+:deep(.t-swiper) {
+  overflow: visible;
+
+  .t-swiper__container {
+    overflow: visible;
+  }
+
+  .t-swiper__item {
+    padding-right: 16px;
+  }
+
+  .t-swiper-item {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+}
+
+// 防止整个页面晃动
+.home-container {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 轮播图容器
+.t-swiper-outside {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
 }
 
 // 吸顶头部样式

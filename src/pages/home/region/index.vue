@@ -20,24 +20,6 @@
 
     <!-- 城市列表容器 -->
     <div class="city-list-container">
-      <!-- 热门城市独立显示，正常滚动 -->
-      <div class="section">
-        <div class="section-title">热门城市</div>
-        <div class="city-list-section">
-          <div
-            v-for="city in popularCities"
-            :key="city.name"
-            class="city-item"
-            :class="{ active: city.name === currentCity }"
-            @click="selectCity(city)"
-          >
-            <span class="city-text">{{ city.name }}</span>
-            <t-icon v-if="city.name === currentCity" name="check" size="24" color="#0052d9" class="check-icon" />
-          </div>
-        </div>
-      </div>
-
-      <!-- 使用 t-indexes 组件，只包含字母分组的城市 -->
       <t-indexes :index-list="indexList" :sticky="false" @change="onIndexChange">
         <template v-for="group in cityGroupsList" :key="group.index">
           <t-indexes-anchor :index="group.index" />
@@ -64,11 +46,17 @@ import { Toast } from 'tdesign-mobile-vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { useCityStore } from '@/store/modules/city';
+
+// 引入城市数据
+import { cityGroups, indexList } from './cities';
+
 const router = useRouter();
+const cityStore = useCityStore();
 
 // 当前定位信息
 const currentLocation = ref({
-  city: '深圳',
+  city: cityStore.getCurrentCity, // 从 store 获取
   latitude: null as number | null,
   longitude: null as number | null,
   isLocating: false,
@@ -76,111 +64,24 @@ const currentLocation = ref({
 });
 
 // 当前选中的城市
-const currentCity = ref('深圳');
-
-// 热门城市列表
-const popularCities = ref([
-  { name: '北京', pinyin: 'beijing' },
-  { name: '上海', pinyin: 'shanghai' },
-  { name: '广州', pinyin: 'guangzhou' },
-  { name: '深圳', pinyin: 'shenzhen' },
-  { name: '成都', pinyin: 'chengdu' },
-]);
-
-// 按字母分组的城市列表
-const cityGroups = ref({
-  A: [
-    { name: '澳门', pinyin: 'aomen' },
-    { name: '阿克苏', pinyin: 'akesu' },
-    { name: '安吉', pinyin: 'anji' },
-    { name: '鞍山', pinyin: 'anshan' },
-  ],
-  B: [
-    { name: '北京', pinyin: 'beijing' },
-    { name: '保定', pinyin: 'baoding' },
-    { name: '包头', pinyin: 'baotou' },
-  ],
-  C: [
-    { name: '成都', pinyin: 'chengdu' },
-    { name: '重庆', pinyin: 'chongqing' },
-    { name: '长沙', pinyin: 'changsha' },
-  ],
-  D: [
-    { name: '大连', pinyin: 'dalian' },
-    { name: '东莞', pinyin: 'dongguan' },
-    { name: '大庆', pinyin: 'daqing' },
-  ],
-  E: [
-    { name: '鄂尔多斯', pinyin: 'eerduosi' },
-    { name: '恩施', pinyin: 'enshi' },
-  ],
-  F: [
-    { name: '福州', pinyin: 'fuzhou' },
-    { name: '佛山', pinyin: 'foshan' },
-  ],
-  G: [
-    { name: '广州', pinyin: 'guangzhou' },
-    { name: '贵阳', pinyin: 'guiyang' },
-  ],
-  H: [
-    { name: '杭州', pinyin: 'hangzhou' },
-    { name: '合肥', pinyin: 'hefei' },
-  ],
-  I: [{ name: '宜昌', pinyin: 'yichang' }],
-  J: [
-    { name: '济南', pinyin: 'jinan' },
-    { name: '嘉兴', pinyin: 'jiaxing' },
-  ],
-  K: [{ name: '昆明', pinyin: 'kunming' }],
-  L: [{ name: '兰州', pinyin: 'lanzhou' }],
-  M: [{ name: '绵阳', pinyin: 'mianyang' }],
-  N: [
-    { name: '南京', pinyin: 'nanjing' },
-    { name: '南昌', pinyin: 'nanchang' },
-  ],
-  O: [{ name: '鄂州', pinyin: 'ezhou' }],
-  P: [{ name: '莆田', pinyin: 'putian' }],
-  Q: [{ name: '青岛', pinyin: 'qingdao' }],
-  R: [{ name: '日照', pinyin: 'rizhao' }],
-  S: [
-    { name: '上海', pinyin: 'shanghai' },
-    { name: '深圳', pinyin: 'shenzhen' },
-    { name: '苏州', pinyin: 'suzhou' },
-  ],
-  T: [
-    { name: '天津', pinyin: 'tianjin' },
-    { name: '太原', pinyin: 'taiyuan' },
-  ],
-  W: [
-    { name: '武汉', pinyin: 'wuhan' },
-    { name: '无锡', pinyin: 'wuxi' },
-  ],
-  X: [
-    { name: '西安', pinyin: 'xian' },
-    { name: '厦门', pinyin: 'xiamen' },
-  ],
-  Y: [{ name: '烟台', pinyin: 'yantai' }],
-  Z: [
-    { name: '郑州', pinyin: 'zhengzhou' },
-    { name: '珠海', pinyin: 'zhuhai' },
-  ],
-});
+const currentCity = ref(cityStore.getCurrentCity);
 
 // 转换为 t-indexes 需要的数据格式
 const cityGroupsList = computed(() => {
-  return Object.entries(cityGroups.value).map(([index, cities]) => ({
+  return Object.entries(cityGroups).map(([index, cities]) => ({
     index,
     children: cities,
   }));
 });
 
-// 字母列表（不包含热门城市）
-const indexList = computed(() => Object.keys(cityGroups.value));
-
 // 选择城市
 const selectCity = (city: { name: string; pinyin: string }) => {
   currentCity.value = city.name;
   currentLocation.value.city = city.name;
+
+  // 更新 store 中的城市
+  cityStore.setCurrentCity(city.name);
+
   setTimeout(() => {
     router.go(-1);
   }, 300);
@@ -189,6 +90,7 @@ const selectCity = (city: { name: string; pinyin: string }) => {
 // 索引变化事件
 const onIndexChange = (index: string | number) => {
   console.log('当前索引:', index);
+  // console.log('当前索引:', index);
 };
 
 // 更新定位
@@ -217,6 +119,9 @@ const updateLocation = async () => {
     };
 
     currentCity.value = normalizedCityName;
+
+    // 更新 store 中的城市
+    cityStore.setCurrentCity(normalizedCityName);
 
     Toast.success(`定位成功：${normalizedCityName}`);
   } catch (error) {
@@ -272,6 +177,9 @@ const getCityFromCoordinates = async (_latitude: number, _longitude: number) => 
 };
 
 onMounted(async () => {
+  // 初始化城市 store
+  cityStore.initCity();
+
   const cachedLocation = localStorage.getItem('cachedLocation');
   if (cachedLocation) {
     try {
@@ -280,6 +188,8 @@ onMounted(async () => {
       if (cacheAge < 30 * 60 * 1000) {
         currentLocation.value = parsed;
         currentCity.value = parsed.city;
+        // 同步到 store
+        cityStore.setCurrentCity(parsed.city);
         return;
       }
     } catch (e) {
@@ -291,7 +201,6 @@ onMounted(async () => {
     await updateLocation();
   } catch (error) {
     console.error('自动定位失败:', error);
-    console.log('自动定位失败，使用默认城市');
   }
 });
 
@@ -377,17 +286,8 @@ watch(
   flex: 1;
 }
 
-.check-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0052d9;
-  font-size: 20px;
-  flex-shrink: 0;
-  margin-left: 8px;
+:deep(.t-cell__right) {
+  padding-right: 7% !important;
 }
 
 .loading-icon {
@@ -486,6 +386,7 @@ watch(
 
 :deep(.t-indexes__sidebar) {
   top: 55%;
+  font-size: 14px;
   transform: translateY(-50%);
 }
 </style>

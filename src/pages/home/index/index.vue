@@ -6,7 +6,7 @@
         <div class="location-header">
           <div class="location-info" @click="goToRegion">
             <location-icon size="18px" />
-            <span class="city-name">深圳市</span>
+            <span class="city-name">{{ currentCity }}</span>
           </div>
         </div>
 
@@ -29,20 +29,23 @@
         <div class="title-text">热门推荐</div>
       </div>
       <div class="swiper-wrapper">
-        <t-swiper
-          class="t-swiper-outside"
-          :navigation="{ type: 'dots' }"
-          :autoplay="false"
-          @click="handleSwiperClick"
-          @change="handleSwiperChange"
-          @touchstart="handleTouchStart"
-          @touchmove="handleTouchMove"
-          @touchend="handleTouchEnd"
-        >
-          <t-swiper-item v-for="(item, index) in swiperList" :key="index" style="height: 192px">
-            <img :src="item" class="img" />
-          </t-swiper-item>
-        </t-swiper>
+        <div class="swiper-container">
+          <t-swiper
+            v-if="recommendList.length > 0"
+            :key="recommendList.length"
+            :navigation="{ type: 'dots', placement: 'outside' }"
+            :autoplay="false"
+            @click="handleClick"
+            @change="handleChange"
+            @touchstart="handleTouchStart"
+            @touchmove="handleTouchMove"
+            @touchend="handleTouchEnd"
+          >
+            <t-swiper-item v-for="(item, index) in recommendList" :key="item.id" style="height: 172px">
+              <img :src="item.img" :alt="`推荐活动${index + 1}`" class="img" />
+            </t-swiper-item>
+          </t-swiper>
+        </div>
       </div>
     </div>
 
@@ -92,8 +95,32 @@
 </template>
 <script setup lang="ts">
 import { FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { getAllActivityList, getRecommendList } from '@/api/list';
+import { useCityStore } from '@/store/modules/city';
+
+const cityStore = useCityStore();
+const router = useRouter();
+
+// 从 store 获取当前城市
+const currentCity = computed(() => cityStore.getCurrentCity);
+
+const recommendList = ref([]);
+const getRecommendListData = async () => {
+  const res = await getRecommendList();
+  recommendList.value = res.list;
+};
+getRecommendListData();
+
+const activityList1 = ref([]);
+const getActivityListData = async () => {
+  const res = await getAllActivityList();
+  activityList1.value = res.list;
+  console.log(activityList1.value, 'activityList1');
+};
+getActivityListData();
 
 const allActivityTabsActive = ref(0);
 const activityTabs = [
@@ -107,13 +134,6 @@ const activityTabs = [
   },
 ];
 const imageCdn = 'https://tdesign.gtimg.com/mobile/demos';
-const swiperList = [
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-];
 
 // 活动列表数据
 const activityList = ref([
@@ -167,19 +187,17 @@ const activityList = ref([
   },
 ]);
 
-const router = useRouter();
-
 // 跳转到地区选择页面
 const goToRegion = () => {
   router.push('/home/region');
 };
 
-const handleSwiperChange = (index: number, context: any) => {
+const handleChange = (index: number, context: any) => {
   console.log('基础示例,页数变化到》》》', index, context);
 };
 
-const handleSwiperClick = (value: number) => {
-  console.log('click: ', value);
+const handleClick = (value: number) => {
+  console.log('[click] ', value);
 };
 
 const onChange = (val: string) => {
@@ -188,14 +206,17 @@ const onChange = (val: string) => {
 
 // 防止页面晃动的触摸事件处理
 const handleTouchStart = (e: TouchEvent) => {
+  e.preventDefault();
   e.stopPropagation();
 };
 
 const handleTouchMove = (e: TouchEvent) => {
+  e.preventDefault();
   e.stopPropagation();
 };
 
 const handleTouchEnd = (e: TouchEvent) => {
+  e.preventDefault();
   e.stopPropagation();
 };
 
@@ -203,4 +224,10 @@ const value = ref('');
 </script>
 <style scoped lang="less">
 @import './index.less';
+
+.img {
+  display: block;
+  width: 100%;
+  height: 172px;
+}
 </style>
