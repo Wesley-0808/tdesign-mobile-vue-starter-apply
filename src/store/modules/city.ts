@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useCityStore = defineStore('city', {
   state: () => ({
-    currentCity: '深圳', // 默认城市
+    currentCity: '深圳市',
   }),
 
   actions: {

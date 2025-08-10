@@ -1,5 +1,5 @@
 <template>
-  <div class="region-container">
+  <div class="region-container container-view">
     <!-- 顶部当前定位信息 -->
     <div class="current-location">
       <div class="location-info">
@@ -20,19 +20,19 @@
 
     <!-- 城市列表容器 -->
     <div class="city-list-container">
-      <t-indexes :index-list="indexList" :sticky="false" @change="onIndexChange">
+      <t-indexes :index-list="indexList" :sticky="false">
         <template v-for="group in cityGroupsList" :key="group.index">
           <t-indexes-anchor :index="group.index" />
           <t-cell-group>
             <t-cell
               v-for="city in group.children"
-              :key="city.name"
-              :title="city.name"
-              :class="{ active: city.name === currentCity }"
+              :key="city.value"
+              :title="city.label"
+              :class="{ active: city.value === currentCity }"
               @click="selectCity(city)"
             >
               <template #right-icon>
-                <t-icon v-if="city.name === currentCity" name="check" size="24" color="#0052d9" />
+                <t-icon v-if="city.value === currentCity" name="check" size="24" color="#0052d9" />
               </template>
             </t-cell>
           </t-cell-group>
@@ -42,14 +42,14 @@
   </div>
 </template>
 <script setup lang="ts">
+// 引入城市数据
 import { Toast } from 'tdesign-mobile-vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { cityGroup, indexList } from '@/constants';
 import { useCityStore } from '@/store/modules/city';
-
-// 引入城市数据
-import { cityGroups, indexList } from './cities';
+import type { City } from '@/types/interface';
 
 const router = useRouter();
 const cityStore = useCityStore();
@@ -68,29 +68,24 @@ const currentCity = ref(cityStore.getCurrentCity);
 
 // 转换为 t-indexes 需要的数据格式
 const cityGroupsList = computed(() => {
-  return Object.entries(cityGroups).map(([index, cities]) => ({
+  return Object.entries(cityGroup).map(([index, cities]) => ({
     index,
     children: cities,
   }));
 });
 
 // 选择城市
-const selectCity = (city: { name: string; pinyin: string }) => {
-  currentCity.value = city.name;
-  currentLocation.value.city = city.name;
+const selectCity = (city: City) => {
+  const cityName = `${city.value}`;
+  currentCity.value = cityName;
+  currentLocation.value.city = cityName;
 
   // 更新 store 中的城市
-  cityStore.setCurrentCity(city.name);
+  cityStore.setCurrentCity(cityName);
 
   setTimeout(() => {
     router.go(-1);
   }, 300);
-};
-
-// 索引变化事件
-const onIndexChange = (index: string | number) => {
-  console.log('当前索引:', index);
-  // console.log('当前索引:', index);
 };
 
 // 更新定位
@@ -108,22 +103,21 @@ const updateLocation = async () => {
     const cityInfo = await getCityFromCoordinates(position.coords.latitude, position.coords.longitude);
 
     const cityName = cityInfo.city || cityInfo.province || '未知城市';
-    const normalizedCityName = cityName.replace(/市$/, '');
 
     currentLocation.value = {
-      city: normalizedCityName,
+      city: cityName,
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
       isLocating: false,
       lastUpdate: new Date(),
     };
 
-    currentCity.value = normalizedCityName;
+    currentCity.value = cityName;
 
     // 更新 store 中的城市
-    cityStore.setCurrentCity(normalizedCityName);
+    cityStore.setCurrentCity(cityName);
 
-    Toast.success(`定位成功：${normalizedCityName}`);
+    Toast.success(`定位成功：${cityName}`);
   } catch (error) {
     console.error('定位失败:', error);
     let errorMessage = '定位失败，请重试';
@@ -164,7 +158,7 @@ const getCityFromCoordinates = async (_latitude: number, _longitude: number) => 
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const mockCityData = {
-      city: '深圳',
+      city: '深圳市',
       province: '广东省',
       district: '南山区',
       address: '广东省深圳市南山区',
@@ -217,7 +211,7 @@ watch(
 <style scoped lang="less">
 .t-button--outline {
   border-radius: 100px !important;
-  background: #e7e7e7;
+  background: var(--td-bg-color-container);
 
   &::after {
     border-radius: 100px !important;
@@ -225,9 +219,8 @@ watch(
 }
 
 .region-container {
-  background: #f5f5f5;
-  min-height: 100vh;
-  position: relative;
+  background: var(--td-bg-color-container);
+  overflow-y: hidden;
 }
 
 .current-location {
@@ -235,8 +228,9 @@ watch(
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  background: var(--td-bg-color-container);
+  color: var(--td-text-color-primary);
+  border-bottom: 1px solid var(--td-border-level-1-color);
 }
 
 .location-info {
@@ -248,34 +242,15 @@ watch(
 .city-name {
   font-size: 16px;
   font-weight: 500;
-  color: #333;
+  color: var(--td-text-color-primary);
 }
 
 .city-list-container {
   height: calc(100vh - 120px);
-  overflow-y: auto;
-}
+  overflow-y: scroll;
 
-.city-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #f8f8f8;
-  }
-
-  &.active {
-    background: #e6f3ff;
-
-    .city-text {
-      font-weight: 600;
-      color: #0052d9;
-    }
+  .t-indexes {
+    overflow-y: unset;
   }
 }
 
@@ -307,8 +282,8 @@ watch(
 
 .update-location-btn {
   border-radius: 100px !important;
-  background: #e7e7e7;
-  color: #201f1f;
+  background: var(--td-bg-color-component);
+  color: var(--td-text-color-primary);
   font-size: 14px;
   padding: 8px 16px;
   transition: all 0.2s ease;
@@ -353,26 +328,13 @@ watch(
   font-weight: 500;
 }
 
-.city-list-section {
-  background: #fff;
-
-  .city-item {
-    border-bottom: 1px solid #f0f0f0;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-}
-
-// 自定义 t-cell 样式
 :deep(.t-cell) {
   &.active {
-    background: #e6f3ff;
+    background: var(--td-brand-color-light);
 
     .t-cell__title {
       font-weight: 600;
-      color: #0052d9;
+      color: var(--td-brand-color);
     }
   }
 }
