@@ -1,17 +1,43 @@
-.@{starter-prefix}{
-  &-form{
-    &-button{
-      position: absolute;
-      bottom: calc(16px + env(safe-area-inset-bottom));
-      bottom: calc(16px + constant(safe-area-inset-top));
-      width: 100%;
-      padding: 0 16px;
+.@{starter-prefix} {
+  &-form {
+    .t-form {
+      &__label {
+        &--required-right {
+          label::after {
+            margin-left: 3px;
+            margin-right: unset;
+          }
+        }
+      }
+
+      &__label.t-form__label--top {
+        padding: 0 0 12px;
+      }
+
+      &__item.hidden-divider {
+        padding: 24px 0 0;
+
+        &::after {
+          display: none;
+        }
+      }
     }
 
-    .t-form__label--required-right{
-      label::after{
-        margin-left: 3px;
-        margin-right: unset;
+    &__check-tag-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      gap: 12px;
+
+      .t-tag {
+        display: flex;
+        justify-content: center;
+      }
+
+      .t-tag--light.t-tag--primary {
+        color: var(--td-tag-primary-color, var(--td-brand-color, var(--td-brand-color-7, #0052d9)));
+        border-color: var(--td-tag-primary-color, var(--td-brand-color, var(--td-brand-color-7, #0052d9)));
+        background-color: var(--td-tag-primary-light-color, var(--td-brand-color-light, var(--td-brand-color-1, #f2f3ff)));
       }
     }
   }
