@@ -36,7 +36,7 @@ jobs:
         id: deploy
         run: |
           repository=${{github.repository}}
-          export DEPLOY_DOMAIN=https://preview-pr-${{ steps.pr.outputs.id }}-tdesign-starter-mobile-vue-apply.surge.sh
+          export DEPLOY_DOMAIN=https://preview-pr-${{ steps.pr.outputs.id }}-tdesign-starter-mobile-vue-apply-g2.surge.sh
           npx surge --project dist --domain $DEPLOY_DOMAIN --token ${{ secrets.SURGE_TOKEN }}
           echo the preview URL is $DEPLOY_DOMAIN
           echo "url=$DEPLOY_DOMAIN" >> $GITHUB_OUTPUT

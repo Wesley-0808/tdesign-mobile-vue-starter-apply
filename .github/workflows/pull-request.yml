@@ -106,6 +106,15 @@ jobs:
     # 如果需要依赖自身任务，可以取消注释（通常不需要）
     # needs: build
     steps:
+      - name: Save PR number
+        run: echo ${{ github.event.number }} > ./pr-id.txt
+
+      - name: Upload PR number
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr
+          path: ./pr-id.txt
+
       # 检出代码仓库，并递归初始化子模块
       - uses: actions/checkout@v4
         with:
@@ -122,3 +131,17 @@ jobs:
       # 运行构建任务
       - name: Build 
         run: npm run build
+
+      - run: |
+          zip -r preview.zip dist
+
+      # 上传构建产物
+      - name: upload preview site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # 产物名称
+          name: preview
+          # 产物路径
+          path: preview.zip
+          # 产物保留天数
+          retention-days: 5

@@ -7,7 +7,7 @@
     :left-arrow="!isInTabbar"
     :on-left-click="() => router.go(-1)"
   />
-  <img v-if="isInTabbar" src="/assets/image/bg-head.png" style="width: 100vw; position: fixed" />
+  <img v-if="isInTabbar" src="/assets/image/bg-head.png" style="width: 100vw; position: fixed; z-index: -1" />
   <div v-if="!isInTabbar || showNav" style="height: var(--td-navbar-height, 48px)"></div>
 </template>
 <script setup lang="ts">
