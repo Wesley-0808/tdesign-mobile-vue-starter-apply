@@ -198,15 +198,16 @@ export default defineComponent({
             <div class={`${prefixClass}__check-tag-group`}>
               {options.map((tag) => {
                 console.log(formData[option.id]);
+                // 为什么需要加一个class？因为组件prop校验没有extra-large
                 return (
                   <t-check-tag
+                    class="t-tag--extra-large"
                     checked={formData[option.id]?.includes(tag.value)}
                     variant="light"
                     theme="primary"
-                    size="extra-large"
                     shape="round"
                     onClick={() => onCheckTagClick(option.id, tag.value)}
-                    {...option?.componentProps}
+                    {...omit(option?.componentProps, ['options'])}
                   >
                     {tag.label}
                   </t-check-tag>
