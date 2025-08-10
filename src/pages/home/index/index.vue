@@ -11,7 +11,7 @@
         </div>
 
         <!-- 搜索框 -->
-        <div class="example-search">
+        <div class="search-bar">
           <t-search
             v-model="value"
             :clearable="true"
@@ -31,18 +31,17 @@
       <div class="swiper-wrapper">
         <div class="swiper-container">
           <t-swiper
-            v-if="recommendList.length > 0"
             :key="recommendList.length"
             :navigation="{ type: 'dots', placement: 'outside' }"
             :autoplay="false"
             @click="handleClick"
             @change="handleChange"
-            @touchstart="handleTouchStart"
-            @touchmove="handleTouchMove"
-            @touchend="handleTouchEnd"
+            @touchstart="handleTouchPrevent"
+            @touchmove="handleTouchPrevent"
+            @touchend="handleTouchPrevent"
           >
             <t-swiper-item v-for="(item, index) in recommendList" :key="item.id" style="height: 172px">
-              <img :src="item.img" :alt="`推荐活动${index + 1}`" class="img" />
+              <img :src="item.img" :alt="`推荐活动-${index + 1}`" />
             </t-swiper-item>
           </t-swiper>
         </div>
@@ -56,13 +55,7 @@
           <div class="title-text">全部活动</div>
         </div>
         <div class="activity-nav">
-          <t-tabs
-            v-model="allActivityTabsActive"
-            :list="activityTabs"
-            :split="false"
-            class="hidden-track"
-            style="width: 100%"
-          >
+          <t-tabs v-model="sortBy" :list="activityTabs" :split="false" class="hidden-track" style="width: 100%">
           </t-tabs>
 
           <div class="filter-btn">
@@ -77,19 +70,7 @@
 
     <!-- 活动列表内容 -->
     <div class="activity-list">
-      <div v-for="(activity, index) in activityList" :key="index" class="activity-list-item">
-        <div class="activity-list-item__image">
-          <img :src="activity.image" :alt="activity.title" />
-        </div>
-        <div class="activity-list-item__content">
-          <div class="activity-list-item__content-title">{{ activity.title }}</div>
-          <div class="activity-list-item__content-evaluate">
-            <t-rate :value="activity.rating" :max="5" size="16" placement="" allow-half />
-            <span class="evaluate-text">{{ activity.rating }}分</span>
-          </div>
-          <div class="activity-list-item__content-price">{{ activity.price }}</div>
-        </div>
-      </div>
+      <activity-list :data="activityListData" :sort-by="sortBy" />
     </div>
   </div>
 
@@ -101,21 +82,36 @@
         <div class="close-icon" @click="filterPopupVisible = false"><close-icon size="24px" /></div>
       </div>
       <div :class="`${prefix}-filter-view__body`">
-        <form-render :form-options="formOptions" :form-config="{ labelAlign: 'top' }" :btn-config="btns" />
+        <form-render
+          :form-options="formOptions"
+          :form-config="{ labelAlign: 'top' }"
+          :btn-config="btns"
+          @confirm="onFilterData"
+        />
       </div>
     </div>
   </t-popup>
 </template>
 <script setup lang="ts">
 import { CloseIcon, FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getAllActivityList, getRecommendList } from '@/api/list';
-import { useCityStore } from '@/store/modules/city';
+import ActivityList from '@/components/activity-list';
+import FormRender from '@/components/form';
+import type { BtnConfig, FormItems } from '@/components/form/type';
+import { ActivityField, ActivityType } from '@/config/consts';
+import { prefix } from '@/config/global';
+import { useCityStore } from '@/store';
 
 const cityStore = useCityStore();
 const router = useRouter();
+
+onMounted(() => {
+  getRecommendListData();
+  getActivityListData();
+});
 
 // 从 store 获取当前城市
 const currentCity = computed(() => cityStore.getCurrentCity);
@@ -125,87 +121,26 @@ const getRecommendListData = async () => {
   const res = await getRecommendList();
   recommendList.value = res.list;
 };
-getRecommendListData();
 
-const activityList1 = ref([]);
+const activityListData = ref([]);
 const getActivityListData = async () => {
   const res = await getAllActivityList();
-  activityList1.value = res.list;
-  console.log(activityList1.value, 'activityList1');
+  activityListData.value = res.list;
+  console.log(activityListData.value, 'activityListData');
 };
-getActivityListData();
 
-const allActivityTabsActive = ref(0);
+const sortBy = ref('latest');
 const activityTabs = [
   {
-    value: 0,
+    value: 'latest',
     label: '最新活动',
   },
   {
-    value: 1,
+    value: 'max-evaluate',
     label: '高分活动',
   },
 ];
-const imageCdn = 'https://tdesign.gtimg.com/mobile/demos';
-
-// 活动列表数据
-const activityList = ref([
-  {
-    title: '2019 SICC服务设计创新大会',
-    rating: 5,
-    price: '免费活动',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: '2021 SICC服务设计创新大会',
-    rating: 4.5,
-    price: '¥88.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-  {
-    title: '少年与星空 插画巡展',
-    rating: 4.5,
-    price: '¥98.00-¥118.00',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: 'Universe AI艺术展',
-    rating: 3.5,
-    price: '¥128.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-  {
-    title: '2019 SICC服务设计创新大会',
-    rating: 5,
-    price: '免费活动',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: '2021 SICC服务设计创新大会',
-    rating: 4.5,
-    price: '¥88.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-  {
-    title: '少年与星空 插画巡展',
-    rating: 4.5,
-    price: '¥98.00-¥118.00',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: 'Universe AI艺术展',
-    rating: 3.5,
-    price: '¥128.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-]);
-
-import FormRender from '@/components/form';
-import type { BtnConfig, FormItems } from '@/components/form/type';
-import { ActivityField, ActivityType } from '@/config/consts';
-import { prefix } from '@/config/global';
-
-// const prefixClass = `${prefix}`;
+const filterOptions = ref({});
 
 const filterPopupVisible = ref(false);
 const formOptions: FormItems[] = [
@@ -227,7 +162,7 @@ const formOptions: FormItems[] = [
     },
   },
   {
-    id: 'phone',
+    id: 'activityDate',
     label: '活动日期',
     type: 'custom',
     component: 123,
@@ -277,18 +212,12 @@ const onChange = (val: string) => {
   console.log('change: ', val);
 };
 
+const onFilterData = (_verify: boolean, data: any) => {
+  filterOptions.value = data;
+};
+
 // 防止页面晃动的触摸事件处理
-const handleTouchStart = (e: TouchEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
-
-const handleTouchMove = (e: TouchEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
-
-const handleTouchEnd = (e: TouchEvent) => {
+const handleTouchPrevent = (e: TouchEvent) => {
   e.preventDefault();
   e.stopPropagation();
 };
@@ -297,10 +226,4 @@ const value = ref('');
 </script>
 <style scoped lang="less">
 @import './index.less';
-
-.img {
-  display: block;
-  width: 100%;
-  height: 172px;
-}
 </style>

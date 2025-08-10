@@ -11,3 +11,10 @@ div :has(.t-tab-bar){
     margin-bottom: 56px;
   }
 }
+
+div :has(.navbar-placeholder){
+  .container-view{
+    height: calc( 100vh - var(--td-navbar-height, 48px) - constant(safe-area-inset-bottom, 0px));
+    height: calc( 100vh - var(--td-navbar-height, 48px) - env(safe-area-inset-bottom, 0px));
+  }
+}

@@ -51,6 +51,7 @@ export default [
               id: 1,
               img: '/assets/image/activity/cover-1.png',
               name: '2019 SICC服务设计创新大会',
+              date: ['2021-3-18', '2021-3-19'],
               price: [],
               evaluate: 5,
             },
@@ -112,6 +113,7 @@ export default [
               img: '/assets/image/activity/cover-3.png',
               name: '少年与星空 插画巡展',
               price: ['98.00', '118.00'],
+              date: ['2021-3-10', '2021-3-20'],
               evaluate: 4.5,
             },
             {
@@ -119,6 +121,7 @@ export default [
               img: '/assets/image/activity/cover-4.png',
               name: 'Unverse AI艺术展',
               price: ['66.00', '988.00'],
+              date: ['2021-3-12'],
               evaluate: 3,
             },
           ],
