@@ -63,7 +63,7 @@
           </t-tabs>
 
           <div class="filter-btn">
-            <div>
+            <div @click="filterPopupVisible = true">
               <filter-icon size="18px" />
               <span>筛选</span>
             </div>
@@ -95,7 +95,7 @@
     <div :class="`${prefix}-filter-view`">
       <div :class="`${prefix}-filter-view__header`">
         <div class="title">全部筛选</div>
-        <div class="close-icon"><close-icon size="24px" /></div>
+        <div class="close-icon" @click="filterPopupVisible = false"><close-icon size="24px" /></div>
       </div>
       <div :class="`${prefix}-filter-view__body`">
         <form-render :form-options="formOptions" :form-config="{ labelAlign: 'top' }" :btn-config="btns" />
@@ -187,7 +187,7 @@ import { prefix } from '@/config/global';
 
 // const prefixClass = `${prefix}`;
 
-const filterPopupVisible = ref(true);
+const filterPopupVisible = ref(false);
 const formOptions: FormItems[] = [
   {
     id: 'activityField',
