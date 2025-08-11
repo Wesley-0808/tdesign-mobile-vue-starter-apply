@@ -91,9 +91,41 @@
       </div>
     </div>
   </t-popup>
+  <!---->
+  <t-popup v-model="datePopupVisible" placement="bottom" :overlay-props="{ backgroundColor: 'transparent' }">
+    <div :class="`${prefix}-calendar-view`">
+      <div :class="`${prefix}-calendar-view__header`">
+        <div class="close-icon" @click="datePopupVisible = false"><chevron-left-icon size="24px" /></div>
+        <div class="title">选择日期</div>
+        <div class="close-icon" @click="datePopupVisible = false"><close-icon size="24px" /></div>
+      </div>
+      <div :class="`${prefix}-calendar-view__body`">
+        <t-calendar
+          v-model:value="chooseDate"
+          type="range"
+          :use-popup="false"
+          :confirm-btn="null"
+          :on-select="
+            (v) => {
+              const val = v as unknown as any[];
+              chooseDateCache = val;
+            }
+          "
+        >
+          <template #title>
+            <span></span>
+          </template>
+        </t-calendar>
+        <!---->
+        <div :class="`${prefix}-calendar-view__body-btn`">
+          <t-button theme="primary" size="large" block @click="onDatePickerConfirm">确认日期</t-button>
+        </div>
+      </div>
+    </div>
+  </t-popup>
 </template>
-<script setup lang="ts">
-import { CloseIcon, FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
+<script setup lang="tsx">
+import { ChevronLeftIcon, CloseIcon, FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -104,6 +136,7 @@ import type { BtnConfig, FormItems } from '@/components/form/type';
 import { ActivityField, ActivityType } from '@/config/consts';
 import { prefix } from '@/config/global';
 import { useCityStore } from '@/store';
+import { getDateRangeString } from '@/utils/activity/getDate';
 
 const cityStore = useCityStore();
 const router = useRouter();
@@ -141,7 +174,9 @@ const activityTabs = [
   },
 ];
 const filterOptions = ref({});
-
+const chooseDate = ref([]);
+const chooseDateCache = ref([]);
+const datePopupVisible = ref(false);
 const filterPopupVisible = ref(false);
 const formOptions: FormItems[] = [
   {
@@ -165,7 +200,16 @@ const formOptions: FormItems[] = [
     id: 'activityDate',
     label: '活动日期',
     type: 'custom',
-    component: 123,
+    component: () => {
+      return (
+        <div class="filter-view__date-filter">
+          <span>{chooseDate.value.length === 0 ? '全部' : getDateRangeString(chooseDate.value)}</span>
+          <t-button theme="default" size="extra-small" shape="round" onClick={() => (datePopupVisible.value = true)}>
+            选择日期
+          </t-button>
+        </div>
+      );
+    },
   },
   {
     id: 'idCard',
@@ -214,6 +258,11 @@ const onChange = (val: string) => {
 
 const onFilterData = (_verify: boolean, data: any) => {
   filterOptions.value = data;
+};
+
+const onDatePickerConfirm = () => {
+  chooseDate.value = chooseDateCache.value;
+  datePopupVisible.value = false;
 };
 
 // 防止页面晃动的触摸事件处理

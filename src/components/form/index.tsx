@@ -241,7 +241,7 @@ export default defineComponent({
             <t-form-item
               key={option.id}
               name={option.id}
-              {...omit(option, ['componentProps', 'id', 'type', 'suffixIcon'])}
+              {...omit(option, ['componentProps', 'id', 'type', 'suffixIcon', 'component'])}
             >
               {renderItem(option)}
             </t-form-item>

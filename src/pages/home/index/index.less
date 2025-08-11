@@ -18,6 +18,49 @@
 
     &__body {
       padding-top: 14px;
+
+      :deep(.filter-view__date-filter) {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+  }
+
+  &-calendar-view {
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      width: 100%;
+      padding: 16px;
+
+      .title {
+        flex: 1;
+        text-align: center;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 26px;
+        color: var(--td-text-color-primary, rgb(0 0 0 / 90%));
+      }
+    }
+
+    &__body {
+      :deep(.t-calendar__title) {
+        padding: 0;
+        height: 0;
+      }
+
+      :deep(.t-calendar__months) {
+        height: 516px;
+      }
+
+      &-btn {
+        padding: 16px;
+        padding-bottom: calc(16px + env(safe-area-inset-bottom));
+        padding-bottom: calc(16px + constant(safe-area-inset-bottom));
+      }
     }
   }
 
