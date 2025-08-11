@@ -3,7 +3,7 @@
     <!-- 顶部当前定位信息 -->
     <div class="current-location">
       <div class="location-info">
-        <t-icon name="location" size="20" color="#666" />
+        <location-icon size="20px" color="#666" />
         <span class="city-name">{{ currentLocation.city || '定位中...' }}</span>
         <t-icon v-if="currentLocation.isLocating" name="loading" size="16" class="loading-icon" />
       </div>
@@ -32,7 +32,7 @@
               @click="selectCity(city)"
             >
               <template #right-icon>
-                <t-icon v-if="city.value === currentCity" name="check" size="24" color="#0052d9" />
+                <check-icon v-if="city.value === currentCity" size="24" color="var(--td-brand-color)" />
               </template>
             </t-cell>
           </t-cell-group>
@@ -42,7 +42,7 @@
   </div>
 </template>
 <script setup lang="ts">
-// 引入城市数据
+import { CheckIcon, LocationIcon } from 'tdesign-icons-vue-next';
 import { Toast } from 'tdesign-mobile-vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -330,11 +330,8 @@ watch(
 
 :deep(.t-cell) {
   &.active {
-    background: var(--td-brand-color-light);
-
-    .t-cell__title {
+    .t-cell__title-text {
       font-weight: 600;
-      color: var(--td-brand-color);
     }
   }
 }
