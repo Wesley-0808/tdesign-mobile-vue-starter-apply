@@ -305,8 +305,7 @@ const onChange = (value: TabValue) => {
     &-textcontainer {
       width: calc(100% - 120px);
       height: 120px;
-      .flex-center(space-between);
-
+      display: flex;
       flex-direction: column;
 
       &-info {
@@ -321,8 +320,8 @@ const onChange = (value: TabValue) => {
           font-size: 14px;
           text-align: left;
           line-height: 22px;
+          overflow-x: hidden;
           white-space: nowrap;
-          overflow: auto;
           text-overflow: ellipsis;
         }
 
@@ -339,7 +338,8 @@ const onChange = (value: TabValue) => {
       &-statusbox {
         width: calc(100% - 32px);
         height: 22px;
-        margin: 12px 16px;
+        margin: 16px;
+        margin-top: 10px;
         .flex-center(space-between);
 
         text-align: left;
