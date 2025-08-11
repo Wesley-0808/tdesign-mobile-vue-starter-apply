@@ -1,4 +1,5 @@
 import Layout from '@/layouts/index.vue';
+import { t } from '@/locales';
 
 export default [
   {
@@ -16,13 +17,20 @@ export default [
           showNav: true,
           navBgColor: 'transparent',
           navFgColor: '#000000e6',
+          tabbar: {
+            label: t('layout.tabbar.mine'),
+            icon: 'user',
+            index: 1,
+          },
         },
       },
       {
         path: 'info',
         name: 'MineInfo',
         component: () => import('@/pages/mine/info/index.vue'),
-        meta: { title: { zh_CN: '个人信息', en_US: 'MineInfo' } },
+        meta: {
+          title: { zh_CN: '个人信息', en_US: 'MineInfo' },
+        },
       },
     ],
   },
