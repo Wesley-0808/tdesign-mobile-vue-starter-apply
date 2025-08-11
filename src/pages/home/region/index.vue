@@ -7,13 +7,7 @@
         <span class="city-name">{{ currentLocation.city || '定位中...' }}</span>
         <t-icon v-if="currentLocation.isLocating" name="loading" size="16" class="loading-icon" />
       </div>
-      <t-button
-        size="small"
-        variant="outline"
-        class="update-location-btn"
-        :disabled="currentLocation.isLocating"
-        @click="updateLocation"
-      >
+      <t-button size="extra-small" shape="round" :disabled="currentLocation.isLocating" @click="updateLocation">
         {{ currentLocation.isLocating ? '定位中...' : '更新定位' }}
       </t-button>
     </div>
@@ -236,13 +230,13 @@ watch(
 .location-info {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .city-name {
   font-size: 16px;
   font-weight: 500;
   color: var(--td-text-color-primary);
+  padding: 0 0 0 8px;
 }
 
 .city-list-container {
@@ -277,41 +271,6 @@ watch(
 
   to {
     transform: rotate(360deg);
-  }
-}
-
-.update-location-btn {
-  border-radius: 100px !important;
-  background: var(--td-bg-color-component);
-  color: var(--td-text-color-primary);
-  font-size: 14px;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  &:hover:not(:disabled) {
-    background: #d8d8d8;
-    border-color: #c0c0c0;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  &::after {
-    border-radius: 100px !important;
   }
 }
 
