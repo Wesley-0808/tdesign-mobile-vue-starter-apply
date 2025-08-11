@@ -1,22 +1,22 @@
 <template>
   <div class="mine-card">
-    <t-avatar class="mine-card--avatar" size="large" alt=""></t-avatar>
+    <t-avatar class="mine-card--avatar" size="large" :image="userInfo.avatar" alt=""></t-avatar>
     <div class="mine-card--content">
       <div class="mine-card--content--info">
-        <div class="mine-card--content--info--name">陈梓博</div>
+        <div class="mine-card--content--info--name">{{ userInfo.username }}</div>
         <div class="mine-card--content--info--age_reputation">
-          <div>21岁</div>
-          <div style="margin-left: 8px">前端开发工程师</div>
+          <div v-show="userInfo.age !== 0">{{ userInfo.age }}岁</div>
+          <div v-show="userInfo.reputation !== ''" style="margin-left: 8px">{{ userInfo.reputation }}</div>
         </div>
       </div>
-      <div class="mine-card--content--edit"><t-icon name="edit" size="20px" /></div>
+      <div class="mine-card--content--edit" @click="onEdit"><t-icon name="edit" size="20px" /></div>
     </div>
   </div>
   <t-tabs :value="currentValue" :list="tabList" @change="onChange">
     <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
-      <t-list :async-loading="loading" @scroll="onScroll">
+      <t-list :async-loading="activityLoading" @scroll="onScroll">
         <div
-          v-for="cell in filterActivityList(allActivity.list, currentValue)"
+          v-for="cell in filterActivityList(allActivityList.list, currentValue)"
           :key="cell.id"
           class="t-list--item"
           align="middle"
@@ -41,14 +41,17 @@
           </div>
         </div>
         <template #footer>
+          <div v-if="userInfo.userid === -1" class="t-list--item-click_to_login" @click.stop="onLogin">
+            您还未登录，点击登录
+          </div>
           <div
-            v-if="isShowLoading && !isShowAll"
+            v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
             class="t-list--item-click_loading"
-            @click.stop="() => onLoad(false, true)"
+            @click.stop="() => onActivityLoad(false, true)"
           >
             <div>点击加载更多</div>
           </div>
-          <div v-if="isShowAll" class="t-list--item-had_show_all">
+          <div v-if="userInfo.userid !== -1 && isShowAll" class="t-list--item-had_show_all">
             <div>再往下滑也没有啦</div>
           </div>
         </template>
@@ -62,105 +65,19 @@ import { Toast } from 'tdesign-mobile-vue';
 import type { Ref } from 'vue';
 import { onMounted, ref, watch } from 'vue';
 
-import { getMyActivityList } from '@/api/list';
-import type { MyActivityList, MyActivityListResult } from '@/api/model/listModel';
+import { getMyActivityList, getUserInfo } from '@/api/list';
+import type { MyActivityList, MyActivityListResult, UserInfoResult } from '@/api/model/listModel';
 
-const currentPage = ref<number>(1);
-const badge = ref<boolean>(false);
-const isShowLoading = ref<boolean>(true);
-const isShowAll = ref<boolean>(false);
+const userInfo = ref<UserInfoResult>({ userid: -1, username: '', age: 0, avatar: '', reputation: '' }); // 用户信息
+const currentPage = ref<number>(1); // 分页加载活动列表
+const badge = ref<boolean>(false); // 待参加的右上角的小红点
+const isShowLoading = ref<boolean>(true); // 是否显示“点击加载更多”
+const isShowAll = ref<boolean>(false); // 是否显示“再往下滑也没有啦”
+const allActivityList = ref<MyActivityListResult>({ list: [], is_end: false }); // 活动列表存储
+const activityLoading = ref(''); // t-list自带的加载loading，官方用法如此
+const currentValue = ref<TabValue>('0'); // 活动列表的tab值
 
-const calShowLoading: () => boolean = () => {
-  const viewportWidth = window.innerWidth;
-  // 计算 110vw 的像素值
-  const vwHeight = viewportWidth * 1.1;
-  const totalHeight = filterActivityList(allActivity.value.list, currentValue.value).length * 152;
-  return totalHeight < vwHeight;
-};
-
-const loadData = async (data: Ref<MyActivityListResult>, isRefresh?: boolean, loadMore = false) => {
-  try {
-    const page = isRefresh ? 1 : currentPage.value + 1 + (loadMore ? 1 : 0);
-    const temp = await getMyActivityList({ page });
-    console.log(temp);
-
-    watch(
-      () => temp.list.some((item) => item.status === 0),
-      (bool) => {
-        return bool ? (badge.value = true) : (badge.value = false);
-      },
-      { immediate: true },
-    );
-
-    if (temp.list) {
-      if (isRefresh) {
-        data.value = temp;
-        currentPage.value = 1;
-      } else {
-        currentPage.value++;
-        console.log(currentPage.value);
-
-        data.value.list.push(...temp.list);
-        data.value.is_end = temp.is_end;
-        isShowAll.value = temp.is_end;
-      }
-    }
-    isShowLoading.value = calShowLoading();
-    return Promise.resolve(data);
-  } catch (error) {
-    console.error(error);
-    return Promise.reject(error);
-  }
-};
-
-const allActivity = ref<MyActivityListResult>({ list: [], is_end: false });
-const loading = ref('');
-
-const onLoad = (isRefresh?: boolean, loadMore = false) => {
-  if (allActivity.value.is_end || loading.value) {
-    return;
-  }
-  loading.value = 'loading';
-  loadData(allActivity, isRefresh, loadMore)
-    .catch((err) => {
-      console.log(err);
-
-      Toast({
-        theme: 'error',
-        direction: 'column',
-        message: err,
-      });
-    })
-    .finally(() => {
-      loading.value = '';
-    });
-};
-
-const filterActivityList: (arr: MyActivityList[], tabVal: TabValue) => MyActivityList[] = (
-  arr: MyActivityList[],
-  tabVal: TabValue,
-) => {
-  switch (tabVal) {
-    case '2':
-      return arr;
-    case '1':
-      return arr.filter((item) => item.status === 1);
-    case '0':
-      return arr.filter((item) => item.status === 0);
-  }
-};
-
-const onScroll = (scrollBottom: number) => {
-  if (scrollBottom < 50) {
-    onLoad();
-  }
-};
-
-onMounted(() => {
-  onLoad();
-});
-
-const currentValue = ref<TabValue>('0');
+// 定义t-tabs的相关属性
 const tabList = [
   {
     value: '0',
@@ -177,12 +94,144 @@ const tabList = [
   },
 ];
 
+// 点击蓝字登录时触发
+const onLogin = () => {
+  console.log('登录 逻辑需要你开发～');
+};
+
+// 点击编辑icon触发
+const onEdit = () => {
+  if (userInfo.value.userid === -1) {
+    return;
+  }
+  console.log('编辑 逻辑需要你开发～');
+};
+
+// 活动列表滚动到底部触发
+const onScroll = (scrollBottom: number) => {
+  if (scrollBottom < 50) {
+    onActivityLoad();
+  }
+};
+
+// 更改活动列表tab时触发
 const onChange = (value: TabValue) => {
   currentValue.value = value;
-
   isShowLoading.value = calShowLoading();
-  console.log(`change to ${value}`);
 };
+
+// 根据t-list盒子的高和视窗高进行判断，看是否需要显示“点击加载更多”
+const calShowLoading: () => boolean = () => {
+  const viewportWidth = window.innerWidth;
+  const vwHeight = viewportWidth * 1.1;
+  const totalHeight = filterActivityList(allActivityList.value.list, currentValue.value).length * 152;
+  // 列表盒子的子项内容未overflow时就显示“点击加载更多”
+  return totalHeight < vwHeight;
+};
+
+// 加工活动列表，以在切换到不同tab时，能够正确显示对应的内容
+const filterActivityList: (arr: MyActivityList[], tabVal: TabValue) => MyActivityList[] = (
+  arr: MyActivityList[],
+  tabVal: TabValue,
+) => {
+  // 和tab文字的意义对应，筛选即可
+  switch (tabVal) {
+    case '2':
+      return arr;
+    case '1':
+      return arr.filter((item) => item.status === 1);
+    case '0':
+      return arr.filter((item) => item.status === 0);
+  }
+};
+
+// 异步请求活动列表
+const loadActivityData = async (data: Ref<MyActivityListResult>, isRefresh?: boolean, loadMore = false) => {
+  try {
+    const page = isRefresh ? 1 : currentPage.value + 1 + (loadMore ? 1 : 0); // 分页加载活动列表，一次不必存储全部
+    const userid = userInfo.value.userid !== -1 && userInfo.value.userid;
+
+    // 未登录就不请求
+    if (userInfo.value.userid === -1) {
+      Toast({
+        theme: 'error',
+        direction: 'column',
+        message: '您还未登录，请先登录',
+      });
+      return;
+    }
+
+    const temp = await getMyActivityList({ page, userid });
+
+    // 检查是否需要增加“待参加”的右上角小红点
+    watch(
+      () => temp.list.some((item) => item.status === 0),
+      (bool) => {
+        return bool ? (badge.value = true) : (badge.value = false);
+      },
+      { immediate: true },
+    );
+
+    if (temp.list) {
+      if (isRefresh) {
+        data.value = temp;
+        currentPage.value = 1;
+      } else {
+        currentPage.value++;
+        data.value.list.push(...temp.list);
+        data.value.is_end = temp.is_end;
+        isShowAll.value = temp.is_end;
+      }
+    }
+    isShowLoading.value = calShowLoading(); // 检查活动数量是否多到overflow了
+    return Promise.resolve(data);
+  } catch (error) {
+    console.error(error);
+    return Promise.reject(error);
+  }
+};
+
+// 加载活动列表主函数
+const onActivityLoad = (isRefresh?: boolean, loadMore = false) => {
+  // 已经加载完或仍在加载时，不请求
+  if (allActivityList.value.is_end || activityLoading.value) {
+    return;
+  }
+  activityLoading.value = 'loading'; // 加上t-list自带的loading
+  loadActivityData(allActivityList, isRefresh, loadMore)
+    .catch((err) => {
+      console.log(err);
+
+      Toast({
+        theme: 'error',
+        direction: 'column',
+        message: err,
+      });
+    })
+    .finally(() => {
+      activityLoading.value = '';
+    });
+};
+
+// 加载用户信息主函数
+const onUserInfoLoad = async () => {
+  try {
+    const res = await getUserInfo();
+    userInfo.value = res;
+  } catch (err) {
+    console.error(err);
+    Toast({
+      theme: 'error',
+      direction: 'column',
+      message: err,
+    });
+  }
+};
+
+onMounted(() => {
+  onUserInfoLoad();
+  onActivityLoad();
+});
 </script>
 <style scoped lang="less">
 .mine-card {
@@ -222,7 +271,7 @@ const onChange = (value: TabValue) => {
       &--age_reputation {
         height: 24px;
         min-width: 157px;
-        .flex-center();
+        .flex-center(flex-start);
 
         div {
           width: auto;
@@ -358,8 +407,11 @@ const onChange = (value: TabValue) => {
     }
 
     &-click_loading,
+    &-click_to_login,
     &-had_show_all {
       .flex-center();
+
+      margin: 16px 0;
 
       div {
         height: 20px;
@@ -369,8 +421,10 @@ const onChange = (value: TabValue) => {
       }
     }
 
-    &-had_show_all {
-      margin-bottom: 16px;
+    &-click_to_login {
+      color: var(--td-brand-color-6);
+      font-size: 18px;
+      line-height: 22px;
     }
   }
 }

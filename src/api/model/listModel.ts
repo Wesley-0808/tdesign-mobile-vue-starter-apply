@@ -62,3 +62,11 @@ export interface MyActivityList {
   date: string;
   status: 0 | 1;
 }
+
+export interface UserInfoResult {
+  userid: number;
+  avatar: string;
+  username: string;
+  age: number;
+  reputation: string;
+}

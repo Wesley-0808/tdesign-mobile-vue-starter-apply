@@ -3,6 +3,7 @@ import type {
   ActivityResult,
   MyActivityListResult,
   RecommendListResult,
+  UserInfoResult,
 } from '@/api/model/listModel';
 import { request } from '@/utils/request';
 
@@ -11,6 +12,7 @@ const Api = {
   AllActivity: '/get-all-activity',
   ActivityEvaluate: '/get-activity-evaluate',
   MyActivity: '/get-my-activity-list',
+  UserInfo: '/get-user-info',
 };
 
 export function getRecommendList() {
@@ -31,9 +33,15 @@ export function getActivityEvaluate() {
   });
 }
 
-export function getMyActivityList(params: object = { page: 1 }) {
+export function getMyActivityList(params: object) {
   return request.get<MyActivityListResult>({
     url: Api.MyActivity,
     params,
+  });
+}
+
+export function getUserInfo() {
+  return request.get<UserInfoResult>({
+    url: Api.UserInfo,
   });
 }

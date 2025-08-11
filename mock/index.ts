@@ -190,4 +190,20 @@ export default [
       },
     }),
   },
+  {
+    url: '/api/get-user-info',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          userid: 123456,
+          avatar: 'assets/image/avatar.png',
+          username: '蔡宣轩',
+          age: 29,
+          reputation: '设计/艺术从业者',
+        }),
+      },
+    }),
+  },
 ] as MockMethod[];
