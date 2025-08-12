@@ -32,7 +32,7 @@
             <div class="t-list--item-textcontainer-statusbox">
               <div
                 class="t-list--item-textcontainer-statusbox-status"
-                :style="{ color: cell.status ? '#2ba471' : '#00000066' }"
+                :style="{ color: cell.status ? 'var(--td-success-color)' : 'var(--td-text-color-placeholder)' }"
               >
                 {{ cell.status ? '已完成' : '待参加' }}
               </div>
@@ -237,8 +237,8 @@ onMounted(() => {
 .mine-card {
   position: relative;
   height: 96px;
-  border-radius: 12px;
-  background: #fff;
+  border-radius: var(--td-radius-extraLarge);
+  background: var(--td-bg-color-container);
   margin: 0 16px;
   margin-bottom: 16px;
   .flex-center(space-evenly);
@@ -261,11 +261,11 @@ onMounted(() => {
 
       &--name {
         height: 24px;
-        font-size: 16px;
+        font-size: var(--td-font-size-link-large);
         font-weight: 600;
         white-space: nowrap;
         text-align: center;
-        line-height: 24px;
+        line-height: var(--td-line-height-link-large);
       }
 
       &--age_reputation {
@@ -276,10 +276,10 @@ onMounted(() => {
         div {
           width: auto;
           height: 20px;
-          border-radius: 3px;
-          background: #f3f3f3;
+          border-radius: var(--td-radius-default);
+          background: var(--td-bg-color-page);
           padding: 2px 8px;
-          font-size: 12px;
+          font-size: var(--td-font-size-link-small);
           font-weight: 400;
           text-align: center;
           line-height: 18px;
@@ -299,15 +299,15 @@ onMounted(() => {
 .t-tabs {
   position: relative;
   height: 110vw;
-  border-radius: 12px;
-  background: #fff;
+  border-radius: var(--td-radius-extraLarge);
+  background: var(--td-bg-color-container);
   margin: 0 16px;
   overflow: hidden;
 
   :deep(&__nav) {
     z-index: 2;
     position: absolute;
-    border-radius: 12px;
+    border-radius: var(--td-radius-extraLarge);
   }
 }
 
@@ -318,7 +318,7 @@ onMounted(() => {
   scrollbar-width: none;
   -ms-overflow-style: none;
   overscroll-behavior: contain;
-  border-radius: 12px;
+  border-radius: var(--td-radius-extraLarge);
 
   &::-webkit-scrollbar {
     display: none;
@@ -329,18 +329,15 @@ onMounted(() => {
   &--item {
     margin: 16px;
     height: 120px;
-    border-radius: 9px;
-    background: #fff;
-    box-shadow:
-      0 6px 30px 5px #0000000d,
-      0 16px 24px 2px #0000000a,
-      0 8px 10px -5px #00000014;
+    border-radius: var(--td-radius-large);
+    background: var(--td-bg-color-container);
+    box-shadow: var(--td-shadow-3);
     .flex-center(flex-start);
 
     &-imgcontainer {
       width: 120px;
       height: 120px;
-      border-radius: 9px 0 0 9px;
+      border-radius: var(--td-radius-large) 0 0 var(--td-radius-large);
 
       img {
         width: 120px;
@@ -365,10 +362,10 @@ onMounted(() => {
         &-activity_name {
           height: 22px;
           margin-bottom: 4px;
-          color: #000000e6;
-          font-size: 14px;
+          color: var(--td-text-color-primary);
+          font-size: var(--td-font-size-link-medium);
           text-align: left;
-          line-height: 22px;
+          line-height: var(--td-line-height-link-medium);
           overflow-x: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -377,10 +374,10 @@ onMounted(() => {
         &-date {
           width: 100%;
           height: 20px;
-          color: #0009;
-          font-size: 12px;
+          color: var(--td-text-color-secondary);
+          font-size: var(--td-font-size-link-small);
           text-align: left;
-          line-height: 20px;
+          line-height: var(--td-line-height-link-small);
         }
       }
 
@@ -392,15 +389,15 @@ onMounted(() => {
         .flex-center(space-between);
 
         text-align: left;
-        line-height: 22px;
-        font-size: 14px;
+        line-height: var(--td-line-height-link-medium);
+        font-size: var(--td-font-size-link-medium);
 
         &-status {
           font-weight: 600;
         }
 
         &-comment {
-          color: #0052d9;
+          color: var(--td-brand-color);
           font-weight: 400;
         }
       }
@@ -415,16 +412,16 @@ onMounted(() => {
 
       div {
         height: 20px;
-        color: #0009;
-        font-size: 16px;
-        line-height: 20px;
+        color: var(--td-text-color-secondary);
+        font-size: var(--td-font-size-link-large);
+        line-height: var(--td-line-height-link-small);
       }
     }
 
     &-click_to_login {
       color: var(--td-brand-color-6);
-      font-size: 18px;
-      line-height: 22px;
+      font-size: var(--td-font-size-title-large);
+      line-height: var(--td-line-height-link-medium);
     }
   }
 }

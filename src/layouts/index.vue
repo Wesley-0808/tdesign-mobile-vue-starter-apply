@@ -19,13 +19,12 @@ import Tabbar from './components/Tabbar.vue';
 
 const route = useRoute();
 
-const bgc = computed(() => (route.path.includes('mine') ? '#f5f6f7' : '#fff'));
+const bgc = computed(() => (route.path.includes('mine') ? 'var(--td-bg-color-page)' : 'var(--td-bg-color-container)'));
 </script>
 <style lang="less" scoped>
 .main {
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
   scrollbar-width: none;
 }
 </style>
