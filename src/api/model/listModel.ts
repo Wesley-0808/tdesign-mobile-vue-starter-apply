@@ -72,5 +72,5 @@ export interface UserInfoResult {
   avatar: string;
   username: string;
   age: number;
-  reputation: string;
+  occupation: string;
 }

@@ -1,21 +1,21 @@
 <template>
   <div class="container-view">
     <div class="mine-card">
-      <t-avatar class="mine-card--avatar" size="large" :image="userInfo.avatar" alt=""></t-avatar>
-      <div class="mine-card--content">
-        <div class="mine-card--content--info">
-          <div class="mine-card--content--info--name">{{ userInfo.username }}</div>
-          <div class="mine-card--content--info--age_reputation">
+      <t-avatar class="mine-card__avatar" size="large" :image="userInfo.avatar" alt=""></t-avatar>
+      <div class="mine-card__content">
+        <div class="mine-card__content-info">
+          <div class="mine-card__content-info-name">{{ userInfo.username }}</div>
+          <div class="mine-card__content-info-age_occupation">
             <div v-show="userInfo.age !== 0">{{ userInfo.age }}岁</div>
-            <div v-show="userInfo.reputation !== ''" style="margin-left: 8px">{{ userInfo.reputation }}</div>
+            <div v-show="userInfo.occupation !== ''" style="margin-left: 8px">{{ userInfo.occupation }}</div>
           </div>
         </div>
-        <div class="mine-card--content--edit" @click="onEdit"><edit-icon size="20px" /></div>
+        <div class="mine-card__content-edit" @click="onEdit"><edit-icon size="20px" /></div>
       </div>
     </div>
     <t-tabs :value="currentValue" :list="tabList" @change="onChange">
       <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
-        <t-list :async-loading="activityLoading" @scroll="onScroll">
+        <t-list :async-loading="activityLoading ? 'loading' : ''" @scroll="onScroll">
           <div
             v-for="cell in filterActivityList(allActivityList.list, currentValue)"
             :key="cell.id"
@@ -37,7 +37,7 @@
                 >
                   {{ cell.status ? '已完成' : '待参加' }}
                 </div>
-                <div v-if="cell.status" class="t-list__item-content-footer-comment">去评价</div>
+                <div v-if="cell.status" class="t-list__item-content-footer-comment" @click="onComment">去评价</div>
               </div>
             </div>
           </div>
@@ -51,7 +51,7 @@
               @click.stop="() => onActivityLoad(false, true)"
             >
               <empty class="t-list__item-empty_img" />
-              <div class="t-list__item-empty_title">点击加载更多</div>
+              <div class="t-list__item-empty_title">加载更多</div>
             </div>
             <div v-if="userInfo.userid !== -1 && isShowAll" class="t-list__item-end">
               <div>再往下滑也没有啦</div>
@@ -73,16 +73,23 @@ import { getMyActivityList, getUserInfo } from '@/api/list';
 import type { MyActivityList, MyActivityListResult, UserInfoResult } from '@/api/model/listModel';
 import Empty from '@/components/result/Empty';
 
-const userInfo = ref<UserInfoResult>({ userid: -1, username: '', age: 0, avatar: '', reputation: '' }); // 用户信息
-const currentPage = ref<number>(1); // 分页加载活动列表
-const badge = ref<boolean>(false); // 待参加的右上角的小红点
-const isShowLoading = ref<boolean>(true); // 是否显示“点击加载更多”
-const isShowAll = ref<boolean>(false); // 是否显示“再往下滑也没有啦”
-const allActivityList = ref<MyActivityListResult>({ list: [], is_end: false }); // 活动列表存储
-const activityLoading = ref(''); // t-list自带的加载loading，官方用法如此
-const currentValue = ref<TabValue>('0'); // 活动列表的tab值
+// 用户信息
+const userInfo = ref<UserInfoResult>({ userid: -1, username: '', age: 0, avatar: '', occupation: '' });
+// 分页加载活动列表
+const currentPage = ref<number>(1);
+// 待参加的右上角的小红点
+const badge = ref<boolean>(false);
+// 是否显示“点击加载更多”
+const isShowLoading = ref<boolean>(true);
+// 是否显示“再往下滑也没有啦”
+const isShowAll = ref<boolean>(false);
+// 活动列表存储
+const allActivityList = ref<MyActivityListResult>({ list: [], is_end: false });
+// t-list的加载loading
+const activityLoading = ref(false);
+// 活动列表的tab值
+const currentValue = ref<TabValue>('0');
 
-// 定义t-tabs的相关属性
 const tabList = [
   {
     value: '0',
@@ -101,7 +108,7 @@ const tabList = [
 
 // 点击蓝字登录时触发
 const onLogin = () => {
-  console.log('登录 逻辑需要你开发～');
+  console.log('登录 逻辑需要自行开发～');
 };
 
 // 点击编辑icon触发
@@ -109,7 +116,11 @@ const onEdit = () => {
   if (userInfo.value.userid === -1) {
     return;
   }
-  console.log('编辑 逻辑需要你开发～');
+  console.log('编辑 逻辑需要自行开发～');
+};
+
+const onComment = () => {
+  console.log('评论 逻辑需要自行开发～');
 };
 
 // 活动列表滚动到底部触发
@@ -202,7 +213,7 @@ const onActivityLoad = (isRefresh?: boolean, loadMore = false) => {
   if (allActivityList.value.is_end || activityLoading.value) {
     return;
   }
-  activityLoading.value = 'loading'; // 加上t-list自带的loading
+  activityLoading.value = true;
   loadActivityData(allActivityList, isRefresh, loadMore)
     .catch((err) => {
       console.log(err);
@@ -214,248 +225,21 @@ const onActivityLoad = (isRefresh?: boolean, loadMore = false) => {
       });
     })
     .finally(() => {
-      activityLoading.value = '';
+      activityLoading.value = false;
     });
 };
 
-// 加载用户信息主函数
+// 加载用户信息
 const onUserInfoLoad = async () => {
-  try {
-    const res = await getUserInfo();
-    userInfo.value = res;
-  } catch (err) {
-    console.error(err);
-    Toast({
-      theme: 'error',
-      direction: 'column',
-      message: err,
-    });
-  }
+  const res = await getUserInfo();
+  userInfo.value = res;
+  onActivityLoad();
 };
 
 onMounted(() => {
   onUserInfoLoad();
-  onActivityLoad();
 });
 </script>
 <style scoped lang="less">
-.container-view {
-  margin-bottom: 0 !important;
-}
-
-.mine-card {
-  position: relative;
-  height: 96px;
-  border-radius: var(--td-radius-extraLarge);
-  background: var(--td-bg-color-container);
-  margin: 0 16px;
-  margin-bottom: 16px;
-  .flex-center(space-evenly);
-
-  &--avatar {
-    margin-left: 16px;
-  }
-
-  &--content {
-    flex-grow: 1;
-    height: 64px;
-    .flex-center(space-between);
-
-    &--info {
-      margin-left: 16px;
-      height: 54px;
-      .flex-center(flex-end,flex-start);
-
-      flex-direction: column;
-
-      &--name {
-        height: 24px;
-        font-size: var(--td-font-size-link-large);
-        font-weight: 600;
-        white-space: nowrap;
-        text-align: center;
-        line-height: var(--td-line-height-link-large);
-      }
-
-      &--age_reputation {
-        height: 24px;
-        min-width: 157px;
-        .flex-center(flex-start);
-
-        div {
-          width: auto;
-          height: 20px;
-          border-radius: var(--td-radius-default);
-          background: var(--td-bg-color-page);
-          padding: 2px 8px;
-          font-size: var(--td-font-size-link-small);
-          font-weight: 400;
-          text-align: center;
-          line-height: 18px;
-        }
-      }
-    }
-
-    &--edit {
-      margin: 0 16px;
-      width: 20px;
-      height: 20px;
-      .flex-center();
-    }
-  }
-}
-
-.t-tabs {
-  position: relative;
-  border-radius: var(--td-radius-extraLarge);
-  background: var(--td-bg-color-container);
-  margin: 0 16px;
-  padding-bottom: 16px;
-  overflow: hidden;
-
-  :deep(&__nav) {
-    z-index: 2;
-    position: absolute;
-    border-radius: var(--td-radius-extraLarge);
-  }
-}
-
-.t-list {
-  padding-top: 48px;
-  overflow: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overscroll-behavior: contain;
-  border-radius: var(--td-radius-extraLarge);
-  height: calc(100vh - 248px);
-
-  &::-webkit-scrollbar {
-    display: none;
-    height: 0;
-    width: 0;
-  }
-
-  &__item {
-    margin: 16px;
-    height: 120px;
-    border-radius: var(--td-radius-large);
-    background: var(--td-bg-color-container);
-    box-shadow: var(--td-shadow-2);
-    .flex-center(flex-start);
-
-    overflow: hidden;
-
-    &-img {
-      width: 120px;
-      height: 120px;
-      border-radius: var(--td-radius-large) 0 0 var(--td-radius-large);
-
-      img {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        object-position: left;
-        border-radius: inherit;
-      }
-    }
-
-    &-content {
-      padding: 16px 16px 12px;
-      width: calc(100% - 120px);
-      height: 100%;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
-      &-info {
-        &-name {
-          height: 22px;
-          margin-bottom: 4px;
-          color: var(--td-text-color-primary);
-          font-size: var(--td-font-size-link-medium);
-          text-align: left;
-          line-height: var(--td-line-height-link-medium);
-          overflow-x: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-
-        &-date {
-          width: 100%;
-          height: 20px;
-          color: var(--td-text-color-secondary);
-          font-size: var(--td-font-size-link-small);
-          text-align: left;
-          line-height: var(--td-line-height-link-small);
-        }
-      }
-
-      &-footer {
-        height: 22px;
-        .flex-center(space-between);
-
-        text-align: left;
-        line-height: var(--td-line-height-link-medium);
-        font-size: var(--td-font-size-link-medium);
-
-        &-status {
-          font-weight: 600;
-          color: var(--td-text-color-placeholder);
-        }
-
-        &-comment {
-          color: var(--td-brand-color);
-          font-weight: 400;
-        }
-      }
-    }
-
-    &-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 36px 0;
-
-      &_img {
-        font-size: 48px;
-        display: flex;
-        justify-content: center;
-      }
-
-      &_text {
-        font: var(--td-font-body-medium);
-        color: var(--td-text-color-secondary);
-        margin-top: var(--td-comp-margin-s);
-        margin-bottom: 0;
-      }
-    }
-
-    &-end {
-      .flex-center();
-
-      margin-top: 16px;
-      color: var(--td-text-color-secondary);
-      font-size: var(--td-font-size-link-medium);
-      line-height: var(--td-line-height-link-small);
-    }
-
-    &-click_to_login {
-      .flex-center();
-
-      color: var(--td-brand-color-6);
-      font-size: var(--td-font-size-title-large);
-      line-height: var(--td-line-height-link-medium);
-      margin: 16px 0;
-
-      div {
-        height: 20px;
-        color: var(--td-text-color-secondary);
-        font-size: var(--td-font-size-link-large);
-        line-height: var(--td-line-height-link-small);
-      }
-    }
-  }
-}
+@import './index.less';
 </style>

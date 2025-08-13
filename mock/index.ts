@@ -229,10 +229,10 @@ export default [
       data: {
         ...Mock.mock({
           userid: 123456,
-          avatar: 'assets/image/avatar.png',
+          avatar: '/assets/image/avatar.png',
           username: '蔡宣轩',
           age: 29,
-          reputation: '设计/艺术从业者',
+          occupation: '设计/艺术从业者',
         }),
       },
     }),
