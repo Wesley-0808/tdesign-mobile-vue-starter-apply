@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 import { isArray } from 'lodash';
 
 import type { ActivityModel } from '@/api/model/listModel';
+
+dayjs.extend(isBetween);
 
 // 查找某个项目的最前（最早）的日期
 export const getLastDate = (item: ActivityModel) => {
@@ -46,4 +49,13 @@ export const getDateRangeString = (date: Date[]) => {
   }
 
   return '';
+};
+
+export const dateIncludes = (item: ActivityModel, date: Date[]) => {
+  const { date: itemDate } = item;
+  // date是一个日期范围 itemDate是具体的日期group
+  return itemDate.some((dateItem) => {
+    const [start, end] = date;
+    return dayjs(dateItem).isBetween(start, end, null, '[]');
+  });
 };

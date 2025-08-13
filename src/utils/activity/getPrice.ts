@@ -1,8 +1,9 @@
-import { isFinite } from 'lodash';
+import { isArray, isFinite } from 'lodash';
 
 import type { ActivityModel } from '@/api/model/listModel';
 
 export const getMinPrice = (item: ActivityModel) => {
+  if (!isArray(item.price)) return '';
   const min = Math.min(
     ...item.price
       .map((act) => {
@@ -15,6 +16,7 @@ export const getMinPrice = (item: ActivityModel) => {
 };
 
 export const getMaxPrice = (item: ActivityModel) => {
+  if (!isArray(item.price)) return '';
   const max = Math.max(
     ...item.price
       .map((act) => {

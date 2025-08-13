@@ -12,13 +12,7 @@
 
         <!-- 搜索框 -->
         <div class="search-bar">
-          <t-search
-            v-model="value"
-            :clearable="true"
-            shape="round"
-            placeholder="搜索活动"
-            @change="() => onChange('')"
-          ></t-search>
+          <t-search v-model="value" :clearable="true" shape="round" placeholder="搜索活动"></t-search>
         </div>
       </div>
     </t-sticky>
@@ -34,8 +28,6 @@
             :key="recommendList.length"
             :navigation="{ type: 'dots', placement: 'outside' }"
             :autoplay="false"
-            @click="handleClick"
-            @change="handleChange"
             @touchstart="handleTouchPrevent"
             @touchmove="handleTouchPrevent"
             @touchend="handleTouchPrevent"
@@ -70,7 +62,7 @@
 
     <!-- 活动列表内容 -->
     <div class="activity-list">
-      <activity-list :data="activityListData" :sort-by="sortBy" />
+      <activity-list :data="activityListData" :sort-by="sortBy" :filter-by="filterActivityItem" />
     </div>
   </div>
 
@@ -103,6 +95,8 @@
         <t-calendar
           v-model:value="chooseDate"
           type="range"
+          :min-date="dateMinRange"
+          :max-date="dateMaxRange"
           :use-popup="false"
           :confirm-btn="null"
           :on-select="
@@ -125,18 +119,21 @@
   </t-popup>
 </template>
 <script setup lang="tsx">
+import { isEmpty } from 'lodash';
 import { ChevronLeftIcon, CloseIcon, FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getAllActivityList, getRecommendList } from '@/api/list';
+import type { ActivityModel } from '@/api/model/listModel';
 import ActivityList from '@/components/activity-list';
 import FormRender from '@/components/form';
 import type { BtnConfig, FormItems } from '@/components/form/type';
 import { ActivityField, ActivityType } from '@/config/consts';
 import { prefix } from '@/config/global';
 import { useCityStore } from '@/store';
-import { getDateRangeString } from '@/utils/activity/getDate';
+import { dateIncludes, getDateRangeString } from '@/utils/activity/getDate';
+import { getMaxPrice, getMinPrice } from '@/utils/activity/getPrice';
 
 const cityStore = useCityStore();
 const router = useRouter();
@@ -148,7 +145,8 @@ onMounted(() => {
 
 // 从 store 获取当前城市
 const currentCity = computed(() => cityStore.getCurrentCity);
-
+const dateMinRange = new Date(2021, 2, 1);
+const dateMaxRange = new Date(2021, 4, 31);
 const recommendList = ref([]);
 const getRecommendListData = async () => {
   const res = await getRecommendList();
@@ -159,7 +157,6 @@ const activityListData = ref([]);
 const getActivityListData = async () => {
   const res = await getAllActivityList();
   activityListData.value = res.list;
-  console.log(activityListData.value, 'activityListData');
 };
 
 const sortBy = ref('latest');
@@ -173,14 +170,14 @@ const activityTabs = [
     label: '高分活动',
   },
 ];
-const filterOptions = ref({});
-const chooseDate = ref([]);
+const filterOptions = ref<{ [k: string]: any }>({});
+const chooseDate = ref<Date[]>([]);
 const chooseDateCache = ref([]);
 const datePopupVisible = ref(false);
 const filterPopupVisible = ref(false);
 const formOptions: FormItems[] = [
   {
-    id: 'activityField',
+    id: 'field',
     label: '面向领域',
     type: 'check-tag',
     class: 'hidden-divider',
@@ -189,7 +186,7 @@ const formOptions: FormItems[] = [
     },
   },
   {
-    id: 'activityType',
+    id: 'type',
     label: '活动形式',
     type: 'check-tag',
     componentProps: {
@@ -197,13 +194,13 @@ const formOptions: FormItems[] = [
     },
   },
   {
-    id: 'activityDate',
+    id: 'date',
     label: '活动日期',
     type: 'custom',
     component: () => {
       return (
         <div class="filter-view__date-filter">
-          <span>{chooseDate.value.length === 0 ? '全部' : getDateRangeString(chooseDate.value)}</span>
+          <span>{chooseDate.value?.length === 0 ? '全部' : getDateRangeString(chooseDate.value)}</span>
           <t-button theme="default" size="extra-small" shape="round" onClick={() => (datePopupVisible.value = true)}>
             选择日期
           </t-button>
@@ -212,7 +209,7 @@ const formOptions: FormItems[] = [
     },
   },
   {
-    id: 'idCard',
+    id: 'price',
     label: '价格范围（元）',
     type: 'slider',
     componentProps: {
@@ -244,20 +241,55 @@ const goToRegion = () => {
   router.push('/home/region');
 };
 
-const handleChange = (index: number, context: any) => {
-  console.log('基础示例,页数变化到》》》', index, context);
-};
-
-const handleClick = (value: number) => {
-  console.log('[click] ', value);
-};
-
-const onChange = (val: string) => {
-  console.log('change: ', val);
-};
-
 const onFilterData = (_verify: boolean, data: any) => {
   filterOptions.value = data;
+  filterPopupVisible.value = false;
+};
+
+const includes = (main: string | string[], sub: string[]) => {
+  const mainArray = typeof main === 'string' ? [main] : main;
+  if (!Array.isArray(mainArray)) {
+    throw new TypeError('main must be a string or an array');
+  }
+  return sub.every((item) => mainArray.includes(item));
+};
+
+const filterActivityItem = (item: ActivityModel) => {
+  const filterKey = Object.keys(filterOptions.value);
+  // no filter
+  if (isEmpty(filterKey)) {
+    return true;
+  }
+
+  let result = true;
+
+  // 面向领域
+  if (result && filterOptions.value.field && filterOptions.value.field.length > 0) {
+    result = Array.isArray(item.field)
+      ? item.field.some((field) => filterOptions.value.field.includes(field))
+      : filterOptions.value.field.includes(item.field);
+  }
+
+  // 活动形式
+  if (result && filterOptions.value.type) {
+    result = includes(item.type, filterOptions.value.type);
+  }
+
+  // 价格范围
+  if (result && filterOptions.value.price && filterOptions.value.price.length === 2) {
+    const [minPrice, maxPrice] = filterOptions.value.price;
+    const itemMinPrice = getMinPrice(item);
+    const itemMaxPrice = getMaxPrice(item);
+
+    result = item.price === 'free' || (itemMinPrice >= minPrice && itemMaxPrice <= maxPrice);
+  }
+
+  // 日期范围
+  if (result && chooseDate.value && chooseDate.value.length === 2) {
+    result = dateIncludes(item, chooseDate.value);
+  }
+
+  return result;
 };
 
 const onDatePickerConfirm = () => {

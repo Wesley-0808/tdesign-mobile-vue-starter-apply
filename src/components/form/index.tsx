@@ -37,7 +37,6 @@ export default defineComponent({
     const rules: Record<string, any> = {};
 
     // 初始化表单数据
-    // onMounted(() => {
     props.formOptions.forEach((option) => {
       if (option.type === 'picker' || option.type === 'check-tag') {
         initialFormData[option.id] = [];
@@ -56,7 +55,6 @@ export default defineComponent({
         rules[option.id] = option.rules;
       }
     });
-    // });
 
     const formData = reactive(initialFormData);
     const formRef = ref();
@@ -181,7 +179,6 @@ export default defineComponent({
         case 'switch':
           return <t-switch v-model={formData[option.id]} {...option?.componentProps}></t-switch>;
         case 'slider':
-          console.log(formData[option.id]);
           return (
             <t-slider
               v-model={formData[option.id]}
@@ -197,7 +194,6 @@ export default defineComponent({
           return (
             <div class={`${prefixClass}__check-tag-group`}>
               {options.map((tag) => {
-                console.log(formData[option.id]);
                 // 为什么需要加一个class？因为组件prop校验没有extra-large
                 return (
                   <t-check-tag

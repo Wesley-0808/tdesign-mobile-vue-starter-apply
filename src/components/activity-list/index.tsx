@@ -35,12 +35,21 @@ export default defineComponent({
         }
         return 0;
       });
+
       const filteredData = sortedData.filter((i) => {
         if (isFunction(props.filterBy)) {
           return props.filterBy(i);
         }
         return true;
       });
+
+      const getPrice = (item: ActivityModel) => {
+        if (item.price === 'free') {
+          return '免费活动';
+        }
+        return `¥${getMinPrice(item)}-¥${getMaxPrice(item)}`;
+      };
+
       const list = filteredData.map((item) => {
         return (
           <div class="activity-list-item">
@@ -53,9 +62,7 @@ export default defineComponent({
                 <t-rate value={item.evaluate} max="5" size="16" placement="" allow-half />
                 <span class="evaluate-text">{item.evaluate}分</span>
               </div>
-              <div class="activity-list-item__content-price">
-                ¥{getMinPrice(item)}-¥{getMaxPrice(item)}
-              </div>
+              <div class="activity-list-item__content-price">{getPrice(item)}</div>
             </div>
           </div>
         );

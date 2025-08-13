@@ -12,27 +12,27 @@ export default [
           list: [
             {
               id: 1,
-              img: '/assets/image/activity/sicc-2019.png',
+              img: '/assets/image/activity/sicc-2021.png',
             },
             {
               id: 2,
-              img: '/assets/image/activity/sicc-2021.png',
+              img: '/assets/image/activity/sicc-2019.png',
             },
             {
               id: 3,
-              img: '/assets/image/activity/sicc-2019.png',
+              img: '/assets/image/activity/sicc-2021.png',
             },
             {
               id: 4,
-              img: '/assets/image/activity/sicc-2021.png',
-            },
-            {
-              id: 5,
               img: '/assets/image/activity/sicc-2019.png',
             },
             {
-              id: 6,
+              id: 5,
               img: '/assets/image/activity/sicc-2021.png',
+            },
+            {
+              id: 6,
+              img: '/assets/image/activity/sicc-2019.png',
             },
           ],
         }),
@@ -51,14 +51,18 @@ export default [
               id: 1,
               img: '/assets/image/activity/cover-1.png',
               name: '2019 SICC服务设计创新大会',
-              date: ['2021-3-18', '2021-3-19'],
-              price: [],
+              date: ['2021-3-20', '2021-3-23', '2021-3-24'],
+              price: 'free',
               evaluate: 5,
+              field: 'art',
+              type: 'lecture',
             },
             {
               id: 2,
               img: '/assets/image/activity/cover-2.png',
               name: '2021 SICC服务设计创新大会',
+              field: 'art',
+              type: 'lecture',
               price: [
                 {
                   name: '早鸟价-单人票',
@@ -73,12 +77,10 @@ export default [
                 {
                   name: '正价-单人票',
                   price: 128,
-                  discount: null,
                 },
                 {
                   name: '正价-双人票',
                   price: 228,
-                  discount: null,
                 },
               ],
               evaluate: 4.5,
@@ -112,17 +114,43 @@ export default [
               id: 3,
               img: '/assets/image/activity/cover-3.png',
               name: '少年与星空 插画巡展',
-              price: ['98.00', '118.00'],
-              date: ['2021-3-10', '2021-3-20'],
+              price: [
+                {
+                  name: '低档',
+                  price: 98,
+                },
+                {
+                  name: '高档',
+                  price: 118,
+                },
+              ],
+              date: ['2021-3-1', '2021-3-3'],
               evaluate: 4.5,
+              field: 'art',
+              type: 'exhibition',
             },
             {
               id: 4,
               img: '/assets/image/activity/cover-4.png',
               name: 'Unverse AI艺术展',
-              price: ['66.00', '988.00'],
-              date: ['2021-3-12'],
+              price: [
+                {
+                  name: '低档',
+                  price: 128,
+                },
+                {
+                  name: '中档',
+                  price: 198,
+                },
+                {
+                  name: '高档',
+                  price: 228,
+                },
+              ],
+              date: ['2021-3-5'],
               evaluate: 3,
+              field: ['it', 'art'],
+              type: 'exhibition',
             },
           ],
         }),
