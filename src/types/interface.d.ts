@@ -34,3 +34,12 @@ export interface NormalOption {
   value: any;
   label: string;
 }
+
+export interface City {
+  value: string;
+  label: string;
+}
+
+export interface CityGroup {
+  [key: string]: City[];
+}

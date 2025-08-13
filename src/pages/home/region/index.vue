@@ -1,56 +1,32 @@
 <template>
-  <div class="region-container">
+  <div class="region-container container-view">
     <!-- 顶部当前定位信息 -->
     <div class="current-location">
       <div class="location-info">
-        <t-icon name="location" size="20" color="#666" />
+        <location-icon size="20px" color="#666" />
         <span class="city-name">{{ currentLocation.city || '定位中...' }}</span>
         <t-icon v-if="currentLocation.isLocating" name="loading" size="16" class="loading-icon" />
       </div>
-      <t-button
-        size="small"
-        variant="outline"
-        class="update-location-btn"
-        :disabled="currentLocation.isLocating"
-        @click="updateLocation"
-      >
+      <t-button size="extra-small" shape="round" :disabled="currentLocation.isLocating" @click="updateLocation">
         {{ currentLocation.isLocating ? '定位中...' : '更新定位' }}
       </t-button>
     </div>
 
     <!-- 城市列表容器 -->
     <div class="city-list-container">
-      <!-- 热门城市独立显示，正常滚动 -->
-      <div class="section">
-        <div class="section-title">热门城市</div>
-        <div class="city-list-section">
-          <div
-            v-for="city in popularCities"
-            :key="city.name"
-            class="city-item"
-            :class="{ active: city.name === currentCity }"
-            @click="selectCity(city)"
-          >
-            <span class="city-text">{{ city.name }}</span>
-            <t-icon v-if="city.name === currentCity" name="check" size="24" color="#0052d9" class="check-icon" />
-          </div>
-        </div>
-      </div>
-
-      <!-- 使用 t-indexes 组件，只包含字母分组的城市 -->
-      <t-indexes :index-list="indexList" :sticky="false" @change="onIndexChange">
+      <t-indexes :index-list="indexList" :sticky="false">
         <template v-for="group in cityGroupsList" :key="group.index">
           <t-indexes-anchor :index="group.index" />
           <t-cell-group>
             <t-cell
               v-for="city in group.children"
-              :key="city.name"
-              :title="city.name"
-              :class="{ active: city.name === currentCity }"
+              :key="city.value"
+              :title="city.label"
+              :class="{ active: city.value === currentCity }"
               @click="selectCity(city)"
             >
               <template #right-icon>
-                <t-icon v-if="city.name === currentCity" name="check" size="24" color="#0052d9" />
+                <check-icon v-if="city.value === currentCity" size="24" color="var(--td-brand-color)" />
               </template>
             </t-cell>
           </t-cell-group>
@@ -60,15 +36,21 @@
   </div>
 </template>
 <script setup lang="ts">
+import { CheckIcon, LocationIcon } from 'tdesign-icons-vue-next';
 import { Toast } from 'tdesign-mobile-vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { cityGroup, indexList } from '@/constants';
+import { useCityStore } from '@/store/modules/city';
+import type { City } from '@/types/interface';
+
 const router = useRouter();
+const cityStore = useCityStore();
 
 // 当前定位信息
 const currentLocation = ref({
-  city: '深圳',
+  city: cityStore.getCurrentCity, // 从 store 获取
   latitude: null as number | null,
   longitude: null as number | null,
   isLocating: false,
@@ -76,119 +58,28 @@ const currentLocation = ref({
 });
 
 // 当前选中的城市
-const currentCity = ref('深圳');
-
-// 热门城市列表
-const popularCities = ref([
-  { name: '北京', pinyin: 'beijing' },
-  { name: '上海', pinyin: 'shanghai' },
-  { name: '广州', pinyin: 'guangzhou' },
-  { name: '深圳', pinyin: 'shenzhen' },
-  { name: '成都', pinyin: 'chengdu' },
-]);
-
-// 按字母分组的城市列表
-const cityGroups = ref({
-  A: [
-    { name: '澳门', pinyin: 'aomen' },
-    { name: '阿克苏', pinyin: 'akesu' },
-    { name: '安吉', pinyin: 'anji' },
-    { name: '鞍山', pinyin: 'anshan' },
-  ],
-  B: [
-    { name: '北京', pinyin: 'beijing' },
-    { name: '保定', pinyin: 'baoding' },
-    { name: '包头', pinyin: 'baotou' },
-  ],
-  C: [
-    { name: '成都', pinyin: 'chengdu' },
-    { name: '重庆', pinyin: 'chongqing' },
-    { name: '长沙', pinyin: 'changsha' },
-  ],
-  D: [
-    { name: '大连', pinyin: 'dalian' },
-    { name: '东莞', pinyin: 'dongguan' },
-    { name: '大庆', pinyin: 'daqing' },
-  ],
-  E: [
-    { name: '鄂尔多斯', pinyin: 'eerduosi' },
-    { name: '恩施', pinyin: 'enshi' },
-  ],
-  F: [
-    { name: '福州', pinyin: 'fuzhou' },
-    { name: '佛山', pinyin: 'foshan' },
-  ],
-  G: [
-    { name: '广州', pinyin: 'guangzhou' },
-    { name: '贵阳', pinyin: 'guiyang' },
-  ],
-  H: [
-    { name: '杭州', pinyin: 'hangzhou' },
-    { name: '合肥', pinyin: 'hefei' },
-  ],
-  I: [{ name: '宜昌', pinyin: 'yichang' }],
-  J: [
-    { name: '济南', pinyin: 'jinan' },
-    { name: '嘉兴', pinyin: 'jiaxing' },
-  ],
-  K: [{ name: '昆明', pinyin: 'kunming' }],
-  L: [{ name: '兰州', pinyin: 'lanzhou' }],
-  M: [{ name: '绵阳', pinyin: 'mianyang' }],
-  N: [
-    { name: '南京', pinyin: 'nanjing' },
-    { name: '南昌', pinyin: 'nanchang' },
-  ],
-  O: [{ name: '鄂州', pinyin: 'ezhou' }],
-  P: [{ name: '莆田', pinyin: 'putian' }],
-  Q: [{ name: '青岛', pinyin: 'qingdao' }],
-  R: [{ name: '日照', pinyin: 'rizhao' }],
-  S: [
-    { name: '上海', pinyin: 'shanghai' },
-    { name: '深圳', pinyin: 'shenzhen' },
-    { name: '苏州', pinyin: 'suzhou' },
-  ],
-  T: [
-    { name: '天津', pinyin: 'tianjin' },
-    { name: '太原', pinyin: 'taiyuan' },
-  ],
-  W: [
-    { name: '武汉', pinyin: 'wuhan' },
-    { name: '无锡', pinyin: 'wuxi' },
-  ],
-  X: [
-    { name: '西安', pinyin: 'xian' },
-    { name: '厦门', pinyin: 'xiamen' },
-  ],
-  Y: [{ name: '烟台', pinyin: 'yantai' }],
-  Z: [
-    { name: '郑州', pinyin: 'zhengzhou' },
-    { name: '珠海', pinyin: 'zhuhai' },
-  ],
-});
+const currentCity = ref(cityStore.getCurrentCity);
 
 // 转换为 t-indexes 需要的数据格式
 const cityGroupsList = computed(() => {
-  return Object.entries(cityGroups.value).map(([index, cities]) => ({
+  return Object.entries(cityGroup).map(([index, cities]) => ({
     index,
     children: cities,
   }));
 });
 
-// 字母列表（不包含热门城市）
-const indexList = computed(() => Object.keys(cityGroups.value));
-
 // 选择城市
-const selectCity = (city: { name: string; pinyin: string }) => {
-  currentCity.value = city.name;
-  currentLocation.value.city = city.name;
+const selectCity = (city: City) => {
+  const cityName = `${city.value}`;
+  currentCity.value = cityName;
+  currentLocation.value.city = cityName;
+
+  // 更新 store 中的城市
+  cityStore.setCurrentCity(cityName);
+
   setTimeout(() => {
     router.go(-1);
   }, 300);
-};
-
-// 索引变化事件
-const onIndexChange = (index: string | number) => {
-  console.log('当前索引:', index);
 };
 
 // 更新定位
@@ -206,19 +97,21 @@ const updateLocation = async () => {
     const cityInfo = await getCityFromCoordinates(position.coords.latitude, position.coords.longitude);
 
     const cityName = cityInfo.city || cityInfo.province || '未知城市';
-    const normalizedCityName = cityName.replace(/市$/, '');
 
     currentLocation.value = {
-      city: normalizedCityName,
+      city: cityName,
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
       isLocating: false,
       lastUpdate: new Date(),
     };
 
-    currentCity.value = normalizedCityName;
+    currentCity.value = cityName;
 
-    Toast.success(`定位成功：${normalizedCityName}`);
+    // 更新 store 中的城市
+    cityStore.setCurrentCity(cityName);
+
+    Toast.success(`定位成功：${cityName}`);
   } catch (error) {
     console.error('定位失败:', error);
     let errorMessage = '定位失败，请重试';
@@ -259,7 +152,7 @@ const getCityFromCoordinates = async (_latitude: number, _longitude: number) => 
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const mockCityData = {
-      city: '深圳',
+      city: '深圳市',
       province: '广东省',
       district: '南山区',
       address: '广东省深圳市南山区',
@@ -272,6 +165,9 @@ const getCityFromCoordinates = async (_latitude: number, _longitude: number) => 
 };
 
 onMounted(async () => {
+  // 初始化城市 store
+  cityStore.initCity();
+
   const cachedLocation = localStorage.getItem('cachedLocation');
   if (cachedLocation) {
     try {
@@ -280,6 +176,8 @@ onMounted(async () => {
       if (cacheAge < 30 * 60 * 1000) {
         currentLocation.value = parsed;
         currentCity.value = parsed.city;
+        // 同步到 store
+        cityStore.setCurrentCity(parsed.city);
         return;
       }
     } catch (e) {
@@ -291,7 +189,6 @@ onMounted(async () => {
     await updateLocation();
   } catch (error) {
     console.error('自动定位失败:', error);
-    console.log('自动定位失败，使用默认城市');
   }
 });
 
@@ -308,7 +205,7 @@ watch(
 <style scoped lang="less">
 .t-button--outline {
   border-radius: 100px !important;
-  background: #e7e7e7;
+  background: var(--td-bg-color-container);
 
   &::after {
     border-radius: 100px !important;
@@ -316,9 +213,8 @@ watch(
 }
 
 .region-container {
-  background: #f5f5f5;
-  min-height: 100vh;
-  position: relative;
+  background: var(--td-bg-color-container);
+  overflow-y: hidden;
 }
 
 .current-location {
@@ -326,47 +222,29 @@ watch(
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  background: var(--td-bg-color-container);
+  color: var(--td-text-color-primary);
+  border-bottom: 1px solid var(--td-border-level-1-color);
 }
 
 .location-info {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .city-name {
   font-size: 16px;
   font-weight: 500;
-  color: #333;
+  color: var(--td-text-color-primary);
+  padding: 0 0 0 8px;
 }
 
 .city-list-container {
   height: calc(100vh - 120px);
-  overflow-y: auto;
-}
+  overflow-y: scroll;
 
-.city-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #f8f8f8;
-  }
-
-  &.active {
-    background: #e6f3ff;
-
-    .city-text {
-      font-weight: 600;
-      color: #0052d9;
-    }
+  .t-indexes {
+    overflow-y: unset;
   }
 }
 
@@ -377,17 +255,8 @@ watch(
   flex: 1;
 }
 
-.check-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0052d9;
-  font-size: 20px;
-  flex-shrink: 0;
-  margin-left: 8px;
+:deep(.t-cell__right) {
+  padding-right: 7% !important;
 }
 
 .loading-icon {
@@ -405,41 +274,6 @@ watch(
   }
 }
 
-.update-location-btn {
-  border-radius: 100px !important;
-  background: #e7e7e7;
-  color: #201f1f;
-  font-size: 14px;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  &:hover:not(:disabled) {
-    background: #d8d8d8;
-    border-color: #c0c0c0;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  &::after {
-    border-radius: 100px !important;
-  }
-}
-
 .section {
   background: #fff;
   margin-bottom: 8px;
@@ -453,26 +287,10 @@ watch(
   font-weight: 500;
 }
 
-.city-list-section {
-  background: #fff;
-
-  .city-item {
-    border-bottom: 1px solid #f0f0f0;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-}
-
-// 自定义 t-cell 样式
 :deep(.t-cell) {
   &.active {
-    background: #e6f3ff;
-
-    .t-cell__title {
+    .t-cell__title-text {
       font-weight: 600;
-      color: #0052d9;
     }
   }
 }
@@ -486,6 +304,7 @@ watch(
 
 :deep(.t-indexes__sidebar) {
   top: 55%;
+  font-size: 14px;
   transform: translateY(-50%);
 }
 </style>
