@@ -1,24 +1,21 @@
 @import './font-family.less';
 @import './reset.less';
 
-html,body{
-  overflow: hidden;
-}
-
 body {
   width: 100vw;
   height: 100%;
+  background-color: var(--td-bg-color-page);
 }
 
-div :has(.t-tab-bar){
-  .container-view{
+div :has(.t-tab-bar) {
+  .container-view {
     margin-bottom: 56px;
   }
 }
 
-div :has(.navbar-placeholder){
-  .container-view{
-    height: calc( 100vh - var(--td-navbar-height, 48px) - constant(safe-area-inset-bottom, 0px));
-    height: calc( 100vh - var(--td-navbar-height, 48px) - env(safe-area-inset-bottom, 0px));
+div :has(.navbar-placeholder) {
+  .container-view {
+    height: calc(100vh - var(--td-navbar-height, 48px) - constant(safe-area-inset-bottom, 0px));
+    height: calc(100vh - var(--td-navbar-height, 48px) - env(safe-area-inset-bottom, 0px));
   }
 }
