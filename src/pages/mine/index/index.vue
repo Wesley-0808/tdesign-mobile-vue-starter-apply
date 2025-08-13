@@ -67,7 +67,7 @@ import { EditIcon } from 'tdesign-icons-vue-next';
 import type { TabValue } from 'tdesign-mobile-vue';
 import { Toast } from 'tdesign-mobile-vue';
 import type { Ref } from 'vue';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { getMyActivityList, getUserInfo } from '@/api/list';
 import type { MyActivityList, MyActivityListResult, UserInfoResult } from '@/api/model/listModel';
@@ -90,11 +90,11 @@ const activityLoading = ref(false);
 // 活动列表的tab值
 const currentValue = ref<TabValue>('0');
 
-const tabList = [
+const tabList = computed(() => [
   {
     value: '0',
     label: '待参加',
-    badgeProps: { dot: badge, offset: [-4, 1] },
+    badgeProps: { dot: badge.value, offset: [-4, 1] },
   },
   {
     value: '1',
@@ -104,7 +104,7 @@ const tabList = [
     value: '2',
     label: '全部活动',
   },
-];
+]);
 
 // 点击蓝字登录时触发
 const onLogin = () => {
