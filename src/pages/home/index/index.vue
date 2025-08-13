@@ -6,19 +6,13 @@
         <div class="location-header">
           <div class="location-info" @click="goToRegion">
             <location-icon size="18px" />
-            <span class="city-name">深圳市</span>
+            <span class="city-name">{{ currentCity }}</span>
           </div>
         </div>
 
         <!-- 搜索框 -->
-        <div class="example-search">
-          <t-search
-            v-model="value"
-            :clearable="true"
-            shape="round"
-            placeholder="搜索活动"
-            @change="() => onChange('')"
-          ></t-search>
+        <div class="search-bar">
+          <t-search v-model="value" :clearable="true" shape="round" placeholder="搜索活动"></t-search>
         </div>
       </div>
     </t-sticky>
@@ -29,20 +23,20 @@
         <div class="title-text">热门推荐</div>
       </div>
       <div class="swiper-wrapper">
-        <t-swiper
-          class="t-swiper-outside"
-          :navigation="{ type: 'dots' }"
-          :autoplay="false"
-          @click="handleSwiperClick"
-          @change="handleSwiperChange"
-          @touchstart="handleTouchStart"
-          @touchmove="handleTouchMove"
-          @touchend="handleTouchEnd"
-        >
-          <t-swiper-item v-for="(item, index) in swiperList" :key="index" style="height: 192px">
-            <img :src="item" class="img" />
-          </t-swiper-item>
-        </t-swiper>
+        <div class="swiper-container">
+          <t-swiper
+            :key="recommendList.length"
+            :navigation="{ type: 'dots', placement: 'outside' }"
+            :autoplay="false"
+            @touchstart="handleTouchPrevent"
+            @touchmove="handleTouchPrevent"
+            @touchend="handleTouchPrevent"
+          >
+            <t-swiper-item v-for="(item, index) in recommendList" :key="item.id" style="height: 172px">
+              <img :src="item.img" :alt="`推荐活动-${index + 1}`" />
+            </t-swiper-item>
+          </t-swiper>
+        </div>
       </div>
     </div>
 
@@ -53,13 +47,7 @@
           <div class="title-text">全部活动</div>
         </div>
         <div class="activity-nav">
-          <t-tabs
-            v-model="allActivityTabsActive"
-            :list="activityTabs"
-            :split="false"
-            class="hidden-track"
-            style="width: 100%"
-          >
+          <t-tabs v-model="sortBy" :list="activityTabs" :split="false" class="hidden-track" style="width: 100%">
           </t-tabs>
 
           <div class="filter-btn">
@@ -74,19 +62,7 @@
 
     <!-- 活动列表内容 -->
     <div class="activity-list">
-      <div v-for="(activity, index) in activityList" :key="index" class="activity-list-item">
-        <div class="activity-list-item__image">
-          <img :src="activity.image" :alt="activity.title" />
-        </div>
-        <div class="activity-list-item__content">
-          <div class="activity-list-item__content-title">{{ activity.title }}</div>
-          <div class="activity-list-item__content-evaluate">
-            <t-rate :value="activity.rating" :max="5" size="16" placement="" allow-half />
-            <span class="evaluate-text">{{ activity.rating }}分</span>
-          </div>
-          <div class="activity-list-item__content-price">{{ activity.price }}</div>
-        </div>
-      </div>
+      <activity-list :data="activityListData" :sort-by="sortBy" :filter-by="filterActivityItem" />
     </div>
   </div>
 
@@ -98,99 +74,110 @@
         <div class="close-icon" @click="filterPopupVisible = false"><close-icon size="24px" /></div>
       </div>
       <div :class="`${prefix}-filter-view__body`">
-        <form-render :form-options="formOptions" :form-config="{ labelAlign: 'top' }" :btn-config="btns" />
+        <form-render
+          :form-options="formOptions"
+          :form-config="{ labelAlign: 'top' }"
+          :btn-config="btns"
+          @confirm="onFilterData"
+        />
+      </div>
+    </div>
+  </t-popup>
+  <!---->
+  <t-popup v-model="datePopupVisible" placement="bottom" :overlay-props="{ backgroundColor: 'transparent' }">
+    <div :class="`${prefix}-calendar-view`">
+      <div :class="`${prefix}-calendar-view__header`">
+        <div class="close-icon" @click="datePopupVisible = false"><chevron-left-icon size="24px" /></div>
+        <div class="title">选择日期</div>
+        <div class="close-icon" @click="datePopupVisible = false"><close-icon size="24px" /></div>
+      </div>
+      <div :class="`${prefix}-calendar-view__body`">
+        <t-calendar
+          v-model:value="chooseDate"
+          type="range"
+          :min-date="dateMinRange"
+          :max-date="dateMaxRange"
+          :use-popup="false"
+          :confirm-btn="null"
+          :on-select="
+            (v) => {
+              const val = v as unknown as any[];
+              chooseDateCache = val;
+            }
+          "
+        >
+          <template #title>
+            <span></span>
+          </template>
+        </t-calendar>
+        <!---->
+        <div :class="`${prefix}-calendar-view__body-btn`">
+          <t-button theme="primary" size="large" block @click="onDatePickerConfirm">确认日期</t-button>
+        </div>
       </div>
     </div>
   </t-popup>
 </template>
-<script setup lang="ts">
-import { CloseIcon, FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
-import { ref } from 'vue';
+<script setup lang="tsx">
+import { isEmpty } from 'lodash';
+import { ChevronLeftIcon, CloseIcon, FilterIcon, LocationIcon } from 'tdesign-icons-vue-next';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const allActivityTabsActive = ref(0);
-const activityTabs = [
-  {
-    value: 0,
-    label: '最新活动',
-  },
-  {
-    value: 1,
-    label: '高分活动',
-  },
-];
-const imageCdn = 'https://tdesign.gtimg.com/mobile/demos';
-const swiperList = [
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-];
-
-// 活动列表数据
-const activityList = ref([
-  {
-    title: '2019 SICC服务设计创新大会',
-    rating: 5,
-    price: '免费活动',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: '2021 SICC服务设计创新大会',
-    rating: 4.5,
-    price: '¥88.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-  {
-    title: '少年与星空 插画巡展',
-    rating: 4.5,
-    price: '¥98.00-¥118.00',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: 'Universe AI艺术展',
-    rating: 3.5,
-    price: '¥128.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-  {
-    title: '2019 SICC服务设计创新大会',
-    rating: 5,
-    price: '免费活动',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: '2021 SICC服务设计创新大会',
-    rating: 4.5,
-    price: '¥88.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-  {
-    title: '少年与星空 插画巡展',
-    rating: 4.5,
-    price: '¥98.00-¥118.00',
-    image: `${imageCdn}/swiper1.png`,
-  },
-  {
-    title: 'Universe AI艺术展',
-    rating: 3.5,
-    price: '¥128.00-¥228.00',
-    image: `${imageCdn}/swiper2.png`,
-  },
-]);
-
+import { getAllActivityList, getRecommendList } from '@/api/list';
+import type { ActivityModel } from '@/api/model/listModel';
+import ActivityList from '@/components/activity-list';
 import FormRender from '@/components/form';
 import type { BtnConfig, FormItems } from '@/components/form/type';
 import { ActivityField, ActivityType } from '@/config/consts';
 import { prefix } from '@/config/global';
+import { useCityStore } from '@/store';
+import { dateIncludes, getDateRangeString } from '@/utils/activity/getDate';
+import { getMaxPrice, getMinPrice } from '@/utils/activity/getPrice';
 
-// const prefixClass = `${prefix}`;
+const cityStore = useCityStore();
+const router = useRouter();
 
+onMounted(() => {
+  getRecommendListData();
+  getActivityListData();
+});
+
+// 从 store 获取当前城市
+const currentCity = computed(() => cityStore.getCurrentCity);
+const dateMinRange = new Date(2021, 2, 1);
+const dateMaxRange = new Date(2021, 4, 31);
+const recommendList = ref([]);
+const getRecommendListData = async () => {
+  const res = await getRecommendList();
+  recommendList.value = res.list;
+};
+
+const activityListData = ref([]);
+const getActivityListData = async () => {
+  const res = await getAllActivityList();
+  activityListData.value = res.list;
+};
+
+const sortBy = ref('latest');
+const activityTabs = [
+  {
+    value: 'latest',
+    label: '最新活动',
+  },
+  {
+    value: 'max-evaluate',
+    label: '高分活动',
+  },
+];
+const filterOptions = ref<{ [k: string]: any }>({});
+const chooseDate = ref<Date[]>([]);
+const chooseDateCache = ref([]);
+const datePopupVisible = ref(false);
 const filterPopupVisible = ref(false);
 const formOptions: FormItems[] = [
   {
-    id: 'activityField',
+    id: 'field',
     label: '面向领域',
     type: 'check-tag',
     class: 'hidden-divider',
@@ -199,7 +186,7 @@ const formOptions: FormItems[] = [
     },
   },
   {
-    id: 'activityType',
+    id: 'type',
     label: '活动形式',
     type: 'check-tag',
     componentProps: {
@@ -207,13 +194,22 @@ const formOptions: FormItems[] = [
     },
   },
   {
-    id: 'phone',
+    id: 'date',
     label: '活动日期',
     type: 'custom',
-    component: 123,
+    component: () => {
+      return (
+        <div class="filter-view__date-filter">
+          <span>{chooseDate.value?.length === 0 ? '全部' : getDateRangeString(chooseDate.value)}</span>
+          <t-button theme="default" size="extra-small" shape="round" onClick={() => (datePopupVisible.value = true)}>
+            选择日期
+          </t-button>
+        </div>
+      );
+    },
   },
   {
-    id: 'idCard',
+    id: 'price',
     label: '价格范围（元）',
     type: 'slider',
     componentProps: {
@@ -240,35 +236,70 @@ const btns: BtnConfig[] = [
   },
 ];
 
-const router = useRouter();
-
 // 跳转到地区选择页面
 const goToRegion = () => {
   router.push('/home/region');
 };
 
-const handleSwiperChange = (index: number, context: any) => {
-  console.log('基础示例,页数变化到》》》', index, context);
+const onFilterData = (_verify: boolean, data: any) => {
+  filterOptions.value = data;
+  filterPopupVisible.value = false;
 };
 
-const handleSwiperClick = (value: number) => {
-  console.log('click: ', value);
+const includes = (main: string | string[], sub: string[]) => {
+  const mainArray = typeof main === 'string' ? [main] : main;
+  if (!Array.isArray(mainArray)) {
+    throw new TypeError('main must be a string or an array');
+  }
+  return sub.every((item) => mainArray.includes(item));
 };
 
-const onChange = (val: string) => {
-  console.log('change: ', val);
+const filterActivityItem = (item: ActivityModel) => {
+  const filterKey = Object.keys(filterOptions.value);
+  // no filter
+  if (isEmpty(filterKey)) {
+    return true;
+  }
+
+  let result = true;
+
+  // 面向领域
+  if (result && filterOptions.value.field && filterOptions.value.field.length > 0) {
+    result = Array.isArray(item.field)
+      ? item.field.some((field) => filterOptions.value.field.includes(field))
+      : filterOptions.value.field.includes(item.field);
+  }
+
+  // 活动形式
+  if (result && filterOptions.value.type) {
+    result = includes(item.type, filterOptions.value.type);
+  }
+
+  // 价格范围
+  if (result && filterOptions.value.price && filterOptions.value.price.length === 2) {
+    const [minPrice, maxPrice] = filterOptions.value.price;
+    const itemMinPrice = getMinPrice(item);
+    const itemMaxPrice = getMaxPrice(item);
+
+    result = item.price === 'free' || (itemMinPrice >= minPrice && itemMaxPrice <= maxPrice);
+  }
+
+  // 日期范围
+  if (result && chooseDate.value && chooseDate.value.length === 2) {
+    result = dateIncludes(item, chooseDate.value);
+  }
+
+  return result;
+};
+
+const onDatePickerConfirm = () => {
+  chooseDate.value = chooseDateCache.value;
+  datePopupVisible.value = false;
 };
 
 // 防止页面晃动的触摸事件处理
-const handleTouchStart = (e: TouchEvent) => {
-  e.stopPropagation();
-};
-
-const handleTouchMove = (e: TouchEvent) => {
-  e.stopPropagation();
-};
-
-const handleTouchEnd = (e: TouchEvent) => {
+const handleTouchPrevent = (e: TouchEvent) => {
+  e.preventDefault();
   e.stopPropagation();
 };
 

@@ -10,11 +10,15 @@ export interface ActivityResult {
   list: ActivityModel[];
 }
 
+export type ActivityType = 'lecture' | 'exhibition' | 'workshop';
+
 export interface ActivityModel {
   id: number;
   img: string;
   name: string;
-  price: ActivityPrice[];
+  field: string | string[];
+  type: ActivityType;
+  price: ActivityPrice[] | string;
   evaluate: number;
   interested: number;
   date: string[];
@@ -37,7 +41,7 @@ interface ActivityGuest {
 interface ActivityPrice {
   name: string;
   price: number;
-  discount: number | null;
+  discount?: number;
 }
 
 export interface ActivityEvaluateResult {
