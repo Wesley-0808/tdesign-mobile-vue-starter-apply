@@ -9,16 +9,38 @@ interface UsersInfo {
   default: number;
 }
 
+const defaultUsers = [
+  {
+    id: 1,
+    name: '蔡宣轩',
+    birthday: '01-01',
+    phone: '12345678910',
+    identityCard: 'ABCD',
+    email: 'mail@example.com',
+    occupation: '设计师',
+  },
+  {
+    id: 2,
+    name: '蔡晓萱',
+    birthday: '01-02',
+    phone: '12345678910',
+    identityCard: 'GHJI',
+    email: 'mail2@example.com',
+    occupation: '计算机从业者',
+  },
+];
+
 export const useUsersStore = defineStore('users', {
   state: () => ({
     userInfo: {
-      list: [],
+      list: [...defaultUsers],
       default: null,
     } as UsersInfo,
   }),
   getters: {
     defaultUser: (state) =>
       state.userInfo.default && state.userInfo.list.find((item) => item.id === state.userInfo.default)?.id,
+    users: (state) => state.userInfo.list,
   },
   actions: {
     addUser(info: UserInfo, setToDefault = false) {

@@ -38,7 +38,7 @@ interface ActivityGuest {
   img: string;
 }
 
-interface ActivityPrice {
+export interface ActivityPrice {
   name: string;
   price: number;
   discount?: number;

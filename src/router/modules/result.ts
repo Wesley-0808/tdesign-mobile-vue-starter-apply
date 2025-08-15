@@ -14,17 +14,17 @@ export default [
       icon: 'check-circle',
     },
     children: [
-      // {
-      //   path: 'success',
-      //   name: 'ResultSuccess',
-      //   component: () => import('@/pages/result/success/index.vue'),
-      //   meta: {
-      //     title: {
-      //       zh_CN: '成功页',
-      //       en_US: 'Success',
-      //     },
-      //   },
-      // },
+      {
+        path: 'success',
+        name: 'ResultSuccess',
+        component: () => import('@/pages/result/index.vue'),
+        meta: {
+          title: {
+            zh_CN: '购买结果',
+            en_US: 'BuyResult',
+          },
+        },
+      },
       // {
       //   path: 'fail',
       //   name: 'ResultFail',

@@ -1,0 +1,200 @@
+.order-confirm-container {
+  background-color: var(--td-bg-color-container);
+  margin: 0 16px;
+}
+
+// 价格信息
+.ticket-price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .ticket-price-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    .ticket-price {
+      text-align: right;
+      font-size: 16px;
+      font-weight: 400;
+
+      .current-price {
+        font-weight: 600;
+        color: var(--td-text-color-primary);
+      }
+
+      .original-price {
+        color: var(--td-text-color-secondary);
+        margin-left: 4px;
+        text-decoration: line-through;
+      }
+    }
+  }
+}
+
+// 通用checkbox组件
+.t-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .t-checkbox {
+    width: 100%;
+
+    :deep(.t-checkbox__content) {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    :deep(.t-checkbox__title + .t-checkbox__description:not(:empty)) {
+      margin-top: 0;
+    }
+  }
+}
+
+.card {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid var(--td-component-border);
+
+  &--active {
+    border: 1.5px solid var(--td-brand-color);
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      border: 14px solid #0052d9;
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+    }
+  }
+
+  &__icon {
+    color: #fff;
+    position: absolute;
+    left: 1.5px;
+    top: 1.5px;
+    z-index: 1;
+  }
+}
+
+/* checkbox横向布局 */
+.horizontal-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+
+  .card {
+    margin: 0;
+
+    &::after {
+      border-width: 12px;
+    }
+
+    &__icon {
+      font-size: 12px;
+    }
+  }
+}
+
+// 顶部信息
+.event-info {
+  padding: 16px 0;
+  background-color: #fff;
+  border-bottom: 0.5px solid var(--td-border-level-1-color);
+
+  .event-title {
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 28px;
+  }
+
+  .event-details {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    color: var(--td-text-color-primary);
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+
+      .t-icon {
+        margin-right: 4px;
+        color: var(--td-brand-color);
+      }
+    }
+  }
+}
+
+// 表单区域
+.section-container {
+  padding: 18px 0 6px;
+  background-color: #fff;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+
+    .t-button {
+      :deep(.t-button__content) {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+    }
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+}
+
+// 底部按钮
+.bottom-btn {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  padding-bottom: calc(16px + constants(safe-area-inset-bottom));
+  border-top: 1px solid var(--td-border-level-1-color);
+  background-color: var(--td-bg-color-container);
+
+  .price-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+
+    .total-price {
+      color: var(--td-brand-color);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 28px;
+    }
+  }
+
+  .btn {
+    width: 201px;
+  }
+}
