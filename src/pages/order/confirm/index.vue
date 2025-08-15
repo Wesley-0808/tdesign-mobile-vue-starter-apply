@@ -29,7 +29,8 @@
           <div
             v-for="person in users"
             :key="person.id"
-            :class="`card ${formData.personList.includes(person.id) ? 'card--active' : formData.personList.indexOf(person.id)}`"
+            class="card"
+            :class="{ 'card--active': formData.personList.includes(person.id) }"
           >
             <check-icon v-if="formData.personList.includes(person.id)" class="card__icon"></check-icon>
             <t-checkbox :value="person.id" :label="person.name" :icon="false" />
@@ -48,7 +49,8 @@
           <div
             v-for="date in activityList.date"
             :key="date"
-            :class="`card ${formData.date.includes(date) ? 'card--active' : formData.date.indexOf(date)}`"
+            class="card"
+            :class="{ 'card--active': formData.date.includes(date) }"
           >
             <check-icon v-if="formData.date.includes(date)" class="card__icon"></check-icon>
             <t-checkbox :value="date" :label="dayjs(date).format('YYYY年MM月DD日')" :icon="false" />
@@ -67,8 +69,8 @@
           <div
             v-for="(price, index) in activityList.price"
             :key="index"
-            class="ticket-price-item"
-            :class="`card ${formData.price.includes((price as ActivityPrice).name || price) ? 'card--active' : formData.price.indexOf((price as ActivityPrice).name || price)}`"
+            class="ticket-price-item card"
+            :class="{ 'card--active': formData.price.includes((price as ActivityPrice).name || price) }"
           >
             <check-icon v-if="formData.price.includes((price as ActivityPrice).name || price)" class="card__icon" />
             <t-checkbox
@@ -199,6 +201,7 @@ const onConfirm = () => {
       setTimeout(() => {
         activityStore.setActivity(activityList.value);
         activityStore.setUsers(formData.personList);
+        activityStore.setOrder(formData);
         router.replace('/result');
       }, 2100);
     })
