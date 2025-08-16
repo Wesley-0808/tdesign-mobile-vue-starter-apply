@@ -6,7 +6,7 @@ import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 
 import type { ActivityModel } from '@/api/model/listModel';
-import { getLastDate } from '@/utils/activity/getDate';
+import { getEarlyDate } from '@/utils/activity/getDate';
 import { getMaxPrice, getMinPrice } from '@/utils/activity/getPrice';
 
 import Empty from '../result/Empty';
@@ -39,7 +39,7 @@ export default defineComponent({
     const renderList = () => {
       const sortedData = props.data.sort((a, b) => {
         if (props.sortBy === 'latest') {
-          return dayjs(getLastDate(a)).isBefore(getLastDate(b)) ? -1 : 1;
+          return dayjs(getEarlyDate(a)).isBefore(getEarlyDate(b)) ? -1 : 1;
         }
         if (props.sortBy === 'max-evaluate') {
           return b.evaluate - a.evaluate;

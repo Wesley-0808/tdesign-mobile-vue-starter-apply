@@ -19,3 +19,10 @@ div :has(.navbar-placeholder) {
     height: calc(100vh - var(--td-navbar-height, 48px) - env(safe-area-inset-bottom, 0px));
   }
 }
+
+// 全局禁用rate组件的点击放大效果
+.t-rate__icon {
+  &.t-rate__icon--current {
+    --td-rate-icon-scale: 1;
+  }
+}
