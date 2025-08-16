@@ -4,6 +4,19 @@ import { defineStore } from 'pinia';
 import type { ActivityModel } from '@/api/model/listModel';
 import type { UserInfo } from '@/types/interface';
 
+const defaultUsers = [
+  {
+    id: 1,
+    name: '蔡宣轩',
+    img: '/assets/image/avatar.png',
+    birthday: '01-01',
+    phone: '12345678910',
+    identityCard: 'ABCD',
+    email: 'mail@example.com',
+    occupation: '设计师',
+  },
+];
+
 export const useResultStore = defineStore('result', {
   state: () => ({
     activity: {
@@ -59,7 +72,7 @@ export const useResultStore = defineStore('result', {
         },
       ],
     } as ActivityModel,
-    users: [] as UserInfo[],
+    users: [...defaultUsers] as UserInfo[],
     order: {},
   }),
   actions: {
