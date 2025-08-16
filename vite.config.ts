@@ -23,6 +23,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     css: {
       preprocessorOptions: {
         less: {
+          additionalData: `@import "${path.resolve('src/style/utils.less')}";`,
           modifyVars: {
             hack: `true; @import (reference) "${path.resolve('src/style/variables.less')}";`,
           },
