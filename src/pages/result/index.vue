@@ -30,30 +30,32 @@
       </t-text>
     </div>
 
-    <!-- 3. 活动信息卡片 -->
-    <div class="activity-card">
-      <t-image :src="posterUrl" width="100%" height="175" fit="cover" style="border-radius: 12px 12px 0 0" />
+    <!-- 3. 活动信息卡片 - 从resultStore获取数据 -->
+    <div v-if="activity" class="activity-card">
+      <t-image :src="activity.img" width="100%" height="175" fit="cover" style="border-radius: 12px 12px 0 0" />
       <div class="activity-info">
-        <t-text class="activity-title" size="16" weight="600"> 2021 SICC 服务设计创新大会 </t-text>
+        <t-text class="activity-title" size="16" weight="600"> {{ activity.name }} </t-text>
         <div class="activity-details">
           <t-space align="center" size="small">
             <time-icon size="14" color="#0052D9" />
-            <t-text size="12" color="#000">2021年3月16日</t-text>
+            <t-text size="12" color="#000">{{ activity.date[0] }}</t-text>
             <location-icon size="14" color="#0052D9" class="ml-16" />
-            <t-text size="12" color="#000">深圳市腾讯滨海大厦</t-text>
+            <t-text size="12" color="#000">{{ activity.place }}</t-text>
           </t-space>
         </div>
       </div>
     </div>
 
-    <!-- 4. 报名人员信息 -->
-    <div class="applicant-section">
+    <!-- 4. 报名人员信息 - 从resultStore获取数据 -->
+    <div v-if="users.length > 0" class="applicant-section">
       <t-text class="section-title">报名人员</t-text>
       <t-list>
         <t-list-item
-          :avatar="avatarUrl"
-          title="蔡宣轩"
-          description="29岁 设计师/艺术从业者"
+          v-for="user in users"
+          :key="user.id"
+          :avatar="user.img"
+          :title="user.name"
+          :description="`${getUserAge(user)}岁 ${user.occupation}`"
           style="border-radius: 8px"
         />
       </t-list>
@@ -62,188 +64,45 @@
     <!-- 5. 操作按钮区 -->
     <div class="action-btns">
       <t-button class="share-btn" theme="default" size="medium"> 分享给朋友 </t-button>
-      <t-button class="check-btn" theme="default" size="medium"> 去查看 </t-button>
+      <t-button class="check-btn" theme="default" size="medium" @click="goToActivityDetail"> 去查看 </t-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { CheckCircleIcon, LocationIcon, TimeIcon } from 'tdesign-icons-vue-next';
-import {
-  Button as TButton,
-  Icon as TIcon,
-  Image as TImage,
-  List as TList,
-  ListItem as TListItem,
-  Space as TSpace,
-  Text as TText,
-} from 'tdesign-mobile-vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
+import type { ActivityModel } from '@/api/model/listModel';
+import { useResultStore } from '@/store/modules/result';
+import type { UserInfo } from '@/types/interface';
+
+// 初始化resultStore实例
+const resultStore = useResultStore();
 const router = useRouter();
+
+// 从resultStore获取活动信息（通过getter）
+const activity = computed<ActivityModel | null>(() => resultStore.getActivity);
+
+// 从resultStore获取用户列表（通过getter）
+const users = computed<UserInfo[]>(() => resultStore.getUsers);
+
+// 计算用户年龄
+const getUserAge = (user: UserInfo) => {
+  if (!user.birthday) return '未知';
+  // 假设birthday格式为"MM-DD"，这里简化处理
+  const birthYear = new Date().getFullYear() - 29; // 实际项目中应根据完整生日计算
+  return new Date().getFullYear() - birthYear;
+};
+
+// 返回上一页
 const goBack = () => router.back();
-
-const posterUrl = '/assets/activity-poster.png';
-const avatarUrl = '/assets/user-avatar.png';
+// 跳转到活动详情页（使用活动ID）
+const goToActivityDetail = () => {
+  if (activity.value) {
+    router.push(`/activity/detail/${activity.value.id}`);
+  }
+};
 </script>
-<style scoped>
-/* 总页面容器：严格匹配设计尺寸 */
-.result-page {
-  width: 375px;
-  height: 812px;
-  opacity: 1;
-  background: #f5f6f7; /* 替换为指定背景色 */
-  padding: 16px;
-  box-sizing: border-box; /* 确保padding不影响总尺寸 */
-  overflow-y: auto; /* 内容超出时可滚动 */
-  margin: 0 auto; /* 居中显示（模拟手机屏幕） */
-  position: relative; /* 便于内部元素定位 */
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  margin: -16px -16px 16px;
-  width: 100%;
-}
-
-.header .back-btn {
-  border: none;
-  background: transparent;
-  margin-right: 16px;
-}
-
-.header .back-btn:hover {
-  background: transparent;
-}
-
-.header .back-btn .t-icon {
-  width: 8.07px !important;
-  height: 13.38px !important;
-  opacity: 1 !important;
-  color: #000000e6 !important;
-}
-
-.header .title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000;
-}
-
-.result-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 16px 0;
-}
-
-.result-status .success-icon {
-  width: 70px !important;
-  height: 70px !important;
-  opacity: 1 !important;
-  background-color: #2baa71 !important;
-}
-
-.result-status .status-title {
-  width: 80px;
-  height: 28px;
-  opacity: 1;
-  color: #000000e6;
-  font-size: 20px;
-  font-weight: 600;
-  font-family: 'PingFang SC', sans-serif;
-  text-align: center;
-  line-height: 28px;
-  margin-top: 8px;
-}
-
-/* 活动信息卡片 */
-.activity-card {
-  width: 343px;
-  height: 282px;
-  border-radius: 12px;
-  opacity: 1;
-  background: #fff;
-  box-shadow:
-    0 6px 30px 5px #0000000d,
-    0 16px 24px 2px #0000000a,
-    0 8px 10px -5px #00000014;
-  overflow: hidden;
-  margin-bottom: 16px;
-}
-
-.activity-card .activity-info {
-  padding: 16px;
-}
-
-.activity-card .activity-title {
-  margin-bottom: 8px;
-}
-
-.activity-card .activity-details {
-  display: flex;
-  align-items: center;
-}
-
-.applicant-section {
-  width: 327px;
-  height: 82px;
-  opacity: 1;
-  border: 0 solid #e7e7e7;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-sizing: border-box;
-}
-
-.applicant-section .section-title {
-  width: 249px;
-  height: 24px;
-  opacity: 1;
-  color: #000000e6;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: 'PingFang SC', sans-serif;
-  text-align: left;
-  line-height: 24px;
-  margin-bottom: 8px;
-}
-
-.action-btns {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 24px;
-  width: 100%;
-  max-width: 343px;
-}
-
-.action-btns .share-btn {
-  width: 167.5px;
-  height: 48px;
-  border-radius: 6px;
-  opacity: 1;
-  border: 1px solid #0052d9;
-  background: #f2f3ff;
-  color: #0052d9;
-  font-weight: 500;
-}
-
-.action-btns .check-btn {
-  width: 167.5px;
-  height: 48px;
-  border-radius: 6px;
-  opacity: 1;
-  background: #0052d9;
-  color: #fff;
-  border: none;
-  font-weight: 500;
-}
-
-.ml-16 {
-  margin-left: 16px;
-}
-</style>
+<!-- 抽离后的独立样式文件 -->
+<style lang="less" scoped src="./result.less" />

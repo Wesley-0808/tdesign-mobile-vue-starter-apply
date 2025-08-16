@@ -1,0 +1,164 @@
+/* 总页面容器：严格匹配设计尺寸 */
+.result-page {
+  width: 375px;
+  height: 812px;
+  opacity: 1;
+  background: #f5f6f7;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 顶部导航 */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  margin: -16px -16px 16px;
+  width: 100%;
+
+  .back-btn {
+    border: none;
+    background: transparent;
+    margin-right: 16px;
+
+    &:hover {
+      background: transparent;
+    }
+
+    .t-icon {
+      width: 8.07px !important;
+      height: 13.38px !important;
+      opacity: 1 !important;
+      color: #000000e6 !important;
+    }
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+  }
+}
+
+/* 结果状态区 */
+.result-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 16px 0;
+
+  .success-icon {
+    width: 70px !important;
+    height: 70px !important;
+    opacity: 1 !important;
+    background-color: #2baa71 !important;
+  }
+
+  .status-title {
+    width: 80px;
+    height: 28px;
+    opacity: 1;
+    color: #000000e6;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'PingFang SC', sans-serif;
+    text-align: center;
+    line-height: 28px;
+    margin-top: 8px;
+  }
+}
+
+/* 活动信息卡片 */
+.activity-card {
+  width: 343px;
+  height: 282px;
+  border-radius: 12px;
+  opacity: 1;
+  background: #fff;
+  box-shadow:
+    0 6px 30px 5px #0000000d,
+    0 16px 24px 2px #0000000a,
+    0 8px 10px -5px #00000014;
+  overflow: hidden;
+  margin-bottom: 16px;
+
+  .activity-info {
+    padding: 16px;
+  }
+
+  .activity-title {
+    margin-bottom: 8px;
+  }
+
+  .activity-details {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* 报名人员信息 */
+.applicant-section {
+  width: 327px;
+  height: 82px;
+  opacity: 1;
+  border: 0 solid #e7e7e7;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+
+  .section-title {
+    width: 249px;
+    height: 24px;
+    opacity: 1;
+    color: #000000e6;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'PingFang SC', sans-serif;
+    text-align: left;
+    line-height: 24px;
+    margin-bottom: 8px;
+  }
+}
+
+/* 操作按钮区 */
+.action-btns {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  width: 100%;
+  max-width: 343px;
+
+  .share-btn {
+    width: 167.5px;
+    height: 48px;
+    border-radius: 6px;
+    opacity: 1;
+    border: 1px solid #0052d9;
+    background: #f2f3ff;
+    color: #0052d9;
+    font-weight: 500;
+  }
+
+  .check-btn {
+    width: 167.5px;
+    height: 48px;
+    border-radius: 6px;
+    opacity: 1;
+    background: #0052d9;
+    color: #fff;
+    border: none;
+    font-weight: 500;
+  }
+}
+
+.ml-16 {
+  margin-left: 16px;
+}
