@@ -1,13 +1,5 @@
 <template>
   <div class="result-page">
-    <!-- 1. 顶部导航 -->
-    <div class="header">
-      <t-button theme="default" size="small" class="back-btn" padding="0" @click="goBack">
-        <t-icon name="chevron-left" style="width: 8.07px; height: 13.38px; opacity: 1; color: #000000e6" />
-      </t-button>
-      <span class="title">购买结果</span>
-    </div>
-
     <!-- 2. 结果状态区 -->
     <div class="result-status">
       <check-circle-icon class="success-icon" size="70" color="#2BAA71" />
@@ -95,8 +87,6 @@ const getUserAge = (user: UserInfo) => {
   return new Date().getFullYear() - birthYear;
 };
 
-// 返回上一页
-const goBack = () => router.back();
 // 跳转到活动详情页（使用活动ID）
 const goToActivityDetail = () => {
   if (activity.value) {
