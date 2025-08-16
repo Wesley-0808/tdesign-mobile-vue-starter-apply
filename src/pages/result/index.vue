@@ -45,7 +45,7 @@
         <t-list-item
           v-for="user in users"
           :key="user.id"
-          :avatar="user.img"
+          :avatar="user.avatar"
           :title="user.name"
           :description="`${getUserAge(user)}岁 ${user.occupation}`"
           style="border-radius: 8px"

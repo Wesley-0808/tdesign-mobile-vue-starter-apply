@@ -23,7 +23,7 @@ export interface TabbarItem {
 export interface UserInfo {
   id: number;
   name: string;
-  img: string;
+  avatar: string;
   birthday: string;
   phone: string;
   identityCard: string;
