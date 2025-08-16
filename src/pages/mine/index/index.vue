@@ -54,7 +54,9 @@
               <div class="t-list__item-empty_title">加载更多</div>
             </div>
             <div v-if="userInfo.userid !== -1 && isShowAll" class="t-list__item-end">
-              <div>再往下滑也没有啦</div>
+              <div>
+                <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
+              </div>
             </div>
           </template>
         </t-list>
