@@ -65,7 +65,6 @@
       <activity-list :data="activityListData" :sort-by="sortBy" :filter-by="filterActivityItem" />
     </div>
   </div>
-
   <!---->
   <t-popup v-model="filterPopupVisible" placement="bottom">
     <div :class="`${prefix}-filter-view`">
@@ -251,7 +250,7 @@ const includes = (main: string | string[], sub: string[]) => {
   if (!Array.isArray(mainArray)) {
     throw new TypeError('main must be a string or an array');
   }
-  return sub.every((item) => mainArray.includes(item));
+  return sub.some((item) => mainArray.includes(item));
 };
 
 const filterActivityItem = (item: ActivityModel) => {

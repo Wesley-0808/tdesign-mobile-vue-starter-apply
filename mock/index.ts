@@ -40,6 +40,51 @@ export default [
     }),
   },
   {
+    url: '/api/get-my-activity-list',
+    method: 'get',
+    params: {
+      page: 1,
+    },
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          list: [
+            {
+              id: 1,
+              img: '/assets/image/activity/cover-2.png',
+              name: '2021 SICC服务设计创新大会',
+              date: '2021年3月16日',
+              status: 0,
+            },
+            {
+              id: 2,
+              img: '/assets/image/activity/cover-3.png',
+              name: '少年与星空 插画巡展',
+              date: '2021年6月5日',
+              status: 1,
+            },
+            {
+              id: 3,
+              img: '/assets/image/activity/cover-1.png',
+              name: '2019 SICC服务设计创新大会',
+              date: '2019年3月16日',
+              status: 1,
+            },
+            {
+              id: 4,
+              img: '/assets/image/activity/cover-4.png',
+              name: 'Unverse AI艺术展',
+              date: '2019年3月16日',
+              status: 1,
+            },
+          ],
+          is_end: true,
+        }),
+      },
+    }),
+  },
+  {
     url: '/api/get-all-activity',
     method: 'get',
     response: () => ({
@@ -172,6 +217,22 @@ export default [
               avatar: '/assets/image/avatar.png',
             },
           ],
+        }),
+      },
+    }),
+  },
+  {
+    url: '/api/get-user-info',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          userid: 123456,
+          avatar: '/assets/image/avatar.png',
+          username: '蔡宣轩',
+          age: 29,
+          occupation: '设计/艺术从业者',
         }),
       },
     }),

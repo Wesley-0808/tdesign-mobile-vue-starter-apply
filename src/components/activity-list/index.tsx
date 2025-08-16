@@ -1,13 +1,15 @@
 import './index.less';
 
 import dayjs from 'dayjs';
-import { isFunction } from 'lodash';
+import { isEmpty, isFunction } from 'lodash';
 import type { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 import type { ActivityModel } from '@/api/model/listModel';
 import { getLastDate } from '@/utils/activity/getDate';
 import { getMaxPrice, getMinPrice } from '@/utils/activity/getPrice';
+
+import Empty from '../result/Empty';
 
 export default defineComponent({
   name: 'ActivityList',
@@ -25,6 +27,15 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const emptyNode = computed(() => {
+      return (
+        <div class="t-empty">
+          <Empty class="t-empty__img" />
+          <span>{isEmpty(props.data) ? '暂无数据' : '当前筛选条件下没有数据～'}</span>
+        </div>
+      );
+    });
+
     const renderList = () => {
       const sortedData = props.data.sort((a, b) => {
         if (props.sortBy === 'latest') {
@@ -68,7 +79,7 @@ export default defineComponent({
         );
       });
 
-      return list;
+      return list.length > 0 ? list : emptyNode.value;
     };
     return () => {
       return <>{renderList()}</>;
