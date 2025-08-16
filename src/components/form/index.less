@@ -40,5 +40,14 @@
         background-color: var(--td-tag-primary-light-color, var(--td-brand-color-light, var(--td-brand-color-1, #f2f3ff)));
       }
     }
+
+    &-button {
+      position: absolute;
+      bottom: 16px;
+      width: 100%;
+      padding: 16px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      padding-bottom: calc(16px + constants(safe-area-inset-bottom));
+    }
   }
 }

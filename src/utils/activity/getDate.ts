@@ -7,7 +7,7 @@ import type { ActivityModel } from '@/api/model/listModel';
 dayjs.extend(isBetween);
 
 // 查找某个项目的最前（最早）的日期
-export const getLastDate = (item: ActivityModel) => {
+export const getEarlyDate = (item: ActivityModel) => {
   const { date } = item;
   if (!date) return 0;
   // 比较每一个日期
@@ -16,7 +16,24 @@ export const getLastDate = (item: ActivityModel) => {
   });
 };
 
-export const getDateRangeString = (date: Date[]) => {
+// 查找某个项目的最后（最晚）的日期
+export const getLatestDate = (item: ActivityModel) => {
+  const { date } = item;
+  if (!date) return 0;
+  // 比较每一个日期
+  return date.reduce((pre, cur) => {
+    return dayjs(cur).isBefore(dayjs(pre)) ? pre : cur;
+  });
+};
+
+export const getDateRangeYMD = (item: ActivityModel) => {
+  const early = getEarlyDate(item);
+  const latest = getLatestDate(item);
+  if (early === latest) return dayjs(early).format('YYYY年MM月DD日');
+  return getDateRangeString([dayjs(early).toDate(), dayjs(latest).toDate()], '至');
+};
+
+export const getDateRangeString = (date: Date[], split: string = '-') => {
   // 单个时间转换
   function convertSingleTime(timeStr: Date): string {
     const date = dayjs(timeStr, 'YYYY-MM-DD');
@@ -43,7 +60,7 @@ export const getDateRangeString = (date: Date[]) => {
       // 相差一年以上
       secondFormatted = convertSingleTime(date?.[1]);
     }
-    return `${firstFormatted} - ${secondFormatted}`;
+    return `${firstFormatted} ${split} ${secondFormatted}`;
   } else {
     console.error('Invalid input type');
   }

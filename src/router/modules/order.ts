@@ -8,7 +8,7 @@ export default [
     children: [
       {
         path: 'confirm',
-        name: 'OrderConfirm',
+        name: '购买确认',
         component: () => import('@/pages/order/confirm/index.vue'),
       },
     ],

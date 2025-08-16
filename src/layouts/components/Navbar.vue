@@ -7,7 +7,7 @@
     :left-arrow="!isInTabbar"
     :on-left-click="() => router.go(-1)"
   />
-  <img v-if="isInTabbar" src="/assets/image/bg-head.png" style="width: 100vw; position: fixed; z-index: -1" />
+  <img v-if="isInTabbar" src="/assets/image/bg-head.png" style="width: 100vw; position: fixed" />
   <div v-if="!isInTabbar || showNav" class="navbar-placeholder" style="height: var(--td-navbar-height, 48px)"></div>
 </template>
 <script setup lang="ts">
@@ -54,6 +54,8 @@ const customColorStyle = computed(() => {
   return {
     '--td-navbar-bg-color': navBgColor,
     '--td-navbar-color': navFgColor,
+    'z-index': 30,
+    position: 'fixed',
   };
 });
 

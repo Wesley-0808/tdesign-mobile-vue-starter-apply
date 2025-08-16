@@ -1,10 +1,18 @@
-import type { ActivityEvaluateResult, ActivityResult, RecommendListResult } from '@/api/model/listModel';
+import type {
+  ActivityEvaluateResult,
+  ActivityResult,
+  MyActivityListResult,
+  RecommendListResult,
+  UserInfoResult,
+} from '@/api/model/listModel';
 import { request } from '@/utils/request';
 
 const Api = {
   RecommendActivity: '/get-recommend-list',
   AllActivity: '/get-all-activity',
   ActivityEvaluate: '/get-activity-evaluate',
+  MyActivity: '/get-my-activity-list',
+  UserInfo: '/get-user-info',
 };
 
 export function getRecommendList() {
@@ -22,5 +30,18 @@ export function getAllActivityList() {
 export function getActivityEvaluate() {
   return request.get<ActivityEvaluateResult>({
     url: Api.ActivityEvaluate,
+  });
+}
+
+export function getMyActivityList(params: object) {
+  return request.get<MyActivityListResult>({
+    url: Api.MyActivity,
+    params,
+  });
+}
+
+export function getUserInfo() {
+  return request.get<UserInfoResult>({
+    url: Api.UserInfo,
   });
 }

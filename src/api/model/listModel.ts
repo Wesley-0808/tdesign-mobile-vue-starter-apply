@@ -38,7 +38,7 @@ interface ActivityGuest {
   img: string;
 }
 
-interface ActivityPrice {
+export interface ActivityPrice {
   name: string;
   price: number;
   discount?: number;
@@ -52,4 +52,25 @@ export interface ActivityEvaluate {
   user: string;
   content: string;
   avatar: string;
+}
+
+export interface MyActivityListResult {
+  list: MyActivityList[];
+  is_end: boolean;
+}
+
+export interface MyActivityList {
+  id: number;
+  img: string;
+  name: string;
+  date: string;
+  status: 0 | 1;
+}
+
+export interface UserInfoResult {
+  userid: number;
+  avatar: string;
+  username: string;
+  age: number;
+  occupation: string;
 }
