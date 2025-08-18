@@ -1,0 +1,431 @@
+.activity-detail {
+  min-height: 100vh;
+  background-color: #000;
+  box-sizing: border-box;
+  // 添加顶部内边距，为导航栏留出空间
+  padding-top: 0; // 根据实际导航栏高度调整
+
+  .content-wrapper {
+    position: relative;
+    height: calc(100vh - 50px); // 减去导航栏高度
+    overflow-y: auto; // 允许内容滚动
+    -webkit-overflow-scrolling: touch; // 增强iOS滚动体验
+    padding-bottom: 150px;
+
+    // 封面图样式
+    .cover-image-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2.34; // 375/160
+      height: auto;
+      margin-bottom: calc(21 / 375 * 100vw);
+
+      .cover-image {
+        border-radius: 0;
+        width: 100%;
+        aspect-ratio: 2.34; // 375/160
+        height: auto;
+        opacity: 1;
+        object-fit: cover;
+      }
+
+      .cover-title {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        color: rgb(255 255 255);
+        font-size: 24px;
+        font-weight: bold;
+        text-shadow: 0 2px 4px rgb(0 0 0 / 50%); // 添加文字阴影提高可读性
+      }
+    }
+
+    .activity-title {
+      width: 64px;
+      height: 24px;
+      opacity: 1;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      line-height: 24px;
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .swiper-wrapper {
+      padding: 0 16px;
+      margin-bottom: 24px; // 添加底部间距
+
+      // 确保轮播容器样式正确
+      :deep(.t-swiper) {
+        overflow: hidden;
+        position: relative;
+      }
+
+      :deep(.t-swiper__track) {
+        display: flex;
+        transition: transform 0.3s ease;
+      }
+
+      :deep(.t-swiper-item) {
+        flex-shrink: 0;
+        width: 100%;
+      }
+    }
+
+    .venue-swiper {
+      margin-top: 8px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // 确保图片完全覆盖容器而不变形
+      border-radius: 8px; // 添加圆角
+    }
+  }
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  max-width: 100vw;
+  height: 80px;
+  opacity: 1;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 -2px 4px rgb(0 0 0 / 5%);
+  z-index: 1000;
+
+
+  .action-item {
+    width: 50px;
+    height: 48px;
+    opacity: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    .t-icon {
+      width: 18px;
+      height: 15.99px;
+      opacity: 1;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    span {
+      width: 50px;
+      height: 20px;
+      opacity: 1;
+      color: #040000;
+      font-size: 12px;
+      font-weight: 400;
+      text-align: center;
+      line-height: 20px;
+      display: block;
+    }
+
+    &.favorited {
+      color: #e54d42;
+
+      span {
+        color: #e54d42;
+      }
+    }
+  }
+
+  .buy-button {
+    flex: 1;
+    height: 48px;
+    font-size: 16px;
+
+    --td-button-border-radius: 6px;
+    --td-button-primary-background-color: #0052d9;
+    --td-button-primary-border-color: #0052d9;
+  }
+}
+
+.bottom-drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 80px; // 与底部操作栏错开
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 12px rgb(0 0 0 / 8%);
+
+  /* overflow: hidden; */
+  // 保持移除状态，允许箭头溢出
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  transition: height 0.28s ease;
+
+  &.no-transition {
+    transition: none;
+
+    .drawer-arrow {
+      transition: none;
+
+      &::after {
+        transition: none;
+      }
+    }
+  }
+
+  .drawer-handle {
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .drawer-arc-img {
+    position: absolute;
+    top: -10px; // 根据图片高度调整
+    left: 50%;
+    transform: translateX(-50%);
+    width: 76px; // 根据图片实际宽度调整
+    height: 11px; // 根据图片实际高度调整
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* 新的箭头图标样式 */
+  .drawer-arrow-container {
+    position: absolute;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.28s ease-in-out;
+
+    .drawer-arrow-icon {
+      transition: font-size 0.28s ease-in-out;
+    }
+
+    /* --- 收起状态 (向上箭头) --- */
+    &.collapsed {
+      width: 36px;
+      height: 20px;
+      opacity: 1;
+      top: 4px;
+      transform: translate(-50%, -50%);
+
+      .drawer-arrow-icon {
+        font-size: 24px;
+      }
+    }
+
+    /* --- 展开状态 (向下箭头) --- */
+    &.expanded {
+      width: 24px;
+      height: 24px;
+      opacity: 1;
+      background: transparent;
+      color: #fff;
+      top: -28px;
+      transform: translateX(-50%);
+
+      .drawer-arrow-icon {
+        font-size: 24px;
+        color: #fff;
+      }
+    }
+  }
+
+  .drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    /* --- 活动详情样式 --- */
+    .activity-info-wrapper {
+      padding: 0 16px 24px;
+      color: #333;
+    }
+
+    // 标题
+    .activity-main-title {
+      // width: 343px; // 宽度建议自适应，避免换行问题
+      height: 28px;
+      opacity: 1;
+      color: #040000;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: left;
+      line-height: 28px;
+      margin: 16px 0;
+    }
+
+    // 感兴趣
+    .interested-section {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+
+      .avatar-group {
+        display: flex;
+        align-items: center;
+
+        .avatar,
+        .avatar-more {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 2px solid white;
+
+          &:not(:first-child) {
+            margin-left: -12px;
+          }
+        }
+
+        .avatar-more {
+          background-color: #f2f2f2;
+          color: #777;
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 500;
+        }
+      }
+
+      .interested-count {
+        margin-left: 8px;
+        font-size: 14px;
+        color: #555;
+      }
+    }
+
+    // 时间与地点
+    .info-block {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 24px;
+
+      .info-row {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #333;
+
+        &:first-child {
+          margin-bottom: 12px;
+        }
+
+        .t-icon {
+          margin-right: 8px;
+          color: #777;
+        }
+
+        .nav-button {
+          margin-left: auto;
+
+          --td-button-small-height: 28px;
+          --td-button-primary-light-color: #0052d9;
+        }
+      }
+    }
+
+    // 通用区块头
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #040000;
+      margin: 0;
+    }
+
+    // 评价区
+    .rating-section {
+      margin-bottom: 24px;
+
+      .rating-display {
+        :deep(.t-rate__text) {
+          font-size: 14px;
+          color: #fa8c16;
+          font-weight: bold;
+          margin-left: 4px;
+        }
+      }
+    }
+
+    // 介绍区
+    .intro-section {
+      .intro-paragraph {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #555;
+        margin: 0;
+      }
+    }
+
+  }
+
+  /* --- 评论横向滚动样式 --- */
+  .reviews-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 8px; // 留出空间给滚动条，即使隐藏了也建议保留
+
+    // 隐藏滚动条
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    scrollbar-width: none; // For Firefox
+
+    .review-cell {
+      flex-shrink: 0; // 防止 cell 被压缩
+      width: 80%; // 每个评论卡片的宽度
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      margin-right: 12px;
+
+      // 使用 :deep 穿透组件样式
+      :deep(.t-cell__title) {
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+
+      :deep(.t-cell__description) {
+        // 限制描述文字最多显示两行
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+      }
+
+      :deep(.t-cell__left) {
+        align-self: flex-start; // 头像顶部对齐
+      }
+    }
+  }
+}

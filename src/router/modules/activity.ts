@@ -9,7 +9,7 @@ export default [
       {
         path: ':id',
         name: 'activity-detail',
-        component: () => import('@/pages/activity/index.vue'),
+        component: () => import('@/pages/activity/index/index.vue'),
         meta: {
           navBgColor: '#000000',
           navFgColor: '#ffffff',
