@@ -1,48 +1,39 @@
 <template>
-  <div class="activity-detail">
+  <!-- 添加加载和未找到状态 -->
+  <div v-if="isLoading" class="loading-container">正在加载活动详情...</div>
+  <div v-else-if="!activityDetail" class="not-found-container">未找到该活动信息。</div>
+
+  <!-- 仅在成功获取数据后渲染主内容 -->
+  <div v-else class="activity-detail">
     <div class="content-wrapper">
       <!-- 活动封面图 -->
       <div class="cover-image-container">
         <t-image
           class="cover-image"
           fit="cover"
-          :src="coverImageSrc"
+          :src="activityDetail.img"
           :style="{ width: '100%', height: '200px' }"
         ></t-image>
       </div>
 
       <!-- 活动嘉宾轮播 -->
-      <div class="swiper-wrapper">
+      <div v-if="activityDetail.guest?.length" class="swiper-wrapper">
         <h3 class="activity-title">活动嘉宾</h3>
-        <t-swiper
-          :navigation="{ type: 'dots', placement: 'outside' }"
-          :autoplay="false"
-          animation="slide"
-          :loop="true"
-          :duration="300"
-          @click="handleClick"
-          @change="handleChange"
-        >
-          <t-swiper-item v-for="(item, index) in swiperList" :key="index" style="height: 192px">
-            <img :src="item" class="img" alt="轮播图片" />
+        <t-swiper :navigation="{ type: 'dots', placement: 'outside' }" :autoplay="false">
+          <!-- 使用从API获取的嘉宾数据 -->
+          <t-swiper-item v-for="guest in activityDetail.guest" :key="guest.name" style="height: 192px">
+            <img :src="guest.img" class="img" :alt="`嘉宾-${guest.name}`" />
           </t-swiper-item>
         </t-swiper>
       </div>
 
       <!-- 活动会场轮播 -->
-      <div class="swiper-wrapper venue-swiper">
+      <div v-if="activityDetail.venue?.length" class="swiper-wrapper venue-swiper">
         <h3 class="activity-title">活动场地</h3>
-        <t-swiper
-          :navigation="{ type: 'dots', placement: 'outside' }"
-          :autoplay="false"
-          animation="slide"
-          :loop="true"
-          :duration="300"
-          @click="handleVenueClick"
-          @change="handleVenueChange"
-        >
-          <t-swiper-item v-for="(item, index) in venueList" :key="index" style="height: 192px">
-            <img :src="item" class="img" alt="会场轮播图片" />
+        <t-swiper :navigation="{ type: 'dots', placement: 'outside' }" :autoplay="false">
+          <!-- 使用从API获取的会场数据 -->
+          <t-swiper-item v-for="venue in activityDetail.venue" :key="venue.name" style="height: 192px">
+            <img :src="venue.img" class="img" :alt="`会场-${venue.name}`" />
           </t-swiper-item>
         </t-swiper>
       </div>
@@ -60,60 +51,59 @@
         @mousedown="onDragStart"
         @touchstart.prevent="onDragStart"
       >
-        <!-- 弧形图片，仅收回状态显示 -->
         <img v-if="!isExpanded" src="@/assets/assets-detail-arcs.png" alt="弧形装饰" class="drawer-arc-img" />
         <div class="drawer-arrow-container" :class="{ expanded: isExpanded, collapsed: !isExpanded }">
           <t-icon :name="isExpanded ? 'chevron-down' : 'chevron-up'" class="drawer-arrow-icon" />
         </div>
       </div>
       <div v-if="isExpanded" class="drawer-content" @touchmove="onDrawerTouchMove" @wheel.stop>
-        <!-- 活动详情容器 -->
         <div class="activity-info-wrapper">
           <!-- 标题 -->
-          <h1 class="activity-main-title">{{ activityDetails.title }}</h1>
+          <h1 class="activity-main-title">{{ activityDetail.name }}</h1>
 
           <!-- 感兴趣 -->
           <div class="interested-section">
             <div class="avatar-group">
-              <img
-                v-for="(avatar, index) in activityDetails.interested.avatars"
-                :key="index"
-                :src="avatar"
-                class="avatar"
-              />
-              <div class="avatar-more">99+</div>
+              <!-- Mock数据中没有头像列表，这里暂时保留静态头像作为示例 -->
+              <img src="https://tdesign.gtimg.com/mobile/demos/avatar_1.png" class="avatar" />
+              <img src="https://tdesign.gtimg.com/mobile/demos/avatar_2.png" class="avatar" />
+              <img src="https://tdesign.gtimg.com/mobile/demos/avatar_3.png" class="avatar" />
+              <div class="avatar-more">...</div>
             </div>
-            <span class="interested-count">{{ activityDetails.interested.count }}人感兴趣</span>
+            <span class="interested-count">{{ activityDetail.interested }}人感兴趣</span>
           </div>
 
           <!-- 时间与地点 -->
           <div class="info-block">
             <div class="info-row">
               <t-icon name="time" size="20px" />
-              <span>时间：{{ activityDetails.time }}</span>
+              <!-- 使用 computed 属性格式化日期 -->
+              <span>时间：{{ formattedDate }}</span>
             </div>
-            <div class="info-row">
+            <div v-if="activityDetail.place" class="info-row">
               <t-icon name="location" size="20px" />
-              <span>地点：{{ activityDetails.location }}</span>
+              <span>地点：{{ activityDetail.place }}</span>
               <t-button theme="primary" variant="base" size="small" class="nav-button">导航</t-button>
             </div>
           </div>
 
           <!-- 活动评价 -->
-          <div class="rating-section">
+          <div v-if="activityReviews.length" class="rating-section">
             <div class="section-header">
-              <h2 class="section-title">活动评价({{ activityDetails.rating.count }})</h2>
+              <!-- 评价总数动态获取 -->
+              <h2 class="section-title">活动评价({{ activityReviews.length }})</h2>
               <div class="rating-display">
-                <t-rate :default-value="activityDetails.rating.average" size="16px" allow-half show-text disabled />
+                <!-- 评分动态获取 -->
+                <t-rate :default-value="activityDetail.evaluate" size="16px" allow-half show-text disabled />
               </div>
             </div>
-            <!-- 评论滚动区 -->
             <div class="reviews-scroll-container">
+              <!-- 循环渲染从API获取的评论 -->
               <t-cell
-                v-for="(review, index) in activityDetails.reviews"
-                :key="index"
-                :title="review.name"
-                :description="review.comment"
+                v-for="review in activityReviews"
+                :key="review.id"
+                :title="review.user"
+                :description="review.content"
                 :image="review.avatar"
                 :bordered="false"
                 class="review-cell"
@@ -122,11 +112,11 @@
           </div>
 
           <!-- 活动介绍 -->
-          <div class="intro-section">
+          <div v-if="activityDetail.introduce" class="intro-section">
             <div class="section-header">
               <h2 class="section-title">活动介绍</h2>
             </div>
-            <p class="intro-paragraph">{{ activityDetails.introduction }}</p>
+            <p class="intro-paragraph">{{ activityDetail.introduce }}</p>
           </div>
         </div>
       </div>
@@ -142,53 +132,105 @@
         <t-icon name="share" size="24px" />
         <span>分享</span>
       </div>
-      <t-button theme="primary" shape="rectangle" class="buy-button" @click="handleBuyClick"
-        >立即购买 ¥88-¥228</t-button
-      >
+      <!-- 使用 computed 属性动态显示价格 -->
+      <t-button theme="primary" shape="rectangle" class="buy-button" @click="handleBuyClick">{{
+        formattedPrice
+      }}</t-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
-// --- 底部操作栏逻辑 ---
-const isFavorited = ref(false);
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
+import { getActivityEvaluate, getAllActivityList } from '@/api/list';
+import type { ActivityEvaluate, ActivityModel } from '@/api/model/listModel';
+
+// --- 定义响应式变量以存储从API获取的数据 ---
+const isLoading = ref(true);
+const activityDetail = ref<ActivityModel | null>(null);
+const activityReviews = ref<ActivityEvaluate[]>([]);
+const route = useRoute();
+const router = useRouter();
+
+// --- 在组件挂载时获取数据 ---
+onMounted(async () => {
+  // 从路由参数中获取活动ID (例如 /activity/2 -> id = 2)
+  const activityId = Number(route.params.id);
+
+  if (!activityId) {
+    isLoading.value = false;
+    console.error('未能在路由中找到有效的活动ID');
+    return;
+  }
+
+  try {
+    // 异步请求所有活动列表和评价列表
+    const [activityRes, evaluateRes] = await Promise.all([getAllActivityList(), getActivityEvaluate()]);
+
+    // 在所有活动中查找与当前ID匹配的活动
+    const foundActivity = activityRes.list.find((act) => act.id === activityId);
+
+    if (foundActivity) {
+      activityDetail.value = foundActivity;
+      activityReviews.value = evaluateRes.list; // Mock中评价是通用的，直接赋值
+      document.title = foundActivity.name; // 动态设置页面标题
+    } else {
+      console.error(`ID为 ${activityId} 的活动未找到`);
+    }
+  } catch (error) {
+    console.error('获取活动详情失败:', error);
+  } finally {
+    isLoading.value = false; // 加载结束
+  }
+});
+
+// --- 创建计算属性以格式化数据 ---
+const formattedDate = computed(() => {
+  if (!activityDetail.value?.date) return '暂无日期';
+  // 将日期数组用 ' - ' 连接起来
+  return activityDetail.value.date.join(' - ');
+});
+
+const formattedPrice = computed(() => {
+  const price = activityDetail.value?.price;
+  if (!price) return '立即购买';
+  if (price === 'free') return '免费参与';
+
+  if (Array.isArray(price) && price.length > 0) {
+    const prices = price.map((p) => p.discount ?? p.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    if (minPrice === maxPrice) return `立即购买 ¥${minPrice}`;
+    return `立即购买 ¥${minPrice}-¥${maxPrice}`;
+  }
+
+  return '查看价格';
+});
+
+// --- 底部操作栏逻辑  ---
+const isFavorited = ref(false);
 const handleFavoriteClick = () => {
   isFavorited.value = !isFavorited.value;
-  console.log(isFavorited.value ? '已收藏' : '已取消收藏');
 };
+const handleShareClick = () => console.log('触发分享');
+const handleBuyClick = () => router.push({ path: '/order/confirm' });
 
-const handleShareClick = () => {
-  console.log('触发分享');
-};
-
-const router = useRouter();
-const handleBuyClick = () => {
-  // 跳转到订单确认页面
-  router.push({ path: '/order/confirm' });
-};
-
-// 抽屉展开收起逻辑
+// --- 抽屉交互逻辑  ---
 const MIN_DRAWER_HEIGHT = 20;
 const MAX_DRAWER_HEIGHT = window.innerHeight * 0.6;
 const drawerHeight = ref(MIN_DRAWER_HEIGHT);
 const SNAP_THRESHOLD = (MIN_DRAWER_HEIGHT + MAX_DRAWER_HEIGHT) / 2;
 const isExpanded = computed(() => drawerHeight.value > MIN_DRAWER_HEIGHT);
-
-const toggleDrawer = () => {
-  drawerHeight.value = isExpanded.value ? MIN_DRAWER_HEIGHT : MAX_DRAWER_HEIGHT;
-};
-
-// 抽屉拖拽逻辑
 const isDragging = ref(false);
 let startY = 0;
 let startHeight = 0;
 let movedDistance = 0;
-const CLICK_DRAG_THRESHOLD = 5; // 小于此位移视为点击
-
+const CLICK_DRAG_THRESHOLD = 5;
 const getClientY = (e: MouseEvent | TouchEvent) => ('touches' in e ? e.touches[0].clientY : e.clientY);
-
+const toggleDrawer = () => {
+  drawerHeight.value = isExpanded.value ? MIN_DRAWER_HEIGHT : MAX_DRAWER_HEIGHT;
+};
 const onDragStart = (e: MouseEvent | TouchEvent) => {
   isDragging.value = true;
   startY = getClientY(e);
@@ -199,7 +241,6 @@ const onDragStart = (e: MouseEvent | TouchEvent) => {
   window.addEventListener('touchmove', onDragMove, { passive: false });
   window.addEventListener('touchend', onDragEnd);
 };
-
 const onDragMove = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
   const currentY = getClientY(e);
@@ -208,28 +249,21 @@ const onDragMove = (e: MouseEvent | TouchEvent) => {
   let next = startHeight + delta;
   next = Math.max(MIN_DRAWER_HEIGHT, Math.min(next, MAX_DRAWER_HEIGHT));
   drawerHeight.value = next;
-  if ('touches' in e) e.preventDefault(); // 阻止页面滚动
+  if ('touches' in e) e.preventDefault();
 };
-
 const onDragEnd = () => {
   if (!isDragging.value) return;
   isDragging.value = false;
-
   if (movedDistance < CLICK_DRAG_THRESHOLD) {
-    // 轻点：切换
     toggleDrawer();
   } else {
-    // 拖动：根据当前位置吸附
     drawerHeight.value = drawerHeight.value >= SNAP_THRESHOLD ? MAX_DRAWER_HEIGHT : MIN_DRAWER_HEIGHT;
   }
-
   window.removeEventListener('mousemove', onDragMove);
   window.removeEventListener('mouseup', onDragEnd);
   window.removeEventListener('touchmove', onDragMove);
   window.removeEventListener('touchend', onDragEnd);
 };
-
-// 防止滚动冒泡
 let lastDrawerTouchY: number | undefined;
 const onDrawerTouchMove = (e: TouchEvent) => {
   const target = e.currentTarget as HTMLElement;
@@ -238,97 +272,25 @@ const onDrawerTouchMove = (e: TouchEvent) => {
   const offsetHeight = target.offsetHeight;
   const direction = e.touches[0].clientY - (lastDrawerTouchY ?? e.touches[0].clientY);
   lastDrawerTouchY = e.touches[0].clientY;
-
-  // 判断是否到达顶部或底部，防止边界穿透
   if ((scrollTop === 0 && direction > 0) || (scrollTop + offsetHeight >= scrollHeight && direction < 0)) {
     e.preventDefault();
     e.stopPropagation();
   } else {
-    // 在抽屉内滚动时阻止冒泡
     e.stopPropagation();
   }
 };
-
-const imageCdn = 'https://tdesign.gtimg.com/mobile/demos';
-// 添加封面图片
-const coverImageSrc = ref('https://tdesign.gtimg.com/demo/demo-image-1.png');
-
-const swiperList = [
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-];
-
-const venueList = [
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-  `${imageCdn}/swiper1.png`,
-  `${imageCdn}/swiper2.png`,
-];
-
-const handleClick = (value: number) => {
-  console.log('嘉宾点击: ', value);
-};
-
-const handleChange = (index: number, context: any) => {
-  console.log('嘉宾轮播，页数变化到》》》', index, context);
-};
-
-const handleVenueClick = (value: number) => {
-  console.log('会场点击: ', value);
-};
-
-const handleVenueChange = (index: number, context: any) => {
-  console.log('会场轮播，页数变化到》》》', index, context);
-};
-
-// 确保导航栏显示在顶部
-onMounted(() => {
-  // 设置页面标题
-  document.title = '活动详情';
-});
-const activityDetails = reactive({
-  title: '2021 SICC服务设计创新大会',
-  interested: {
-    count: 236,
-    avatars: [
-      'https://tdesign.gtimg.com/mobile/demos/avatar_1.png',
-      'https://tdesign.gtimg.com/mobile/demos/avatar_2.png',
-      'https://tdesign.gtimg.com/mobile/demos/avatar_3.png',
-      'https://tdesign.gtimg.com/mobile/demos/avatar_4.png',
-      'https://tdesign.gtimg.com/mobile/demos/avatar_5.png',
-    ],
-  },
-  time: '2021年3月16日',
-  location: '深圳市腾讯滨海大厦',
-  rating: {
-    average: 4.5,
-    count: 26,
-  },
-  reviews: [
-    {
-      name: '小小轩',
-      avatar: 'https://tdesign.gtimg.com/mobile/demos/avatar_1.png',
-      comment: '我已经是第三次参加SICC大会了，作为一名服务体验设计行业的从业者，每次参与都受益匪浅...',
-    },
-    {
-      name: '用户B',
-      avatar: 'https://tdesign.gtimg.com/mobile/demos/avatar_2.png',
-      comment: '干货满满，特别是关于数字化转型的部分，对我的工作很有启发，强烈推荐！',
-    },
-    {
-      name: '用户C',
-      avatar: 'https://tdesign.gtimg.com/mobile/demos/avatar_3.png',
-      comment: '场地安排得很好，嘉宾分享也非常精彩。期待下一届的举办。',
-    },
-  ],
-  introduction:
-    '在数字化时代背景下，如何抓住机遇，构建“数字”+“文化”更高效、宽领域、深覆盖的新时代文化创新之路，让优秀传统文化得以延续和新生，被更多人认可和接受，也是我们服务设计探索的方向。2021年5月16日，由腾讯用户研究与体验设计部（简称CDC）主办的第三届服务创新大会，将在深圳腾讯滨海大厦召开。近年来数字化正在赋能传统文化的传承和传播，而传统文化也同样在启发新的服务设计理念和思路，两者之间的界限越来越模糊，相互融合。本次大会将围绕文化保育和文化创新，邀请7位传统文物、建筑、服饰、工艺等不同艺术领域的行业专家，为我们分享最新发展趋势和实践经验，开拓来宾在传统文化与数字科技间的碰撞思路，探索新的服务设计课题，让我们先睹为快，了解这些专家们将会分享哪些主题。',
-});
 </script>
 <style lang="less" scoped>
 @import './index.less';
+
+/* 新增的加载和未找到样式 */
+.loading-container,
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 16px;
+  color: #888;
+}
 </style>
