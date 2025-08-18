@@ -24,45 +24,82 @@
 
     <!-- 3. 活动信息卡片 - 从resultStore获取数据 -->
     <div v-if="activity" class="activity-card">
-      <t-image :src="activity.img" width="100%" height="175" fit="cover" style="border-radius: 12px 12px 0 0" />
+      <t-image :src="activity.img" fit="cover" class="activity-img" />
       <div class="activity-info">
-        <t-text class="activity-title" size="16" weight="600"> {{ activity.name }} </t-text>
+        <t-text class="activity-title"> {{ activity.name }} </t-text>
         <div class="activity-details">
           <t-space align="center" size="small">
             <time-icon size="14" color="#0052D9" />
-            <t-text size="12" color="#000">{{ activity.date[0] }}</t-text>
+            <t-text class="date-text">{{ activity.date[0] }}</t-text>
             <location-icon size="14" color="#0052D9" class="ml-16" />
-            <t-text size="12" color="#000">{{ activity.place }}</t-text>
+            <t-text class="place-text">{{ activity.place }}</t-text>
           </t-space>
         </div>
       </div>
     </div>
 
-    <!-- 4. 报名人员信息 - 从resultStore获取数据 -->
-    <div v-if="users.length > 0" class="applicant-section">
-      <t-text class="section-title">报名人员</t-text>
-      <t-list>
-        <t-list-item
-          v-for="user in users"
-          :key="user.id"
-          :avatar="user.avatar"
-          :title="user.name"
-          :description="`${getUserAge(user)}岁 ${user.occupation}`"
-          style="border-radius: 8px"
-        />
-      </t-list>
+    <div v-if="users.length &gt; 0" class="applicant-section-wrapper">
+      <!-- 单独的报名人员标题区域 -->
+      <div class="applicant-title-container">
+        <t-text class="applicant-title">报名人员</t-text>
+      </div>
+
+      <!-- 单独的报名人员列表区域 -->
+      <div class="applicant-list-container">
+        <div class="user-cell-list">
+          <t-cell
+            v-for="user in users"
+            :key="user.id"
+            :image="user.avatar"
+            shape="circle"
+            :title="user.name"
+            :description="`${getUserAge(user)}岁 ${user.occupation}`"
+          >
+          </t-cell>
+        </div>
+      </div>
     </div>
 
-    <!-- 5. 操作按钮区 -->
+    <!-- 4. 分享按钮 -->
     <div class="action-btns">
-      <t-button class="share-btn" theme="default" size="medium"> 分享给朋友 </t-button>
-      <t-button class="check-btn" theme="default" size="medium" @click="goToActivityDetail"> 去查看 </t-button>
+      <div class="popup-demo">
+        <!-- 触发分享弹窗的按钮 -->
+        <t-button class="share-btn" theme="default" size="medium" @click="handleShareClick">分享给朋友</t-button>
+        <!-- 底部弹出的弹窗组件 -->
+        <t-popup v-model="visible" placement="bottom" destroy-on-close>
+          <div class="share-popup-content">
+            <!-- 分享给朋友标题及列表 -->
+            <div class="share-section">
+              <div class="section-title">分享给朋友</div>
+              <div class="friend-list">
+                <div v-for="(friend, index) in friendList" :key="index" class="friend-item">
+                  <img :src="friend.avatar" alt="friend-avatar" class="friend-avatar" />
+                  <p class="friend-name">{{ friend.name }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- 分享到社媒标题及列表 -->
+            <div class="share-section">
+              <div class="section-title">分享到社媒</div>
+              <div class="social-list">
+                <div v-for="(social, index) in socialList" :key="index" class="social-item">
+                  <img :src="social.icon" alt="social-icon" class="social-icon" />
+                  <p class="social-name">{{ social.name }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- 取消按钮 -->
+            <t-button theme="default" size="medium" class="cancel-btn" @click="visible = false">取消</t-button>
+          </div>
+        </t-popup>
+      </div>
+      <t-button class="check-btn" theme="default" size="medium" @click="goToActivityDetail">去查看</t-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { CheckCircleIcon, LocationIcon, TimeIcon } from 'tdesign-icons-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { ActivityModel } from '@/api/model/listModel';
@@ -92,6 +129,30 @@ const goToActivityDetail = () => {
   if (activity.value) {
     router.push(`/activity/detail/${activity.value.id}`);
   }
+};
+
+// 控制弹窗显示隐藏
+const visible = ref(false);
+// // 模拟分享给朋友的好友数据
+const friendList = [
+  { avatar: '/assets/image/Allen.png', name: 'Allen' },
+  { avatar: '/assets/image/nick.png', name: 'Nick' },
+  { avatar: '/assets/image/jacky.png', name: 'Jacky' },
+  { avatar: '/assets/image/eric.png', name: 'Eric' },
+  { avatar: '/assets/image/john.png', name: 'Johnsc' },
+];
+// 模拟分享到社媒的平台数据
+const socialList = [
+  { icon: '/assets/image/wechat.png', name: 'WeChat' },
+  { icon: '/assets/image/qq.png', name: 'QQ' },
+  { icon: '/assets/image/doc.png', name: 'Doc' },
+  { icon: '/assets/image/map.png', name: 'Map' },
+  { icon: '/assets/image/music.png', name: 'QQ Mus' },
+];
+
+// 点击分享按钮的处理函数
+const handleShareClick = () => {
+  visible.value = true;
 };
 </script>
 <!-- 抽离后的独立样式文件 -->
