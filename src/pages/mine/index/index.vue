@@ -13,55 +13,69 @@
         <div class="mine-card__content-edit" @click="onEdit"><edit-icon size="20px" /></div>
       </div>
     </div>
-    <t-tabs :value="currentValue" :list="tabList" @change="onChange">
-      <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
-        <t-list :async-loading="activityLoading ? 'loading' : ''" @scroll="onScroll">
-          <div
-            v-for="cell in filterActivityList(allActivityList.list, currentValue)"
-            :key="cell.id"
-            class="t-list__item"
-            align="middle"
+    <div class="activity-list">
+      <t-tabs :value="currentValue" :list="tabList" @change="onChange">
+        <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
+          <t-list
+            :async-loading="activityLoading ? 'loading' : ''"
+            class="activity-list__tlist"
+            :style="{ maxHeight: `${listHeight}px` }"
+            @scroll="onScroll"
           >
-            <div class="t-list__item-img">
-              <img :src="cell.img" alt="" />
-            </div>
-            <div class="t-list__item-content">
-              <div class="t-list__item-content-info">
-                <div class="t-list__item-content-info-name">{{ cell.name }}</div>
-                <div class="t-list__item-content-info-date">{{ cell.date }}</div>
-              </div>
-              <div class="t-list__item-content-footer">
-                <div
-                  class="t-list__item-content-footer-status"
-                  :style="{ color: cell.status ? '' : 'var(--td-success-color)' }"
-                >
-                  {{ cell.status ? '已完成' : '待参加' }}
-                </div>
-                <div v-if="cell.status" class="t-list__item-content-footer-comment" @click="onComment">去评价</div>
-              </div>
-            </div>
-          </div>
-          <template #footer>
-            <div v-if="userInfo.userid === -1" class="t-list__item-click_to_login" @click.stop="onLogin">
-              您还未登录，点击登录
-            </div>
             <div
-              v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
-              class="t-list__item-empty"
-              @click.stop="() => onActivityLoad(false, true)"
+              v-for="cell in filterActivityList(allActivityList.list, currentValue)"
+              :key="cell.id"
+              class="activity-list__tlist__item"
+              align="middle"
             >
-              <empty class="t-list__item-empty_img" />
-              <div class="t-list__item-empty_title">加载更多</div>
-            </div>
-            <div v-if="userInfo.userid !== -1 && isShowAll" class="t-list__item-end">
-              <div>
-                <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
+              <div class="activity-list__tlist__item-img">
+                <img :src="cell.img" alt="" />
+              </div>
+              <div class="activity-list__tlist__item-content">
+                <div class="activity-list__tlist__item-content-info">
+                  <div class="activity-list__tlist__item-content-info-name">{{ cell.name }}</div>
+                  <div class="activity-list__tlist__item-content-info-date">{{ cell.date }}</div>
+                </div>
+                <div class="activity-list__tlist__item-content-footer">
+                  <div
+                    class="activity-list__tlist__item-content-footer-status"
+                    :style="{ color: cell.status ? '' : 'var(--td-success-color)' }"
+                  >
+                    {{ cell.status ? '已完成' : '待参加' }}
+                  </div>
+                  <div v-if="cell.status" class="activity-list__tlist__item-content-footer-comment" @click="onComment">
+                    去评价
+                  </div>
+                </div>
               </div>
             </div>
-          </template>
-        </t-list>
-      </t-tab-panel>
-    </t-tabs>
+            <template #footer>
+              <div
+                v-if="userInfo.userid === -1"
+                class="activity-list__tlist__item-click_to_login"
+                @click.stop="onLogin"
+              >
+                您还未登录，点击登录
+              </div>
+              <div
+                v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
+                class="activity-list__tlist__item-empty"
+                @click.stop="() => onActivityLoad(false, true)"
+              >
+                <empty class="activity-list__tlist__item-empty_img" />
+                <div class="activity-list__tlist__item-empty_title">加载更多</div>
+              </div>
+              <div v-if="userInfo.userid !== -1 && isShowAll" class="activity-list__tlist__item-end">
+                <div>
+                  <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
+                </div>
+              </div>
+            </template>
+          </t-list>
+        </t-tab-panel>
+      </t-tabs>
+    </div>
+    <div style="height: 56px !important; flex-shrink: 0"></div>
   </div>
 </template>
 <script setup lang="ts">
@@ -238,7 +252,15 @@ const onUserInfoLoad = async () => {
   onActivityLoad();
 };
 
+const listHeight = ref(0);
+
+function updateHeight() {
+  const viewport = document.documentElement.clientHeight;
+  listHeight.value = viewport - 96 - 16 - 56 - 48 - 48; // 96+16是个人名片高度，56+48是navbar和tabbar，48是t-tabs的nav高度
+}
+
 onMounted(() => {
+  updateHeight();
   onUserInfoLoad();
 });
 </script>
