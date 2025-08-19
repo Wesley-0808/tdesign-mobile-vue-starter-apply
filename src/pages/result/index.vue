@@ -26,8 +26,6 @@
       <div class="applicant-title">
         <span>报名人员</span>
       </div>
-
-      <!-- 单独的报名人员列表区域 -->
       <div class="applicant-list">
         <div class="user-cell-list">
           <t-cell
