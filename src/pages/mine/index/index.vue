@@ -13,37 +13,41 @@
         <div class="mine-card__content-edit" @click="onEdit"><edit-icon size="20px" /></div>
       </div>
     </div>
-    <div class="activity-list">
+    <div class="my-activity-list">
       <t-tabs :value="currentValue" :list="tabList" @change="onChange">
         <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
           <t-list
             :async-loading="activityLoading ? 'loading' : ''"
-            class="activity-list__tlist"
+            class="my-activity-list__tlist"
             :style="{ maxHeight: `${listHeight}px` }"
             @scroll="onScroll"
           >
             <div
               v-for="cell in filterActivityList(allActivityList.list, currentValue)"
               :key="cell.id"
-              class="activity-list__tlist__item"
+              class="my-activity-list__tlist__item"
               align="middle"
             >
-              <div class="activity-list__tlist__item-img">
+              <div class="my-activity-list__tlist__item-img">
                 <img :src="cell.img" alt="" />
               </div>
-              <div class="activity-list__tlist__item-content">
-                <div class="activity-list__tlist__item-content-info">
-                  <div class="activity-list__tlist__item-content-info-name">{{ cell.name }}</div>
-                  <div class="activity-list__tlist__item-content-info-date">{{ cell.date }}</div>
+              <div class="my-activity-list__tlist__item-content">
+                <div class="my-activity-list__tlist__item-content-info">
+                  <div class="my-activity-list__tlist__item-content-info-name">{{ cell.name }}</div>
+                  <div class="my-activity-list__tlist__item-content-info-date">{{ cell.date }}</div>
                 </div>
-                <div class="activity-list__tlist__item-content-footer">
+                <div class="my-activity-list__tlist__item-content-footer">
                   <div
-                    class="activity-list__tlist__item-content-footer-status"
+                    class="my-activity-list__tlist__item-content-footer-status"
                     :style="{ color: cell.status ? '' : 'var(--td-success-color)' }"
                   >
                     {{ cell.status ? '已完成' : '待参加' }}
                   </div>
-                  <div v-if="cell.status" class="activity-list__tlist__item-content-footer-comment" @click="onComment">
+                  <div
+                    v-if="cell.status"
+                    class="my-activity-list__tlist__item-content-footer-comment"
+                    @click="onComment"
+                  >
                     去评价
                   </div>
                 </div>
@@ -52,20 +56,20 @@
             <template #footer>
               <div
                 v-if="userInfo.userid === -1"
-                class="activity-list__tlist__item-click_to_login"
+                class="my-activity-list__tlist__item-click_to_login"
                 @click.stop="onLogin"
               >
                 您还未登录，点击登录
               </div>
               <div
                 v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
-                class="activity-list__tlist__item-empty"
+                class="my-activity-list__tlist__item-empty"
                 @click.stop="() => onActivityLoad(false, true)"
               >
-                <empty class="activity-list__tlist__item-empty_img" />
-                <div class="activity-list__tlist__item-empty_title">加载更多</div>
+                <empty class="my-activity-list__tlist__item-empty_img" />
+                <div class="my-activity-list__tlist__item-empty_title">加载更多</div>
               </div>
-              <div v-if="userInfo.userid !== -1 && isShowAll" class="activity-list__tlist__item-end">
+              <div v-if="userInfo.userid !== -1 && isShowAll" class="my-activity-list__tlist__item-end">
                 <div>
                   <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
                 </div>
