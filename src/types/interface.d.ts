@@ -44,3 +44,12 @@ export interface City {
 export interface CityGroup {
   [key: string]: City[];
 }
+
+export interface ShareActionSheetData {
+  label: string;
+  children: {
+    img: string;
+    label: string;
+    action?: string | void;
+  }[];
+}
