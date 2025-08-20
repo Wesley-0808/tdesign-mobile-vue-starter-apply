@@ -19,6 +19,7 @@ export default [
         name: 'ResultSuccess',
         component: () => import('@/pages/result/index.vue'),
         meta: {
+          navBgColor: 'var(--td-bg-color-page)',
           title: {
             zh_CN: '购买结果',
             en_US: 'BuyResult',
