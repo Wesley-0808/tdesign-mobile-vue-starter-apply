@@ -4,7 +4,7 @@
   <div v-else-if="!activityDetail" class="not-found-container">未找到该活动信息。</div>
 
   <!-- 仅在成功获取数据后渲染主内容 -->
-  <div v-else class="activity-detail">
+  <div v-else class="activity-detail" :class="{ 'container-lock': isExpanded }">
     <div class="content-wrapper">
       <!-- 活动封面图 -->
       <div class="cover-image-container">
@@ -19,11 +19,22 @@
       <!-- 活动嘉宾轮播 -->
       <div class="swiper-wrapper">
         <h3 class="activity-title">活动嘉宾</h3>
+        <div
+          v-if="!activityDetail?.guest || activityDetail?.guest?.length === 0"
+          class="t-empty"
+          style="
+            --empty-color: var(--td-bg-color-secondarycomponent);
+
+            color: var(--td-text-color-anti);
+          "
+        >
+          <empty class="t-empty__img" />
+          <span style="color: var(--td-text-color-anti)">暂无数据</span>
+        </div>
         <div class="swiper-container">
           <t-swiper
             :navigation="{ type: 'dots', placement: 'outside' }"
             :autoplay="false"
-            :loop="false"
             @touchstart="handleTouchPrevent"
             @touchmove="handleTouchPrevent"
             @touchend="handleTouchPrevent"
@@ -39,11 +50,22 @@
       <!-- 活动会场轮播 -->
       <div class="swiper-wrapper venue-swiper">
         <h3 class="activity-title">活动场地</h3>
+        <div
+          v-if="!activityDetail?.venue || activityDetail?.venue?.length === 0"
+          class="t-empty"
+          style="
+            --empty-color: var(--td-bg-color-secondarycomponent);
+
+            color: var(--td-text-color-anti);
+          "
+        >
+          <empty class="t-empty__img" />
+          <span style="color: var(--td-text-color-anti)">暂无数据</span>
+        </div>
         <div class="swiper-container">
           <t-swiper
             :navigation="{ type: 'dots', placement: 'outside' }"
             :autoplay="false"
-            :loop="false"
             @touchstart="handleTouchPrevent"
             @touchmove="handleTouchPrevent"
             @touchend="handleTouchPrevent"
@@ -58,118 +80,130 @@
     </div>
 
     <!-- 抽屉 -->
-    <div
-      class="bottom-drawer"
-      :class="{ 'is-expanded': isExpanded, 'no-transition': isDragging }"
-      :style="{ height: `${drawerHeight}px` }"
-    >
+    <div style="position: fixed; bottom: 0; width: 100%">
       <div
-        class="drawer-handle"
-        :class="{ dragging: isDragging }"
-        @mousedown="onDragStart"
-        @touchstart.prevent="onDragStart"
+        class="bottom-drawer"
+        :class="{ 'is-expanded': isExpanded, 'no-transition': isDragging }"
+        :style="{ height: `${drawerHeight}px` }"
       >
-        <img v-if="!isExpanded" src="/assets/image/union.png" alt="弧形装饰" class="drawer-arc-img" />
-        <div class="drawer-arrow-container" :class="{ expanded: isExpanded, collapsed: !isExpanded }">
-          <chevron-down-icon v-if="isExpanded" class="drawer-arrow-icon" />
-          <chevron-up-icon v-else class="drawer-arrow-icon" />
-        </div>
-      </div>
-      <div v-if="isExpanded" class="drawer-content" @touchmove="onDrawerTouchMove" @wheel.stop>
-        <div class="activity-info-wrapper">
-          <div class="container">
-            <!-- 标题 -->
-            <h1 class="activity-main-title">{{ activityDetail.name }}</h1>
-
-            <!-- 感兴趣 -->
-            <div class="interested-section split">
-              <t-avatar-group size="small" cascading="left-up" :max="5">
-                <t-avatar
-                  v-for="(url, index) in activityInterested"
-                  :key="index"
-                  shape="circle"
-                  :image="url.avatar"
-                ></t-avatar>
-              </t-avatar-group>
-              <span class="interested-count">{{ activityDetail.interested }}人感兴趣</span>
-            </div>
-
-            <!-- 时间与地点 -->
-            <div class="info-block split">
-              <div class="info-row">
-                <time-icon size="20px" />
-                <!-- 使用 computed 属性格式化日期 -->
-                <span>时间：{{ formattedDate }}</span>
-              </div>
-              <div class="info-row">
-                <location-icon size="20px" />
-                <span>地点：{{ activityDetail.place }}</span>
-                <t-button theme="light" size="extra-small" class="nav-button">导航</t-button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 活动评价 -->
-          <div class="rating-section">
-            <div class="section-header">
-              <!-- 评价总数动态获取 -->
-              <h2 class="section-title">活动评价({{ activityReviews.length }})</h2>
-              <div class="rating-display">
-                <t-rate :value="activityDetail.evaluate" size="20" show-text allow-half />
-              </div>
-            </div>
-            <div class="reviews-scroll-container">
-              <!-- 循环渲染从API获取的评论 -->
-              <t-cell
-                v-for="review in activityReviews"
-                :key="review.id"
-                :title="review.user"
-                :description="review.content"
-                :bordered="false"
-                class="review-cell"
-              >
-                <template #leftIcon>
-                  <t-avatar shape="circle" :image="review.avatar" />
-                </template>
-              </t-cell>
-            </div>
-          </div>
-
-          <!-- 活动介绍 -->
-          <div class="intro-section container">
-            <div class="section-header">
-              <h2 class="section-title">活动介绍</h2>
-            </div>
-            <p class="intro-paragraph">{{ activityDetail.introduce }}</p>
+        <div
+          class="drawer-handle"
+          :class="{ dragging: isDragging }"
+          @mousedown="onDragStart"
+          @touchstart.prevent="onDragStart"
+        >
+          <img src="/assets/image/union.png" alt="弧形装饰" class="drawer-arc-img" :class="{ hide: isExpanded }" />
+          <div class="drawer-arrow-container" :class="{ expanded: isExpanded, collapsed: !isExpanded }">
+            <chevron-down-icon v-if="isExpanded" class="drawer-arrow-icon" />
+            <chevron-up-icon v-else class="drawer-arrow-icon" />
           </div>
         </div>
-      </div>
-    </div>
+        <div class="drawer-content" @touchmove="onDrawerTouchMove" @wheel.stop>
+          <div class="activity-info-wrapper">
+            <div class="container">
+              <h1 class="activity-main-title">{{ activityDetail.name }}</h1>
 
-    <!-- 底部操作栏 -->
-    <div class="bottom-bar">
-      <div class="action-item" :class="{ favorited: isFavorited }" @click="handleFavoriteClick">
-        <t-icon :name="isFavorited ? 'heart-filled' : 'heart'" size="24px" />
-        <span>{{ isFavorited ? '已收藏' : '收藏' }}</span>
+              <div class="interested-section split">
+                <t-avatar-group size="small" cascading="left-up" :max="5">
+                  <t-avatar
+                    v-for="(url, index) in activityInterested"
+                    :key="index"
+                    shape="circle"
+                    :image="url.avatar"
+                  ></t-avatar>
+                </t-avatar-group>
+                <span class="interested-count">{{ activityDetail.interested }}人感兴趣</span>
+              </div>
+
+              <!-- 时间与地点 -->
+              <div class="info-block split">
+                <div class="info-row">
+                  <time-icon size="20px" />
+                  <span>时间：{{ getDateRangeYMD(activityDetail) }}</span>
+                </div>
+                <div class="info-row">
+                  <location-icon size="20px" />
+                  <span>地点：{{ activityDetail.place }}</span>
+                  <t-button theme="light" size="extra-small" class="nav-button">导航</t-button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 活动评价 -->
+            <div class="rating-section">
+              <div class="section-header">
+                <!-- 评价总数动态获取 -->
+                <h2 class="section-title">活动评价({{ activityReviews.length }})</h2>
+                <div class="rating-display">
+                  <t-rate :value="activityDetail.evaluate" size="20" show-text allow-half />
+                </div>
+              </div>
+              <div class="reviews-scroll-container">
+                <t-cell
+                  v-for="review in activityReviews"
+                  :key="review.id"
+                  :title="review.user"
+                  :description="review.content"
+                  :bordered="false"
+                  class="review-cell"
+                >
+                  <template #leftIcon>
+                    <t-avatar shape="circle" :image="review.avatar" />
+                  </template>
+                </t-cell>
+              </div>
+            </div>
+
+            <!-- 活动介绍 -->
+            <div class="intro-section container">
+              <div class="section-header">
+                <h2 class="section-title">活动介绍</h2>
+              </div>
+              <p class="intro-paragraph">{{ activityDetail.introduce }}</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="action-item" @click="handleShareClick">
-        <t-icon name="share" size="24px" />
-        <span>分享</span>
+
+      <!-- 底部操作栏 -->
+      <div class="bottom-bar">
+        <div style="display: flex; flex-direction: row">
+          <div class="action-item" :class="{ favorited: isFavorited }" @click="handleFavoriteClick">
+            <heart-filled-icon v-if="isFavorited" size="24" />
+            <heart-icon v-else size="24" />
+            <span>{{ isFavorited ? '已收藏' : '收藏' }}</span>
+          </div>
+          <div class="action-item" @click="handleShareClick">
+            <share-icon size="24" />
+            <span>分享</span>
+          </div>
+        </div>
+        <t-button theme="primary" shape="rectangle" class="buy-button" @click="handleBuyClick">{{
+          formattedPrice
+        }}</t-button>
       </div>
-      <!-- 使用 computed 属性动态显示价格 -->
-      <t-button theme="primary" shape="rectangle" class="buy-button" @click="handleBuyClick">{{
-        formattedPrice
-      }}</t-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ChevronDownIcon, ChevronUpIcon, LocationIcon, TimeIcon } from 'tdesign-icons-vue-next';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  HeartFilledIcon,
+  HeartIcon,
+  LocationIcon,
+  ShareIcon,
+  TimeIcon,
+} from 'tdesign-icons-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getActivityEvaluate, getActivityInterestedPeople, getAllActivityList } from '@/api/list';
 import type { ActivityEvaluate, ActivityInterestedPeopleData, ActivityModel } from '@/api/model/listModel';
+import Empty from '@/components/result/Empty';
+import { useResultStore } from '@/store';
+import { getDateRangeYMD } from '@/utils/activity/getDate';
+import { getMaxPrice, getMinPrice } from '@/utils/activity/getPrice';
 
 const isLoading = ref(true);
 const activityDetail = ref<ActivityModel>(null);
@@ -177,8 +211,8 @@ const activityReviews = ref<ActivityEvaluate[]>([]);
 const activityInterested = ref<ActivityInterestedPeopleData[]>([]);
 const route = useRoute();
 const router = useRouter();
+const resultStore = useResultStore();
 
-// --- 在组件挂载时获取数据 ---
 onMounted(async () => {
   // 从路由参数中获取活动ID (例如 /activity/2 -> id = 2)
   const activityId = Number(route.params.id);
@@ -215,27 +249,15 @@ onMounted(async () => {
   }
 });
 
-// --- 创建计算属性以格式化数据 ---
-const formattedDate = computed(() => {
-  if (!activityDetail.value?.date) return '暂无日期';
-  // 将日期数组用 ' - ' 连接起来
-  return activityDetail.value.date.join(' - ');
-});
-
 const formattedPrice = computed(() => {
   const price = activityDetail.value?.price;
   if (!price) return '立即购买';
   if (price === 'free') return '免费参与';
 
-  if (Array.isArray(price) && price.length > 0) {
-    const prices = price.map((p) => p.discount ?? p.price);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    if (minPrice === maxPrice) return `立即购买 ¥${minPrice}`;
-    return `立即购买 ¥${minPrice}-¥${maxPrice}`;
-  }
-
-  return '查看价格';
+  const minPrice = getMinPrice(activityDetail.value);
+  const maxPrice = getMaxPrice(activityDetail.value);
+  if (minPrice === maxPrice) return `立即购买 ¥${minPrice}`;
+  return `立即购买 ¥${minPrice}-¥${maxPrice}`;
 });
 
 // --- 底部操作栏逻辑  ---
@@ -244,7 +266,10 @@ const handleFavoriteClick = () => {
   isFavorited.value = !isFavorited.value;
 };
 const handleShareClick = () => console.log('触发分享');
-const handleBuyClick = () => router.push({ path: '/order/confirm' });
+const handleBuyClick = () => {
+  resultStore.setActivity(activityDetail.value);
+  router.push({ path: '/order/confirm' });
+};
 
 // --- 抽屉交互逻辑  ---
 const MIN_DRAWER_HEIGHT = 20;

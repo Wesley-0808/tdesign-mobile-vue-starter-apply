@@ -66,29 +66,43 @@
       </div>
       <div class="ticket-price-list">
         <t-checkbox-group v-model:value="formData.price" borderless>
-          <div
-            v-for="(price, index) in activityList.price"
-            :key="index"
-            class="ticket-price-item card"
-            :class="{ 'card--active': formData.price.includes((price as ActivityPrice).name || price) }"
-          >
-            <check-icon v-if="formData.price.includes((price as ActivityPrice).name || price)" class="card__icon" />
-            <t-checkbox
-              :value="(price as ActivityPrice).name || (price as string)"
-              :label="(price as ActivityPrice).name"
-              :icon="false"
+          <div v-if="activityList.price !== 'free'">
+            <div
+              v-for="(price, index) in activityList.price"
+              :key="index"
+              class="ticket-price-item card"
+              :class="{ 'card--active': formData.price.includes((price as ActivityPrice).name || price) }"
             >
-              <template #content>
-                <div class="ticket-price">
-                  <span class="current-price">
-                    {{ (price as ActivityPrice).discount || (price as ActivityPrice).price }}元
-                  </span>
-                  <span v-if="(price as ActivityPrice).discount" class="original-price">
-                    {{ (price as ActivityPrice).price }}元
-                  </span>
-                </div>
-              </template>
-            </t-checkbox>
+              <check-icon v-if="formData.price.includes((price as ActivityPrice).name || price)" class="card__icon" />
+              <t-checkbox
+                :value="(price as ActivityPrice).name || (price as string)"
+                :label="(price as ActivityPrice).name"
+                :icon="false"
+              >
+                <template #content>
+                  <div class="ticket-price">
+                    <span class="current-price">
+                      {{ (price as ActivityPrice).discount || (price as ActivityPrice).price }}元
+                    </span>
+                    <span v-if="(price as ActivityPrice).discount" class="original-price">
+                      {{ (price as ActivityPrice).price }}元
+                    </span>
+                  </div>
+                </template>
+              </t-checkbox>
+            </div>
+          </div>
+          <div v-else>
+            <div class="ticket-price-item card" :class="{ 'card--active': formData.price.includes('free') }">
+              <check-icon v-if="formData.price.includes('free')" class="card__icon" />
+              <t-checkbox value="free" label="免费参与" :icon="false">
+                <template #content>
+                  <div class="ticket-price">
+                    <span class="current-price"> {{ 0 }}元 </span>
+                  </div>
+                </template>
+              </t-checkbox>
+            </div>
           </div>
         </t-checkbox-group>
       </div>
@@ -136,6 +150,8 @@ const activityList = computed(() => {
 
 // 计算总价
 const totalPrice = computed(() => {
+  if (!activityList.value.price) return '';
+  if (activityList.value.price === 'free') return 0;
   return (activityList.value.price as ActivityPrice[])
     .filter((p) => formData.price.includes(p.name || p))
     .map((p) => Number(p.discount || p.price))
@@ -200,7 +216,10 @@ const onConfirm = () => {
       });
       setTimeout(() => {
         activityStore.setActivity(activityList.value);
-        activityStore.setUsers(formData.personList);
+        const userlist = formData.personList.map((item) => {
+          return users.value.find((user) => user.id === item);
+        });
+        activityStore.setUsers(userlist);
         activityStore.setOrder(formData);
         router.replace('/result');
       }, 2100);

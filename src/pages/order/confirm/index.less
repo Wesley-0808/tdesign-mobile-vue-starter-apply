@@ -37,7 +37,10 @@
 .t-checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+
+  div+div {
+    margin-top: 12px;
+  }
 
   .t-checkbox {
     width: 100%;
