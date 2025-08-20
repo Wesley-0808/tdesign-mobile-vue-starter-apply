@@ -1,7 +1,7 @@
 <template>
   <div>
     <navbar />
-    <router-view v-slot="{ Component }" style="height: calc(100vh - 108px)">
+    <router-view v-slot="{ Component }">
       <component :is="Component" />
     </router-view>
     <tabbar />
