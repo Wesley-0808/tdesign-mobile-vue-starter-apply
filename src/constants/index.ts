@@ -1,4 +1,4 @@
-import type { City, CityGroup } from '@/types/interface';
+import type { City, CityGroup, ShareActionSheetData } from '@/types/interface';
 
 export enum ContentTypeEnum {
   Json = 'application/json;charset=UTF-8',
@@ -100,5 +100,28 @@ export const popularCities: City[] = cityGroup['热门城市'];
 
 // 字母索引列表（不包含热门城市）
 export const indexList = Object.keys(cityGroup).filter((key) => key !== '热门城市');
+
+export const shareActionSheet: ShareActionSheetData[] = [
+  {
+    label: '分享给朋友',
+    children: [
+      { img: '/assets/image/avatar.png', label: 'Allen' },
+      { img: '/assets/image/avatar2.png', label: 'Nick' },
+      { img: '/assets/image/avatar3.png', label: 'Jacky' },
+      { img: '/assets/image/avatar4.png', label: 'Eric' },
+      { img: '/assets/image/avatar5.png', label: 'Johnson' },
+    ],
+  },
+  {
+    label: '分享到社媒',
+    children: [
+      { img: '/assets/image/icon-wechat.png', label: 'WeChat' },
+      { img: '/assets/image/icon-qq.png', label: 'QQ' },
+      { img: '/assets/image/icon-doc.png', label: 'Doc' },
+      { img: '/assets/image/icon-map.png', label: 'Map' },
+      { img: '/assets/image/icon-qqmusic.png', label: 'QQ Music' },
+    ],
+  },
+];
 
 export default {};

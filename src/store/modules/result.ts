@@ -4,11 +4,25 @@ import { defineStore } from 'pinia';
 import type { ActivityModel } from '@/api/model/listModel';
 import type { UserInfo } from '@/types/interface';
 
+const defaultUsers = [
+  {
+    id: 1,
+    name: '蔡宣轩',
+    avatar: '/assets/image/avatar.png',
+    birthday: '1996-01-01',
+    phone: '12345678910',
+    identityCard: 'ABCD',
+    email: 'mail@example.com',
+    occupation: 'art-practitioners',
+  },
+];
+
 export const useResultStore = defineStore('result', {
   state: () => ({
     activity: {
       id: 2,
       img: '/assets/image/activity/cover-2.png',
+      fullImg: '/assets/image/activity/sicc-2021.png',
       name: '2021 SICC服务设计创新大会',
       field: 'art',
       type: 'lecture',
@@ -59,7 +73,7 @@ export const useResultStore = defineStore('result', {
         },
       ],
     } as ActivityModel,
-    users: [] as UserInfo[],
+    users: [...defaultUsers] as UserInfo[],
     order: {},
   }),
   actions: {
