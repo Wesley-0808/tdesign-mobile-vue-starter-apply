@@ -19,23 +19,41 @@
       <!-- 活动嘉宾轮播 -->
       <div class="swiper-wrapper">
         <h3 class="activity-title">活动嘉宾</h3>
-        <t-swiper :navigation="{ type: 'dots', placement: 'outside' }" :autoplay="false">
-          <!-- 使用从API获取的嘉宾数据 -->
-          <t-swiper-item v-for="guest in activityDetail.guest" :key="guest.name" style="height: 159px">
-            <img :src="guest.img" class="img" :alt="`嘉宾-${guest.name}`" />
-          </t-swiper-item>
-        </t-swiper>
+        <div class="swiper-container">
+          <t-swiper
+            :navigation="{ type: 'dots', placement: 'outside' }"
+            :autoplay="false"
+            :loop="false"
+            @touchstart="handleTouchPrevent"
+            @touchmove="handleTouchPrevent"
+            @touchend="handleTouchPrevent"
+          >
+            <!-- 使用从API获取的嘉宾数据 -->
+            <t-swiper-item v-for="guest in activityDetail.guest" :key="guest.name" style="height: 172px">
+              <img :src="guest.img" :alt="`嘉宾-${guest.name}`" />
+            </t-swiper-item>
+          </t-swiper>
+        </div>
       </div>
 
       <!-- 活动会场轮播 -->
       <div class="swiper-wrapper venue-swiper">
         <h3 class="activity-title">活动场地</h3>
-        <t-swiper :navigation="{ type: 'dots', placement: 'outside' }" :autoplay="false">
-          <!-- 使用从API获取的会场数据 -->
-          <t-swiper-item v-for="venue in activityDetail.venue" :key="venue.name" style="height: 192px">
-            <img :src="venue.img" class="img" :alt="`会场-${venue.name}`" />
-          </t-swiper-item>
-        </t-swiper>
+        <div class="swiper-container">
+          <t-swiper
+            :navigation="{ type: 'dots', placement: 'outside' }"
+            :autoplay="false"
+            :loop="false"
+            @touchstart="handleTouchPrevent"
+            @touchmove="handleTouchPrevent"
+            @touchend="handleTouchPrevent"
+          >
+            <!-- 使用从API获取的会场数据 -->
+            <t-swiper-item v-for="venue in activityDetail.venue" :key="venue.name" style="height: 172px">
+              <img :src="venue.img" :alt="`会场-${venue.name}`" />
+            </t-swiper-item>
+          </t-swiper>
+        </div>
       </div>
     </div>
 
@@ -290,6 +308,12 @@ const onDrawerTouchMove = (e: TouchEvent) => {
   } else {
     e.stopPropagation();
   }
+};
+
+// 防止页面晃动的触摸事件处理
+const handleTouchPrevent = (e: TouchEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
 };
 </script>
 <style lang="less" scoped>
