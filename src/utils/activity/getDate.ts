@@ -68,6 +68,11 @@ export const getDateRangeString = (date: Date[], split: string = '-') => {
   return '';
 };
 
+export const getAge = (date: string) => {
+  const now = dayjs();
+  return now.diff(dayjs(date), 'year');
+};
+
 export const dateIncludes = (item: ActivityModel, date: Date[]) => {
   const { date: itemDate } = item;
   // date是一个日期范围 itemDate是具体的日期group

@@ -1,0 +1,150 @@
+
+.result-page {
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  margin: 0 auto;
+  position: relative;
+
+  .result-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 24px 0;
+
+    .status-title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 28px;
+      margin-top: 8px;
+    }
+  }
+}
+
+.activity-card {
+  height: 282px;
+  border-radius: 12px;
+  background: var(--td-bg-color-container);
+  box-shadow: var(--td-shadow-3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px;
+
+  .activity-img {
+    border-radius: 9.06px;
+    object-fit: cover;
+  }
+
+  .activity-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+
+  .activity-info {
+    margin-top: 16.56px;
+  }
+
+  .activity-details {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+
+    &-text {
+      margin-left: 4px;
+    }
+  }
+}
+
+.applicant-wrapper {
+  margin-top: 24px;
+
+  .applicant-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  .applicant-list {
+    margin-top: 12px;
+
+    .t-cell {
+      border-radius: 9px;
+      height: 82px;
+    }
+  }
+}
+
+.action-btns {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 38px;
+
+  .btn {
+    height: 48px;
+  }
+}
+
+.share-action-sheet {
+  .share-popup-content {
+    border-bottom: 0.5px solid #e7e7e7;
+    padding-bottom: 8px;
+  }
+
+  .share-section {
+    display: flex;
+    flex-direction: column;
+    padding-top: 16px;
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      color: var(--td-text-color-placeholder);
+      margin-left: 16px;
+    }
+
+    .section-list {
+      display: flex;
+      flex-direction: row;
+      padding: 16px 0 12px;
+      overflow-x: auto;
+      width: 100%;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+
+      .section-item {
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 20px;
+        gap: 8px;
+
+        .section-img {
+          height: 40px;
+          width: 40px;
+        }
+
+        .section-name {
+          font-size: 12px;
+          font-weight: 400;
+          text-align: center;
+          line-height: 20px;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+
+
+.rectangle-button {
+  border-radius: 0;
+}

@@ -23,6 +23,7 @@ export interface TabbarItem {
 export interface UserInfo {
   id: number;
   name: string;
+  avatar: string;
   birthday: string;
   phone: string;
   identityCard: string;
@@ -42,4 +43,13 @@ export interface City {
 
 export interface CityGroup {
   [key: string]: City[];
+}
+
+export interface ShareActionSheetData {
+  label: string;
+  children: {
+    img: string;
+    label: string;
+    action?: string | void;
+  }[];
 }
