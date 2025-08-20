@@ -74,3 +74,11 @@ export interface UserInfoResult {
   age: number;
   occupation: string;
 }
+
+export interface ActivityInterestedPeopleData {
+  list: {
+    name: string;
+    avatar: string;
+  }[];
+  total: number;
+}

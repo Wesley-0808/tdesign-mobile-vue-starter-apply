@@ -237,4 +237,38 @@ export default [
       },
     }),
   },
+  {
+    url: '/api/get-activity-interested',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        list: [
+          ...Mock.mock([
+            {
+              name: 'user1',
+              avatar: '/assets/image/avatar.png',
+            },
+            {
+              name: 'user2',
+              avatar: '/assets/image/avatar2.png',
+            },
+            {
+              name: 'user3',
+              avatar: '/assets/image/avatar3.png',
+            },
+            {
+              name: 'user4',
+              avatar: '/assets/image/avatar4.png',
+            },
+            {
+              name: 'user5',
+              avatar: '/assets/image/avatar5.png',
+            },
+          ]),
+        ],
+        total: 236,
+      },
+    }),
+  },
 ] as MockMethod[];
