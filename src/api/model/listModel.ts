@@ -77,9 +77,6 @@ export interface UserInfoResult {
 }
 
 export interface ActivityInterestedPeopleData {
-  list: {
-    name: string;
-    avatar: string;
-  }[];
-  total: number;
+  name: string;
+  avatar: string;
 }

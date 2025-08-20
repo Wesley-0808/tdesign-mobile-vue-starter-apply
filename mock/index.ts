@@ -105,6 +105,7 @@ export default [
             {
               id: 2,
               img: '/assets/image/activity/cover-2.png',
+              fullImg: '/assets/image/activity/sicc-2021.png',
               name: '2021 SICC服务设计创新大会',
               field: 'art',
               type: 'lecture',
@@ -242,33 +243,30 @@ export default [
     method: 'get',
     response: () => ({
       code: 0,
-      data: {
-        list: [
-          ...Mock.mock([
-            {
-              name: 'user1',
-              avatar: '/assets/image/avatar.png',
-            },
-            {
-              name: 'user2',
-              avatar: '/assets/image/avatar2.png',
-            },
-            {
-              name: 'user3',
-              avatar: '/assets/image/avatar3.png',
-            },
-            {
-              name: 'user4',
-              avatar: '/assets/image/avatar4.png',
-            },
-            {
-              name: 'user5',
-              avatar: '/assets/image/avatar5.png',
-            },
-          ]),
-        ],
-        total: 236,
-      },
+      data: [
+        ...Mock.mock([
+          {
+            name: 'user1',
+            avatar: '/assets/image/avatar.png',
+          },
+          {
+            name: 'user2',
+            avatar: '/assets/image/avatar2.png',
+          },
+          {
+            name: 'user3',
+            avatar: '/assets/image/avatar3.png',
+          },
+          {
+            name: 'user4',
+            avatar: '/assets/image/avatar4.png',
+          },
+          {
+            name: 'user5',
+            avatar: '/assets/image/avatar5.png',
+          },
+        ]),
+      ],
     }),
   },
 ] as MockMethod[];

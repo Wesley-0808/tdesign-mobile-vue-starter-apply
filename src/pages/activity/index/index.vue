@@ -11,24 +11,24 @@
         <t-image
           class="cover-image"
           fit="cover"
-          :src="activityDetail.img"
+          :src="activityDetail.fullImg || activityDetail.img"
           :style="{ width: '100%', height: '200px' }"
         ></t-image>
       </div>
 
       <!-- 活动嘉宾轮播 -->
-      <div v-if="activityDetail.guest?.length" class="swiper-wrapper">
+      <div class="swiper-wrapper">
         <h3 class="activity-title">活动嘉宾</h3>
         <t-swiper :navigation="{ type: 'dots', placement: 'outside' }" :autoplay="false">
           <!-- 使用从API获取的嘉宾数据 -->
-          <t-swiper-item v-for="guest in activityDetail.guest" :key="guest.name" style="height: 192px">
+          <t-swiper-item v-for="guest in activityDetail.guest" :key="guest.name" style="height: 159px">
             <img :src="guest.img" class="img" :alt="`嘉宾-${guest.name}`" />
           </t-swiper-item>
         </t-swiper>
       </div>
 
       <!-- 活动会场轮播 -->
-      <div v-if="activityDetail.venue?.length" class="swiper-wrapper venue-swiper">
+      <div class="swiper-wrapper venue-swiper">
         <h3 class="activity-title">活动场地</h3>
         <t-swiper :navigation="{ type: 'dots', placement: 'outside' }" :autoplay="false">
           <!-- 使用从API获取的会场数据 -->
@@ -51,50 +51,53 @@
         @mousedown="onDragStart"
         @touchstart.prevent="onDragStart"
       >
-        <img v-if="!isExpanded" src="@/assets/assets-detail-arcs.png" alt="弧形装饰" class="drawer-arc-img" />
+        <img v-if="!isExpanded" src="/assets/image/union.png" alt="弧形装饰" class="drawer-arc-img" />
         <div class="drawer-arrow-container" :class="{ expanded: isExpanded, collapsed: !isExpanded }">
-          <t-icon :name="isExpanded ? 'chevron-down' : 'chevron-up'" class="drawer-arrow-icon" />
+          <chevron-down-icon v-if="isExpanded" class="drawer-arrow-icon" />
+          <chevron-up-icon v-else class="drawer-arrow-icon" />
         </div>
       </div>
       <div v-if="isExpanded" class="drawer-content" @touchmove="onDrawerTouchMove" @wheel.stop>
         <div class="activity-info-wrapper">
-          <!-- 标题 -->
-          <h1 class="activity-main-title">{{ activityDetail.name }}</h1>
+          <div class="container">
+            <!-- 标题 -->
+            <h1 class="activity-main-title">{{ activityDetail.name }}</h1>
 
-          <!-- 感兴趣 -->
-          <div class="interested-section">
-            <div class="avatar-group">
-              <!-- Mock数据中没有头像列表，这里暂时保留静态头像作为示例 -->
-              <img src="https://tdesign.gtimg.com/mobile/demos/avatar_1.png" class="avatar" />
-              <img src="https://tdesign.gtimg.com/mobile/demos/avatar_2.png" class="avatar" />
-              <img src="https://tdesign.gtimg.com/mobile/demos/avatar_3.png" class="avatar" />
-              <div class="avatar-more">...</div>
+            <!-- 感兴趣 -->
+            <div class="interested-section split">
+              <t-avatar-group size="small" cascading="left-up" :max="5">
+                <t-avatar
+                  v-for="(url, index) in activityInterested"
+                  :key="index"
+                  shape="circle"
+                  :image="url.avatar"
+                ></t-avatar>
+              </t-avatar-group>
+              <span class="interested-count">{{ activityDetail.interested }}人感兴趣</span>
             </div>
-            <span class="interested-count">{{ activityDetail.interested }}人感兴趣</span>
-          </div>
 
-          <!-- 时间与地点 -->
-          <div class="info-block">
-            <div class="info-row">
-              <t-icon name="time" size="20px" />
-              <!-- 使用 computed 属性格式化日期 -->
-              <span>时间：{{ formattedDate }}</span>
-            </div>
-            <div v-if="activityDetail.place" class="info-row">
-              <t-icon name="location" size="20px" />
-              <span>地点：{{ activityDetail.place }}</span>
-              <t-button theme="primary" variant="base" size="small" class="nav-button">导航</t-button>
+            <!-- 时间与地点 -->
+            <div class="info-block split">
+              <div class="info-row">
+                <time-icon size="20px" />
+                <!-- 使用 computed 属性格式化日期 -->
+                <span>时间：{{ formattedDate }}</span>
+              </div>
+              <div class="info-row">
+                <location-icon size="20px" />
+                <span>地点：{{ activityDetail.place }}</span>
+                <t-button theme="light" size="extra-small" class="nav-button">导航</t-button>
+              </div>
             </div>
           </div>
 
           <!-- 活动评价 -->
-          <div v-if="activityReviews.length" class="rating-section">
+          <div class="rating-section">
             <div class="section-header">
               <!-- 评价总数动态获取 -->
               <h2 class="section-title">活动评价({{ activityReviews.length }})</h2>
               <div class="rating-display">
-                <!-- 评分动态获取 -->
-                <t-rate :default-value="activityDetail.evaluate" size="16px" allow-half show-text disabled />
+                <t-rate :value="activityDetail.evaluate" size="20" show-text allow-half />
               </div>
             </div>
             <div class="reviews-scroll-container">
@@ -104,15 +107,18 @@
                 :key="review.id"
                 :title="review.user"
                 :description="review.content"
-                :image="review.avatar"
                 :bordered="false"
                 class="review-cell"
-              />
+              >
+                <template #leftIcon>
+                  <t-avatar shape="circle" :image="review.avatar" />
+                </template>
+              </t-cell>
             </div>
           </div>
 
           <!-- 活动介绍 -->
-          <div v-if="activityDetail.introduce" class="intro-section">
+          <div class="intro-section container">
             <div class="section-header">
               <h2 class="section-title">活动介绍</h2>
             </div>
@@ -140,16 +146,17 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ChevronDownIcon, ChevronUpIcon, LocationIcon, TimeIcon } from 'tdesign-icons-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getActivityEvaluate, getAllActivityList } from '@/api/list';
-import type { ActivityEvaluate, ActivityModel } from '@/api/model/listModel';
+import { getActivityEvaluate, getActivityInterestedPeople, getAllActivityList } from '@/api/list';
+import type { ActivityEvaluate, ActivityInterestedPeopleData, ActivityModel } from '@/api/model/listModel';
 
-// --- 定义响应式变量以存储从API获取的数据 ---
 const isLoading = ref(true);
-const activityDetail = ref<ActivityModel | null>(null);
+const activityDetail = ref<ActivityModel>(null);
 const activityReviews = ref<ActivityEvaluate[]>([]);
+const activityInterested = ref<ActivityInterestedPeopleData[]>([]);
 const route = useRoute();
 const router = useRouter();
 
@@ -166,14 +173,19 @@ onMounted(async () => {
 
   try {
     // 异步请求所有活动列表和评价列表
-    const [activityRes, evaluateRes] = await Promise.all([getAllActivityList(), getActivityEvaluate()]);
+    const [activityRes, evaluateRes, interestedRes] = await Promise.all([
+      getAllActivityList(),
+      getActivityEvaluate(),
+      getActivityInterestedPeople(),
+    ]);
 
     // 在所有活动中查找与当前ID匹配的活动
     const foundActivity = activityRes.list.find((act) => act.id === activityId);
 
     if (foundActivity) {
       activityDetail.value = foundActivity;
-      activityReviews.value = evaluateRes.list; // Mock中评价是通用的，直接赋值
+      activityReviews.value = evaluateRes.list;
+      activityInterested.value = interestedRes;
       document.title = foundActivity.name; // 动态设置页面标题
     } else {
       console.error(`ID为 ${activityId} 的活动未找到`);
@@ -219,7 +231,7 @@ const handleBuyClick = () => router.push({ path: '/order/confirm' });
 // --- 抽屉交互逻辑  ---
 const MIN_DRAWER_HEIGHT = 20;
 const MAX_DRAWER_HEIGHT = window.innerHeight * 0.6;
-const drawerHeight = ref(MIN_DRAWER_HEIGHT);
+const drawerHeight = ref(MAX_DRAWER_HEIGHT);
 const SNAP_THRESHOLD = (MIN_DRAWER_HEIGHT + MAX_DRAWER_HEIGHT) / 2;
 const isExpanded = computed(() => drawerHeight.value > MIN_DRAWER_HEIGHT);
 const isDragging = ref(false);

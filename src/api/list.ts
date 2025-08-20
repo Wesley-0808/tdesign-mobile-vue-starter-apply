@@ -49,7 +49,7 @@ export function getUserInfo() {
 }
 
 export function getActivityInterestedPeople() {
-  return request.get<ActivityInterestedPeopleData>({
+  return request.get<ActivityInterestedPeopleData[]>({
     url: Api.ActivityInterestedPeople,
   });
 }
