@@ -16,7 +16,7 @@
           </div>
           <div>
             <location-icon size="16" color="#0052D9" />
-            <span class="activity-details-text">{{ activity.place }}</span>
+            <span class="activity-details-text">{{ activity.place || '-' }}</span>
           </div>
         </div>
       </div>

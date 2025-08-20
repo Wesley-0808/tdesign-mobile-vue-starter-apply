@@ -10,7 +10,7 @@
         </div>
         <div class="detail-item">
           <location-icon size="16px" />
-          <span>{{ activityList.place }}</span>
+          <span>{{ activityList.place || '-' }}</span>
         </div>
       </div>
     </div>

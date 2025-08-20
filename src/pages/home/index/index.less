@@ -16,7 +16,7 @@
         color: var(--td-text-color-primary, rgb(0 0 0 / 90%));
       }
 
-      .close-icon{
+      .close-icon {
         position: absolute;
         right: 0;
       }
@@ -32,7 +32,7 @@
         align-items: center;
       }
 
-      :deep(.@{starter-prefix}-form){
+      :deep(.@{starter-prefix}-form) {
         max-height: 628px;
         overflow: scroll;
       }
@@ -77,6 +77,8 @@
 
   &-form {
     :deep(&-button) {
+      position: static;
+      padding: 0;
       display: flex;
       width: 100%;
       gap: 8px;

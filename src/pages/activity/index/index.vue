@@ -123,7 +123,7 @@
                 </div>
                 <div class="info-row">
                   <location-icon size="20px" />
-                  <span>地点：{{ activityDetail.place }}</span>
+                  <span>地点：{{ activityDetail.place || '-' }}</span>
                   <t-button theme="light" size="extra-small" class="nav-button">导航</t-button>
                 </div>
               </div>
@@ -159,7 +159,7 @@
               <div class="section-header">
                 <h2 class="section-title">活动介绍</h2>
               </div>
-              <p class="intro-paragraph">{{ activityDetail.introduce }}</p>
+              <p class="intro-paragraph">{{ activityDetail.introduce || '暂无介绍～' }}</p>
             </div>
           </div>
         </div>
