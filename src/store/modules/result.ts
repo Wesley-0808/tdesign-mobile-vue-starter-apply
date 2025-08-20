@@ -8,12 +8,12 @@ const defaultUsers = [
   {
     id: 1,
     name: '蔡宣轩',
-    avatar: '/assets/image/user-avatar.png',
-    birthday: '01-01',
+    avatar: '/assets/image/avatar.png',
+    birthday: '1996-01-01',
     phone: '12345678910',
     identityCard: 'ABCD',
     email: 'mail@example.com',
-    occupation: '设计师/艺术从业者',
+    occupation: 'art-practitioners',
   },
 ];
 
@@ -21,7 +21,7 @@ export const useResultStore = defineStore('result', {
   state: () => ({
     activity: {
       id: 2,
-      img: '/assets/image/activity/sicc-2021.png',
+      img: '/assets/image/activity/cover-2.png',
       name: '2021 SICC服务设计创新大会',
       field: 'art',
       type: 'lecture',

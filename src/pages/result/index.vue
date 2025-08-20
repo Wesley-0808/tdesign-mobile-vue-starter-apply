@@ -12,7 +12,7 @@
         <div class="activity-details">
           <div>
             <time-icon size="16" color="#0052D9" />
-            <span class="activity-details-text">{{ activity.date[0] }}</span>
+            <span class="activity-details-text">{{ dayjs(activity.date[0]).format('YYYY年MM月DD日') }}</span>
           </div>
           <div>
             <location-icon size="16" color="#0052D9" />
@@ -31,11 +31,13 @@
           <t-cell
             v-for="user in users"
             :key="user.id"
-            :image="user.avatar"
             shape="circle"
             :title="user.name"
-            :description="`${getUserAge(user)}岁 ${user.occupation}`"
+            :description="`${getAge(user.birthday)}岁 ${Occupation.find((i) => i.value === user.occupation).label}`"
           >
+            <template #leftIcon>
+              <t-avatar shape="circle" :image="user.avatar" />
+            </template>
           </t-cell>
         </div>
       </div>
@@ -76,14 +78,17 @@
   </t-popup>
 </template>
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { CheckCircleIcon, LocationIcon, ShareIcon, TimeIcon } from 'tdesign-icons-vue-next';
 import { computed, h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { ActivityModel } from '@/api/model/listModel';
+import { Occupation } from '@/config/consts';
 import { shareActionSheet } from '@/constants';
 import { useResultStore } from '@/store/modules/result';
 import type { UserInfo } from '@/types/interface';
+import { getAge } from '@/utils/activity/getDate';
 
 const shareIcon = () => h(ShareIcon, { size: '20px' });
 
@@ -93,14 +98,6 @@ const router = useRouter();
 const activity = computed<ActivityModel | null>(() => resultStore.getActivity);
 
 const users = computed<UserInfo[]>(() => resultStore.getUsers);
-
-// 计算用户年龄
-const getUserAge = (user: UserInfo) => {
-  if (!user.birthday) return '未知';
-  // 假设birthday格式为"MM-DD"，这里简化处理
-  const birthYear = new Date().getFullYear() - 29; // 实际项目中应根据完整生日计算
-  return new Date().getFullYear() - birthYear;
-};
 
 const goToActivityDetail = () => {
   if (activity.value) {
