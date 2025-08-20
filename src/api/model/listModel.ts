@@ -15,6 +15,7 @@ export type ActivityType = 'lecture' | 'exhibition' | 'workshop';
 export interface ActivityModel {
   id: number;
   img: string;
+  fullImg: string;
   name: string;
   field: string | string[];
   type: ActivityType;

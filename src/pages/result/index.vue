@@ -6,7 +6,7 @@
     </div>
 
     <div v-if="activity" class="activity-card">
-      <t-image :src="activity.img" fit="cover" class="activity-img" />
+      <t-image :src="activity.fullImg || activity.img" fit="cover" class="activity-img" />
       <div class="activity-info">
         <span class="activity-title"> {{ activity.name }} </span>
         <div class="activity-details">

@@ -22,6 +22,7 @@ export const useResultStore = defineStore('result', {
     activity: {
       id: 2,
       img: '/assets/image/activity/cover-2.png',
+      fullImg: '/assets/image/activity/sicc-2021.png',
       name: '2021 SICC服务设计创新大会',
       field: 'art',
       type: 'lecture',
