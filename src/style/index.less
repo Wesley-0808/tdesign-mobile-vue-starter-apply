@@ -22,8 +22,8 @@ div :has(.navbar-placeholder) {
 
 div :has(.navbar-placeholder):has(.t-tab-bar) {
   .container-view {
-    height: calc(100vh - var(--td-navbar-height, 48px) - constant(safe-area-inset-top, 0px) - constant(safe-area-inset-bottom, 0px) - 56px);
-    height: calc(100vh - var(--td-navbar-height, 48px) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 56px);
+    height: calc(100% - var(--td-navbar-height, 48px) - constant(safe-area-inset-top, 0px) - constant(safe-area-inset-bottom, 0px) - 56px);
+    height: calc(100% - var(--td-navbar-height, 48px) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 56px);
   }
 }
 
