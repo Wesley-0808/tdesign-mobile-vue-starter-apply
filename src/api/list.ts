@@ -15,6 +15,7 @@ const Api = {
   MyActivity: '/get-my-activity-list',
   UserInfo: '/get-user-info',
   ActivityInterestedPeople: '/get-activity-interested',
+  ConfirmActivity: '/confirm-activity',
 };
 
 export function getRecommendList() {
@@ -51,5 +52,12 @@ export function getUserInfo() {
 export function getActivityInterestedPeople() {
   return request.get<ActivityInterestedPeopleData[]>({
     url: Api.ActivityInterestedPeople,
+  });
+}
+
+export function setMyActivity(item: any) {
+  return request.post({
+    url: Api.ConfirmActivity,
+    data: item,
   });
 }

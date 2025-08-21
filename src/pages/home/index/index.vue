@@ -28,12 +28,10 @@
             :key="recommendList.length"
             :navigation="{ type: 'dots', placement: 'outside' }"
             :autoplay="false"
-            @touchstart="handleTouchPrevent"
             @touchmove="handleTouchPrevent"
-            @touchend="handleTouchPrevent"
           >
             <t-swiper-item v-for="(item, index) in recommendList" :key="item.id" style="height: 172px">
-              <img :src="item.img" :alt="`推荐活动-${index + 1}`" />
+              <img :src="item.img" :alt="`推荐活动-${index + 1}`" @click="goToActivityDetail(item.id)" />
             </t-swiper-item>
           </t-swiper>
         </div>
@@ -238,6 +236,11 @@ const btns: BtnConfig[] = [
 // 跳转到地区选择页面
 const goToRegion = () => {
   router.push('/home/region');
+};
+
+const goToActivityDetail = (id: string) => {
+  console.log(id);
+  router.push(`/activity/${id}`);
 };
 
 const onFilterData = (_verify: boolean, data: any) => {

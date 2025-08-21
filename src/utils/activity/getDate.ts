@@ -26,11 +26,34 @@ export const getLatestDate = (item: ActivityModel) => {
   });
 };
 
+// 查找某个项目的最后（最晚）的日期
+export const getLatestDate_YMD = (i: string[]) => {
+  return i.reduce((pre, cur) => {
+    return dayjs(cur).isBefore(dayjs(pre)) ? pre : cur;
+  });
+};
+
+// 查找某个项目的最前（最早）的日期
+export const getEarlyDate_YMD = (i: string[]) => {
+  return dayjs(
+    i.reduce((pre, cur) => {
+      return dayjs(pre).isBefore(dayjs(cur)) ? pre : cur;
+    }),
+  ).format('YYYY年MM月DD日');
+};
+
 export const getDateRangeYMD = (item: ActivityModel) => {
   const early = getEarlyDate(item);
   const latest = getLatestDate(item);
   if (early === latest) return dayjs(early).format('YYYY年MM月DD日');
   return getDateRangeString([dayjs(early).toDate(), dayjs(latest).toDate()], '至');
+};
+
+export const getDateYMD = (i: string[]) => {
+  const early = getEarlyDate_YMD(i);
+  const latest = getLatestDate_YMD(i);
+  if (early === latest) return dayjs(early).format('YYYY年MM月DD日');
+  return getDateRangeString([dayjs(early).toDate(), dayjs(latest).toDate()], ' ');
 };
 
 export const getDateRangeString = (date: Date[], split: string = '-') => {
