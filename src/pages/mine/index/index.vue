@@ -41,7 +41,9 @@
               <div class="my-activity-list__ttabs__panel__tlist__item-content">
                 <div class="my-activity-list__ttabs__panel__tlist__item-content-info">
                   <div class="my-activity-list__ttabs__panel__tlist__item-content-info-name">{{ cell.name }}</div>
-                  <div class="my-activity-list__ttabs__panel__tlist__item-content-info-date">{{ cell.date }}</div>
+                  <div class="my-activity-list__ttabs__panel__tlist__item-content-info-date">
+                    {{ getEarlyDate_YMD(isArray(cell.date) ? cell.date : [cell.date]) }}
+                  </div>
                 </div>
                 <div class="my-activity-list__ttabs__panel__tlist__item-content-footer">
                   <div
@@ -89,6 +91,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { isArray } from 'lodash';
 import { EditIcon } from 'tdesign-icons-vue-next';
 import type { TabValue } from 'tdesign-mobile-vue';
 import { Toast } from 'tdesign-mobile-vue';
@@ -99,6 +102,7 @@ import { getMyActivityList, getUserInfo } from '@/api/list';
 import type { MyActivityList, MyActivityListResult, UserInfoResult } from '@/api/model/listModel';
 import Empty from '@/components/result/Empty';
 import { Occupation } from '@/config/consts';
+import { getEarlyDate_YMD } from '@/utils/activity/getDate';
 
 // 用户信息
 const userInfo = ref<UserInfoResult>({ userid: -1, username: '', age: 0, avatar: '', occupation: '' });
