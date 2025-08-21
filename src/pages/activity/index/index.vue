@@ -349,9 +349,8 @@ const handleTouchPrevent = (e: TouchEvent) => {
 .not-found-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  padding: 96px 0;
   font-size: 16px;
-  color: #888;
+  color: var(--td-text-color-secondary);
 }
 </style>

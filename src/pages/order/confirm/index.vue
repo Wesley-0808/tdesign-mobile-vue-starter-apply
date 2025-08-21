@@ -111,6 +111,7 @@ import { Toast } from 'tdesign-mobile-vue';
 import { computed, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { setMyActivity } from '@/api/list';
 import type { ActivityPrice } from '@/api/model/listModel';
 import { useUsersStore } from '@/store';
 import { useResultStore } from '@/store/modules/result';
@@ -212,7 +213,12 @@ const onConfirm = () => {
         });
         activityStore.setUsers(userlist);
         activityStore.setOrder(formData);
-        router.replace('/result');
+        setMyActivity({
+          ...activityList.value,
+          status: 0,
+        }).then(() => {
+          router.replace('/result/success');
+        });
       }, 2100);
     })
     .catch(() => {

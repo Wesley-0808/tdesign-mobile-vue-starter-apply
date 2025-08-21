@@ -7,7 +7,9 @@
           <div class="mine-card__content-info-name">{{ userInfo.username }}</div>
           <div class="mine-card__content-info-age_occupation">
             <div v-show="userInfo.age !== 0">{{ userInfo.age }}岁</div>
-            <div v-show="userInfo.occupation !== ''" style="margin-left: 8px">{{ userInfo.occupation }}</div>
+            <div v-show="userInfo.occupation !== ''" style="margin-left: 8px">
+              {{ Occupation.find((item) => item.value === userInfo.occupation)?.label }}
+            </div>
           </div>
         </div>
         <div class="mine-card__content-edit" @click="onEdit"><edit-icon size="20px" /></div>
@@ -28,7 +30,9 @@
             <div class="t-list__item-content">
               <div class="t-list__item-content-info">
                 <div class="t-list__item-content-info-name">{{ cell.name }}</div>
-                <div class="t-list__item-content-info-date">{{ cell.date }}</div>
+                <div class="t-list__item-content-info-date">
+                  {{ getEarlyDate_YMD(isArray(cell.date) ? cell.date : [cell.date]) }}
+                </div>
               </div>
               <div class="t-list__item-content-footer">
                 <div
@@ -65,6 +69,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { isArray } from 'lodash';
 import { EditIcon } from 'tdesign-icons-vue-next';
 import type { TabValue } from 'tdesign-mobile-vue';
 import { Toast } from 'tdesign-mobile-vue';
@@ -74,6 +79,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { getMyActivityList, getUserInfo } from '@/api/list';
 import type { MyActivityList, MyActivityListResult, UserInfoResult } from '@/api/model/listModel';
 import Empty from '@/components/result/Empty';
+import { Occupation } from '@/config/consts';
+import { getEarlyDate_YMD } from '@/utils/activity/getDate';
 
 // 用户信息
 const userInfo = ref<UserInfoResult>({ userid: -1, username: '', age: 0, avatar: '', occupation: '' });
