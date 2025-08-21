@@ -14,38 +14,43 @@
       </div>
     </div>
     <div class="my-activity-list">
-      <t-tabs :value="currentValue" :list="tabList" @change="onChange">
-        <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
+      <t-tabs :value="currentValue" :list="tabList" class="my-activity-list__ttabs" @change="onChange">
+        <t-tab-panel
+          v-for="item in tabList"
+          :key="item.value"
+          :value="item.value"
+          :badge-props="item.badgeProps"
+          class="my-activity-list__ttabs__panel"
+        >
           <t-list
             :async-loading="activityLoading ? 'loading' : ''"
-            class="my-activity-list__tlist"
-            :style="{ maxHeight: `${listHeight}px` }"
+            class="my-activity-list__ttabs__panel__tlist"
             @scroll="onScroll"
           >
             <div
               v-for="cell in filterActivityList(allActivityList.list, currentValue)"
               :key="cell.id"
-              class="my-activity-list__tlist__item"
+              class="my-activity-list__ttabs__panel__tlist__item"
               align="middle"
             >
-              <div class="my-activity-list__tlist__item-img">
+              <div class="my-activity-list__ttabs__panel__tlist__item-img">
                 <img :src="cell.img" alt="" />
               </div>
-              <div class="my-activity-list__tlist__item-content">
-                <div class="my-activity-list__tlist__item-content-info">
-                  <div class="my-activity-list__tlist__item-content-info-name">{{ cell.name }}</div>
-                  <div class="my-activity-list__tlist__item-content-info-date">{{ cell.date }}</div>
+              <div class="my-activity-list__ttabs__panel__tlist__item-content">
+                <div class="my-activity-list__ttabs__panel__tlist__item-content-info">
+                  <div class="my-activity-list__ttabs__panel__tlist__item-content-info-name">{{ cell.name }}</div>
+                  <div class="my-activity-list__ttabs__panel__tlist__item-content-info-date">{{ cell.date }}</div>
                 </div>
-                <div class="my-activity-list__tlist__item-content-footer">
+                <div class="my-activity-list__ttabs__panel__tlist__item-content-footer">
                   <div
-                    class="my-activity-list__tlist__item-content-footer-status"
+                    class="my-activity-list__ttabs__panel__tlist__item-content-footer-status"
                     :style="{ color: cell.status ? '' : 'var(--td-success-color)' }"
                   >
                     {{ cell.status ? '已完成' : '待参加' }}
                   </div>
                   <div
                     v-if="cell.status"
-                    class="my-activity-list__tlist__item-content-footer-comment"
+                    class="my-activity-list__ttabs__panel__tlist__item-content-footer-comment"
                     @click="onComment"
                   >
                     去评价
@@ -56,20 +61,20 @@
             <template #footer>
               <div
                 v-if="userInfo.userid === -1"
-                class="my-activity-list__tlist__item-click_to_login"
+                class="my-activity-list__ttabs__panel__tlist__item-click_to_login"
                 @click.stop="onLogin"
               >
                 您还未登录，点击登录
               </div>
               <div
                 v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
-                class="my-activity-list__tlist__item-empty"
+                class="my-activity-list__ttabs__panel__tlist__item-empty"
                 @click.stop="() => onActivityLoad(false, true)"
               >
-                <empty class="my-activity-list__tlist__item-empty_img" />
-                <div class="my-activity-list__tlist__item-empty_title">加载更多</div>
+                <empty class="my-activity-list__ttabs__panel__tlist__item-empty_img" />
+                <div class="my-activity-list__ttabs__panel__tlist__item-empty_title">加载更多</div>
               </div>
-              <div v-if="userInfo.userid !== -1 && isShowAll" class="my-activity-list__tlist__item-end">
+              <div v-if="userInfo.userid !== -1 && isShowAll" class="my-activity-list__ttabs__panel__tlist__item-end">
                 <div>
                   <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
                 </div>
@@ -79,7 +84,6 @@
         </t-tab-panel>
       </t-tabs>
     </div>
-    <div style="height: 56px !important; flex-shrink: 0"></div>
   </div>
 </template>
 <script setup lang="ts">
@@ -256,15 +260,7 @@ const onUserInfoLoad = async () => {
   onActivityLoad();
 };
 
-const listHeight = ref(0);
-
-function updateHeight() {
-  const viewport = document.documentElement.clientHeight;
-  listHeight.value = viewport - 96 - 16 - 56 - 48 - 48; // 96+16是个人名片高度，56+48是navbar和tabbar，48是t-tabs的nav高度
-}
-
 onMounted(() => {
-  updateHeight();
   onUserInfoLoad();
 });
 </script>
