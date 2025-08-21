@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { isEmpty, isFunction } from 'lodash';
 import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
 
 import type { ActivityModel } from '@/api/model/listModel';
 import { getEarlyDate } from '@/utils/activity/getDate';
@@ -36,6 +37,14 @@ export default defineComponent({
       );
     });
 
+    // 注入路由
+
+    const router = (window as any).$vueRouter || useRouter();
+
+    const handleItemClick = (id: string | number) => {
+      router.push(`/activity/${id}`);
+    };
+
     const renderList = () => {
       const sortedData = props.data.sort((a, b) => {
         if (props.sortBy === 'latest') {
@@ -63,7 +72,7 @@ export default defineComponent({
 
       const list = filteredData.map((item) => {
         return (
-          <div class="activity-list-item">
+          <div class="activity-list-item" onClick={() => handleItemClick(item.id)}>
             <div class="activity-list-item__image">
               <img src={item.img} alt={item.name} />
             </div>

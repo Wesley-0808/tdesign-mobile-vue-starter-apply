@@ -75,3 +75,8 @@ export interface UserInfoResult {
   age: number;
   occupation: string;
 }
+
+export interface ActivityInterestedPeopleData {
+  name: string;
+  avatar: string;
+}
