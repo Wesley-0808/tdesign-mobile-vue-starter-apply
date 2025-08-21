@@ -15,57 +15,79 @@
         <div class="mine-card__content-edit" @click="onEdit"><edit-icon size="20px" /></div>
       </div>
     </div>
-    <t-tabs :value="currentValue" :list="tabList" @change="onChange">
-      <t-tab-panel v-for="item in tabList" :key="item.value" :value="item.value" :badge-props="item.badgeProps">
-        <t-list :async-loading="activityLoading ? 'loading' : ''" @scroll="onScroll">
-          <div
-            v-for="cell in filterActivityList(allActivityList.list, currentValue)"
-            :key="cell.id"
-            class="t-list__item"
-            align="middle"
+    <div class="my-activity-list">
+      <t-tabs :value="currentValue" :list="tabList" class="my-activity-list__ttabs" @change="onChange">
+        <t-tab-panel
+          v-for="item in tabList"
+          :key="item.value"
+          :value="item.value"
+          :badge-props="item.badgeProps"
+          class="my-activity-list__ttabs__panel"
+        >
+          <t-list
+            :async-loading="activityLoading ? 'loading' : ''"
+            class="my-activity-list__ttabs__panel__tlist"
+            @scroll="onScroll"
           >
-            <div class="t-list__item-img">
-              <img :src="cell.img" alt="" />
-            </div>
-            <div class="t-list__item-content">
-              <div class="t-list__item-content-info">
-                <div class="t-list__item-content-info-name">{{ cell.name }}</div>
-                <div class="t-list__item-content-info-date">
-                  {{ getEarlyDate_YMD(isArray(cell.date) ? cell.date : [cell.date]) }}
-                </div>
-              </div>
-              <div class="t-list__item-content-footer">
-                <div
-                  class="t-list__item-content-footer-status"
-                  :style="{ color: cell.status ? '' : 'var(--td-success-color)' }"
-                >
-                  {{ cell.status ? '已完成' : '待参加' }}
-                </div>
-                <div v-if="cell.status" class="t-list__item-content-footer-comment" @click="onComment">去评价</div>
-              </div>
-            </div>
-          </div>
-          <template #footer>
-            <div v-if="userInfo.userid === -1" class="t-list__item-click_to_login" @click.stop="onLogin">
-              您还未登录，点击登录
-            </div>
             <div
-              v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
-              class="t-list__item-empty"
-              @click.stop="() => onActivityLoad(false, true)"
+              v-for="cell in filterActivityList(allActivityList.list, currentValue)"
+              :key="cell.id"
+              class="my-activity-list__ttabs__panel__tlist__item"
+              align="middle"
             >
-              <empty class="t-list__item-empty_img" />
-              <div class="t-list__item-empty_title">加载更多</div>
-            </div>
-            <div v-if="userInfo.userid !== -1 && isShowAll" class="t-list__item-end">
-              <div>
-                <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
+              <div class="my-activity-list__ttabs__panel__tlist__item-img">
+                <img :src="cell.img" alt="" />
+              </div>
+              <div class="my-activity-list__ttabs__panel__tlist__item-content">
+                <div class="my-activity-list__ttabs__panel__tlist__item-content-info">
+                  <div class="my-activity-list__ttabs__panel__tlist__item-content-info-name">{{ cell.name }}</div>
+                  <div class="my-activity-list__ttabs__panel__tlist__item-content-info-date">
+                    {{ getEarlyDate_YMD(isArray(cell.date) ? cell.date : [cell.date]) }}
+                  </div>
+                </div>
+                <div class="my-activity-list__ttabs__panel__tlist__item-content-footer">
+                  <div
+                    class="my-activity-list__ttabs__panel__tlist__item-content-footer-status"
+                    :style="{ color: cell.status ? '' : 'var(--td-success-color)' }"
+                  >
+                    {{ cell.status ? '已完成' : '待参加' }}
+                  </div>
+                  <div
+                    v-if="cell.status"
+                    class="my-activity-list__ttabs__panel__tlist__item-content-footer-comment"
+                    @click="onComment"
+                  >
+                    去评价
+                  </div>
+                </div>
               </div>
             </div>
-          </template>
-        </t-list>
-      </t-tab-panel>
-    </t-tabs>
+            <template #footer>
+              <div
+                v-if="userInfo.userid === -1"
+                class="my-activity-list__ttabs__panel__tlist__item-click_to_login"
+                @click.stop="onLogin"
+              >
+                您还未登录，点击登录
+              </div>
+              <div
+                v-if="userInfo.userid !== -1 && isShowLoading && !isShowAll"
+                class="my-activity-list__ttabs__panel__tlist__item-empty"
+                @click.stop="() => onActivityLoad(false, true)"
+              >
+                <empty class="my-activity-list__ttabs__panel__tlist__item-empty_img" />
+                <div class="my-activity-list__ttabs__panel__tlist__item-empty_title">加载更多</div>
+              </div>
+              <div v-if="userInfo.userid !== -1 && isShowAll" class="my-activity-list__ttabs__panel__tlist__item-end">
+                <div>
+                  <span style="margin: 0 8px; font-size: 30px; line-height: 12px">·</span>
+                </div>
+              </div>
+            </template>
+          </t-list>
+        </t-tab-panel>
+      </t-tabs>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
