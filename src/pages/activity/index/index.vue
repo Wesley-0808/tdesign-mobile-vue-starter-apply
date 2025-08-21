@@ -112,7 +112,7 @@
                     :image="url.avatar"
                   ></t-avatar>
                 </t-avatar-group>
-                <span class="interested-count">{{ activityDetail.interested }}人感兴趣</span>
+                <span class="interested-count">{{ activityDetail.interested || 0 }}人感兴趣</span>
               </div>
 
               <!-- 时间与地点 -->
