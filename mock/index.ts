@@ -236,7 +236,7 @@ export default [
           avatar: '/assets/image/avatar.png',
           username: '蔡宣轩',
           age: 29,
-          occupation: '设计/艺术从业者',
+          occupation: 'art-practitioners',
         }),
       },
     }),
