@@ -1,6 +1,8 @@
 import Mock from 'mockjs';
 import type { MockMethod } from 'vite-plugin-mock';
 
+const MyActivityList: any[] = [];
+
 export default [
   {
     url: '/api/get-recommend-list',
@@ -54,30 +56,31 @@ export default [
               id: 1,
               img: '/assets/image/activity/cover-2.png',
               name: '2021 SICC服务设计创新大会',
-              date: '2021年3月16日',
+              date: '2021-3-16',
               status: 0,
             },
             {
               id: 2,
               img: '/assets/image/activity/cover-3.png',
               name: '少年与星空 插画巡展',
-              date: '2021年6月5日',
+              date: '2021-6-5',
               status: 1,
             },
             {
               id: 3,
               img: '/assets/image/activity/cover-1.png',
               name: '2019 SICC服务设计创新大会',
-              date: '2019年3月16日',
+              date: '2019-3-16',
               status: 1,
             },
             {
               id: 4,
               img: '/assets/image/activity/cover-4.png',
               name: 'Unverse AI艺术展',
-              date: '2019年3月16日',
+              date: '2019-3-16',
               status: 1,
             },
+            ...MyActivityList,
           ],
           is_end: true,
         }),
@@ -105,6 +108,7 @@ export default [
             {
               id: 2,
               img: '/assets/image/activity/cover-2.png',
+              fullImg: '/assets/image/activity/sicc-2021.png',
               name: '2021 SICC服务设计创新大会',
               field: 'art',
               type: 'lecture',
@@ -232,9 +236,51 @@ export default [
           avatar: '/assets/image/avatar.png',
           username: '蔡宣轩',
           age: 29,
-          occupation: '设计/艺术从业者',
+          occupation: 'art-practitioners',
         }),
       },
     }),
+  },
+  {
+    url: '/api/get-activity-interested',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: [
+        ...Mock.mock([
+          {
+            name: 'user1',
+            avatar: '/assets/image/avatar.png',
+          },
+          {
+            name: 'user2',
+            avatar: '/assets/image/avatar2.png',
+          },
+          {
+            name: 'user3',
+            avatar: '/assets/image/avatar3.png',
+          },
+          {
+            name: 'user4',
+            avatar: '/assets/image/avatar4.png',
+          },
+          {
+            name: 'user5',
+            avatar: '/assets/image/avatar5.png',
+          },
+        ]),
+      ],
+    }),
+  },
+  {
+    url: '/api/confirm-activity',
+    method: 'post',
+    response: ({ body }: { body: any }) => {
+      console.log(body);
+      MyActivityList.push(body);
+      return {
+        code: 0,
+      };
+    },
   },
 ] as MockMethod[];

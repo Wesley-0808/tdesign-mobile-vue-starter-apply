@@ -1,4 +1,3 @@
-
 .result-page {
   padding: 16px;
   box-sizing: border-box;
@@ -72,6 +71,14 @@
 
   .applicant-list {
     margin-top: 12px;
+    max-height: 100px;
+    overflow: scroll;
+
+    .user-cell-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
     .t-cell {
       border-radius: 9px;
@@ -93,7 +100,7 @@
 
 .share-action-sheet {
   .share-popup-content {
-    border-bottom: 0.5px solid #e7e7e7;
+    border-bottom: 0.5px solid var(--td-border-level-1-color);
     padding-bottom: 8px;
   }
 
@@ -130,6 +137,10 @@
         .section-img {
           height: 40px;
           width: 40px;
+
+          &.section-img--0{
+            border-radius: 50%;
+          }
         }
 
         .section-name {

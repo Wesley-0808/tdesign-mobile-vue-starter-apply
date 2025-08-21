@@ -16,7 +16,7 @@
           </div>
           <div>
             <location-icon size="16" color="#0052D9" />
-            <span class="activity-details-text">{{ activity.place }}</span>
+            <span class="activity-details-text">{{ activity.place || '-' }}</span>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
             :key="user.id"
             shape="circle"
             :title="user.name"
-            :description="`${getAge(user.birthday)}岁 ${Occupation.find((i) => i.value === user.occupation).label}`"
+            :description="`${getAge(user.birthday)}岁 ${Occupation.find((i) => i.value === user.occupation)?.label || ''}`"
           >
             <template #leftIcon>
               <t-avatar shape="circle" :image="user.avatar" />
@@ -61,11 +61,11 @@
 
   <t-popup v-model:visible="shareActionSheetVisible" class="share-action-sheet" placement="bottom" destroy-on-close>
     <div class="share-popup-content">
-      <div v-for="item in shareActionSheet" :key="item.label" class="share-section">
+      <div v-for="(item, listIndex) in shareActionSheet" :key="item.label" class="share-section">
         <div class="section-title">{{ item.label }}</div>
         <div class="section-list">
           <div v-for="(icon, index) in item.children" :key="index" class="section-item">
-            <img :src="icon.img" class="section-img" />
+            <img :src="icon.img" class="section-img" :class="`section-img--${listIndex}`" />
             <p class="section-name">{{ icon.label }}</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ const users = computed<UserInfo[]>(() => resultStore.getUsers);
 
 const goToActivityDetail = () => {
   if (activity.value) {
-    router.push(`/activity/detail/${activity.value.id}`);
+    router.push(`/activity/${activity.value.id}`);
   }
 };
 

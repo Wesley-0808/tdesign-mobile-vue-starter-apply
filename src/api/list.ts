@@ -1,5 +1,6 @@
 import type {
   ActivityEvaluateResult,
+  ActivityInterestedPeopleData,
   ActivityResult,
   MyActivityListResult,
   RecommendListResult,
@@ -13,6 +14,8 @@ const Api = {
   ActivityEvaluate: '/get-activity-evaluate',
   MyActivity: '/get-my-activity-list',
   UserInfo: '/get-user-info',
+  ActivityInterestedPeople: '/get-activity-interested',
+  ConfirmActivity: '/confirm-activity',
 };
 
 export function getRecommendList() {
@@ -43,5 +46,18 @@ export function getMyActivityList(params: object) {
 export function getUserInfo() {
   return request.get<UserInfoResult>({
     url: Api.UserInfo,
+  });
+}
+
+export function getActivityInterestedPeople() {
+  return request.get<ActivityInterestedPeopleData[]>({
+    url: Api.ActivityInterestedPeople,
+  });
+}
+
+export function setMyActivity(item: any) {
+  return request.post({
+    url: Api.ConfirmActivity,
+    data: item,
   });
 }

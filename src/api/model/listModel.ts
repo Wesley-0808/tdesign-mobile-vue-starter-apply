@@ -64,7 +64,7 @@ export interface MyActivityList {
   id: number;
   img: string;
   name: string;
-  date: string;
+  date: string | string[];
   status: 0 | 1;
 }
 
@@ -74,4 +74,9 @@ export interface UserInfoResult {
   username: string;
   age: number;
   occupation: string;
+}
+
+export interface ActivityInterestedPeopleData {
+  name: string;
+  avatar: string;
 }

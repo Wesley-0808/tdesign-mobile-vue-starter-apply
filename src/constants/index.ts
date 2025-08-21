@@ -105,11 +105,11 @@ export const shareActionSheet: ShareActionSheetData[] = [
   {
     label: '分享给朋友',
     children: [
-      { img: '/assets/image/avatar.png', label: 'Allen' },
-      { img: '/assets/image/avatar2.png', label: 'Nick' },
-      { img: '/assets/image/avatar3.png', label: 'Jacky' },
-      { img: '/assets/image/avatar4.png', label: 'Eric' },
-      { img: '/assets/image/avatar5.png', label: 'Johnson' },
+      { img: '/assets/image/avatar5.png', label: 'Allen' },
+      { img: '/assets/image/avatar.png', label: 'Nick' },
+      { img: '/assets/image/avatar2.png', label: 'Jacky' },
+      { img: '/assets/image/avatar3.png', label: 'Eric' },
+      { img: '/assets/image/avatar4.png', label: 'Johnson' },
     ],
   },
   {

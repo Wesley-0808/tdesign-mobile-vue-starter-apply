@@ -7,7 +7,9 @@
           <div class="mine-card__content-info-name">{{ userInfo.username }}</div>
           <div class="mine-card__content-info-age_occupation">
             <div v-show="userInfo.age !== 0">{{ userInfo.age }}岁</div>
-            <div v-show="userInfo.occupation !== ''" style="margin-left: 8px">{{ userInfo.occupation }}</div>
+            <div v-show="userInfo.occupation !== ''" style="margin-left: 8px">
+              {{ Occupation.find((item) => item.value === userInfo.occupation)?.label }}
+            </div>
           </div>
         </div>
         <div class="mine-card__content-edit" @click="onEdit"><edit-icon size="20px" /></div>
@@ -96,6 +98,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { getMyActivityList, getUserInfo } from '@/api/list';
 import type { MyActivityList, MyActivityListResult, UserInfoResult } from '@/api/model/listModel';
 import Empty from '@/components/result/Empty';
+import { Occupation } from '@/config/consts';
 
 // 用户信息
 const userInfo = ref<UserInfoResult>({ userid: -1, username: '', age: 0, avatar: '', occupation: '' });

@@ -10,7 +10,7 @@
         </div>
         <div class="detail-item">
           <location-icon size="16px" />
-          <span>{{ activityList.place }}</span>
+          <span>{{ activityList.place || '-' }}</span>
         </div>
       </div>
     </div>
@@ -111,6 +111,7 @@ import { Toast } from 'tdesign-mobile-vue';
 import { computed, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { setMyActivity } from '@/api/list';
 import type { ActivityPrice } from '@/api/model/listModel';
 import { useUsersStore } from '@/store';
 import { useResultStore } from '@/store/modules/result';
@@ -131,11 +132,18 @@ const users = computed(() => {
 });
 
 const activityList = computed(() => {
-  return activityStore.getActivity;
+  const actItem = activityStore.getActivity;
+  // 处理价格是free的情况
+  if (actItem.price === 'free') {
+    actItem.price = [{ name: '免费参与', price: 0 }];
+  }
+  return actItem;
 });
 
 // 计算总价
 const totalPrice = computed(() => {
+  if (!activityList.value.price) return '';
+  if (activityList.value.price === 'free') return 0;
   return (activityList.value.price as ActivityPrice[])
     .filter((p) => formData.price.includes(p.name || p))
     .map((p) => Number(p.discount || p.price))
@@ -200,9 +208,17 @@ const onConfirm = () => {
       });
       setTimeout(() => {
         activityStore.setActivity(activityList.value);
-        activityStore.setUsers(formData.personList);
+        const userlist = formData.personList.map((item) => {
+          return users.value.find((user) => user.id === item);
+        });
+        activityStore.setUsers(userlist);
         activityStore.setOrder(formData);
-        router.replace('/result');
+        setMyActivity({
+          ...activityList.value,
+          status: 0,
+        }).then(() => {
+          router.replace('/result/success');
+        });
       }, 2100);
     })
     .catch(() => {
