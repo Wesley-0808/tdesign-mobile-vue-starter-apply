@@ -72,18 +72,17 @@
   .my-activity-list {
     flex: 1;
     margin: 0 16px;
-    padding-bottom: 16px;
     overflow: hidden;
 
     &__ttabs {
-      max-height: 100%;
       position: relative;
-      border-radius: var(--td-radius-extraLarge);
+      border-top-left-radius: var(--td-radius-extraLarge);
+      border-top-right-radius: var(--td-radius-extraLarge);
       background: var(--td-bg-color-container);
-      padding-bottom: 16px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      height: 100%;
 
       &__panel {
         overflow: hidden;
@@ -101,8 +100,6 @@
             width: 0;
             height: 0;
           }
-
-          border-radius: var(--td-radius-extraLarge);
 
           &__item {
             margin: 16px;
@@ -204,6 +201,7 @@
               .flex-center();
 
               margin-top: 24px;
+              padding-bottom: 16px;
               color: var(--td-text-color-secondary);
               font-size: var(--td-font-size-link-medium);
               line-height: var(--td-line-height-link-small);
